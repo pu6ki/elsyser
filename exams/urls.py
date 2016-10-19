@@ -3,8 +3,20 @@ from django.conf.urls import url
 from . import views
 
 app_name = 'exams'
-# TODO: /exams/10/A/exam_id
 urlpatterns = [
-    url(r'^$', views.exams_list, name='exams-list'),
-    url(r'^(?P<pk>[0-9]+)/$', views.ExamDetailView.as_view(), name='exam-detail'),
+    url(
+        r'^$',
+        views.all_exams_list,
+        name='all-exams-list'
+    ),
+    url(
+        r'^(?P<class_number>[0-9]+)/$',
+        views.all_class_exams_list,
+        name='all-class-exams-list'
+    ),
+    url(
+        r'^(?P<class_number>[0-9]+)/(?P<class_title>[A-Z])/$',
+        views.class_exam_list,
+        name='class-exam-list'
+    ),
 ]
