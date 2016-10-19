@@ -3,11 +3,11 @@
 {% block content %}
     {% if exams %}
         <h2>Latest exams</h2>
-        {% for exam in exams %}
-            <a href="{% url 'exams:exam-detail' exam.id %}">{{ exam.subject.title }}</a>
-            <br />
-            {# TODO: Make this an <ul> with <li>s #}
-        {% endfor %}
+        <ul>
+            {% for exam in exams %}
+                <li>{{ exam }}</li>
+            {% endfor %}
+        </ul>
     {% else %}
         <h2>No exams right now...</h2>
     {% endif %}
