@@ -12,7 +12,7 @@ class Class(models.Model):
             ('A', 'A'), ('B', 'B'), ('V', 'V'), ('G', 'G')
         )
     )
-    
+
     def __str__(self):
         return '{}{}'.format(self.number, self.title)
 
@@ -28,4 +28,8 @@ class Exam(models.Model):
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.subject.title
+        return '{} - {} ({})'.format(
+            self.subject.title,
+            self.clazz,
+            self.date.strftime('%d-%m-%Y')
+        )
