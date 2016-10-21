@@ -1,38 +1,34 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.views.generic import ListView
 
-from .models import Class, Subject, Exam
-
-
-def _exams_view(request, exams):
-    paginator = Paginator(exams, 10)
-
-    page = request.GET.get('page')
-
-    try:
-        posts = paginator.page(page)
-    except PageNotAnInteger:
-        posts = paginator.page(1)
-    except EmptyPage:
-        posts = paginator.page(paginator.num_pages)
-
-    return render(request, 'exams/list.html', {'exams': exams})
+from .models import Class, Exam
 
 
-def all_exams_list(request):
-    exams = Exam.objects.all().order_by('-date')
+class AllExamsView(ListView):
+    model = Exam
+    template_name = 'exams/list.html'
+    context_object_name = 'exams'
+    paginate_by = 5
 
-    return _exams_view(request, exams)
-
-
-def all_class_exams_list(request, class_number):
-    exams = Exam.objects.filter(clazz__number=class_number)
-
-    return _exams_view(request, exams)
+    def get_queryset(self):
+        return get_list_or_404(self.model)
 
 
-def class_exam_list(request, class_number, class_title):
-    clazz = Class.objects.filter(number=class_number, title=class_title)
-    exams = Exam.objects.filter(clazz=clazz).order_by('-date')
+class AllClassExamsView(AllExamsView):
+    def get_queryset(self):
+        return get_list_or_404(
+            self.model,
+            clazz__number=self.kwargs['class_number']
+        )
 
-    return _exams_view(request, exams)
+
+class CertainClassExamsView(AllExamsView):
+    def get_queryset(self):
+        clazz = get_object_or_404(
+            Class,
+            number=self.kwargs['class_number'],
+            title=self.kwargs['class_title']
+        )
+
+        return get_list_or_404(self.model, clazz=clazz)
