@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% load static %}
+        <meta charset="utf-8" />
+        <title>ELSYSER{% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="{% static "website/bootstrap-3.3.7-dist/css/bootstrap.min.css" %}" />
+    </head>
+    <body>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{% url 'website:home' %}">ELSYSER</a>
+                </div>
+
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            {# TODO: Make it like a dropdown (animations) #}
+                            <a href="{% url 'exams:all-exams-list' %}" class="dropdown-toggle">Exams <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                {# TODO: Add a dropdown for each class #}
+                                <li><a href="{% url 'exams:all-class-exams-list' 8 %}">8</a></li>
+                                <li><a href="{% url 'exams:all-class-exams-list' 9 %}">9</a></li>
+                                <li><a href="{% url 'exams:all-class-exams-list' 10 %}">10</a></li>
+                                <li><a href="{% url 'exams:all-class-exams-list' 11 %}">11</a></li>
+                                <li><a href="{% url 'exams:all-class-exams-list' 12 %}">12</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        {% block content %}{% endblock %}
+
+        <script src="{% static "website/bootstrap-3.3.7-dist/js/bootstrap.min.js" %}"></script>
+    </body>
+</html>
