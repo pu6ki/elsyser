@@ -6,17 +6,17 @@ app_name = 'exams'
 urlpatterns = [
     url(
         r'^$',
-        views.all_exams_list,
+        views.AllExamsView.as_view(),
         name='all-exams-list'
     ),
     url(
         r'^(?P<class_number>[0-9]+)/$',
-        views.all_class_exams_list,
+        views.AllClassExamsView.as_view(),
         name='all-class-exams-list'
     ),
     url(
         r'^(?P<class_number>[0-9]+)/(?P<class_title>[A-Z])/$',
-        views.class_exam_list,
-        name='class-exam-list'
+        views.CertainClassExamsView.as_view(),
+        name='certain-class-exam-list'
     ),
 ]
