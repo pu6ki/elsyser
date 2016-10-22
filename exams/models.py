@@ -1,11 +1,17 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ValidationError
 
-# TODO: Update database to have valid teacher for each Subject
+from datetime import datetime
+
+# TODO: Update database
 
 class Teacher(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
+
+    class Meta:
+        ordering = ['first_name', 'last_name']
 
     def __str__(self):
         return '{} {}'.format(self.first_name, self.last_name)
@@ -13,7 +19,10 @@ class Teacher(models.Model):
 
 class Subject(models.Model):
     title = models.CharField(max_length=50)
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, default=1)
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['title', 'teacher']
 
     def __str__(self):
         return self.title
@@ -42,9 +51,17 @@ class Exam(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     date = models.DateField(auto_now=False)
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
+    topic = models.CharField(max_length=60)
 
     class Meta:
-        ordering = ['-date', 'subject', 'clazz']
+        ordering = ['date', 'subject', 'clazz']
+
+    def clean(self):
+        if self.date < datetime.now().date():
+            raise ValidationError('Only future dates allowed.')
+        if self.date.weekday() not in range(0, 5):
+            raise ValidationError('Exam can be done only from Monday to Friday.')
+
 
     def __str__(self):
         return '{} - {} ({})'.format(
