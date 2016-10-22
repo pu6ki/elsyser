@@ -4,11 +4,13 @@
 
 {% block content %}
     {% if exams %}
-        <h2>Recent exams</h2>
+        <h2>Upcoming exams</h2>
         {% for exam in exams %}
             <ul class="list-group">
-                <h4 class="list-group-item-heading">{{ exam.subject }} ({{ exam.subject.teacher }})</h4>
-                <li class="list-group-item-text">for {{ exam.clazz }} on {{ exam.date }}</li>
+                <h4 class="list-group-item-heading"><b>{{ exam.subject }}</b> ({{ exam.subject.teacher }})</h4>
+                <li class="list-group-item-text">Class: <b>{{ exam.clazz }}</b></li>
+                <li class="list-group-item-text">Date: <b>{{ exam.date }}</b></li>
+                <li class="list-group-item-text">Topic: <b>{{ exam.topic }}</b></li>
             </ul>
         {% endfor %}
         {% if is_paginated %}
@@ -47,6 +49,6 @@
             </nav>
         {% endif %}
     {% else %}
-        <h3>No exams available! Wohooooo!</h3>
+        <h3>No exams! Wohooooo!</h3>
     {% endif %}
 {% endblock %}
