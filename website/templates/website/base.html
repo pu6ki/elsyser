@@ -23,21 +23,23 @@
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
                             {# TODO: Make it like a dropdown (animations) #}
-                            <a href="{% url 'exams:all-exams-list' %}" class="dropdown-toggle">Exams <span class="caret"></span></a>
+                            <a href="{% url 'exams:get_exams' %}" class="dropdown-toggle">Exams <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 {# TODO: Add a dropdown for each class #}
-                                <li><a href="{% url 'exams:all-class-exams-list' 8 %}">8</a></li>
-                                <li><a href="{% url 'exams:all-class-exams-list' 9 %}">9</a></li>
-                                <li><a href="{% url 'exams:all-class-exams-list' 10 %}">10</a></li>
-                                <li><a href="{% url 'exams:all-class-exams-list' 11 %}">11</a></li>
-                                <li><a href="{% url 'exams:all-class-exams-list' 12 %}">12</a></li>
+                                <li><a href="{% url 'exams:get_all_class_exams' 8 %}">8</a></li>
+                                <li><a href="{% url 'exams:get_all_class_exams' 9 %}">9</a></li>
+                                <li><a href="{% url 'exams:get_all_class_exams' 10 %}">10</a></li>
+                                <li><a href="{% url 'exams:get_all_class_exams' 11 %}">11</a></li>
+                                <li><a href="{% url 'exams:get_all_class_exams' 12 %}">12</a></li>
                             </ul>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
-        {% block content %}{% endblock %}
+        {% block content %}
+
+        {% endblock %}
 
         <script src="{% static "website/bootstrap-3.3.7-dist/js/bootstrap.min.js" %}"></script>
     </body>
