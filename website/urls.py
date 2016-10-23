@@ -1,9 +1,7 @@
-from django.conf.urls import url
-
-from . import views
+from django.conf.urls import url, include
 
 
 app_name = 'website'
 urlpatterns = [
-    url(r'^$', views.home, name='home')
+    url(r'^exams/', include('exams.urls')),
 ]
