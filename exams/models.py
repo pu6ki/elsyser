@@ -4,9 +4,9 @@ from django.core.exceptions import ValidationError
 
 from datetime import datetime
 
-# TODO: Update database
 
 class Teacher(models.Model):
+
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
 
@@ -18,7 +18,8 @@ class Teacher(models.Model):
 
 
 class Subject(models.Model):
-    title = models.CharField(max_length=50)
+
+    title = models.CharField(unique=True, max_length=50)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
 
     class Meta:
@@ -29,15 +30,13 @@ class Subject(models.Model):
 
 
 class Class(models.Model):
-    number = models.PositiveSmallIntegerField(
-        default=8,
-        validators=[MinValueValidator(8), MaxValueValidator(12)]
+
+    number = models.IntegerField(
+        choices=[(i, i) for i in range(8, 13)]
     )
     title = models.CharField(
         max_length=1,
-        choices=(
-            ('A', 'A'), ('B', 'B'), ('V', 'V'), ('G', 'G')
-        )
+        choices=[(l, l) for l in ['A', 'B', 'V', 'G']]
     )
 
     class Meta:
@@ -48,10 +47,11 @@ class Class(models.Model):
 
 
 class Exam(models.Model):
+
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     date = models.DateField(auto_now=False)
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
-    topic = models.CharField(max_length=60)
+    topic = models.CharField(unique=True, max_length=60)
 
     class Meta:
         ordering = ['date', 'subject', 'clazz']
