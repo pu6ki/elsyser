@@ -1,22 +1,22 @@
 from django.conf.urls import url
 
-from . import views
+from .views import ExamsList, AllClassExamsList, CertainClassExamsList
 
 app_name = 'exams'
 urlpatterns = [
     url(
         r'^$',
-        views.AllExamsView.as_view(),
-        name='all-exams-list'
+        ExamsList.as_view(),
+        name='get_exams'
     ),
     url(
         r'^(?P<class_number>8|9|1[0-2])/$',
-        views.AllClassExamsView.as_view(),
-        name='all-class-exams-list'
+        AllClassExamsList.as_view(),
+        name='get_all_class_exams'
     ),
     url(
         r'^(?P<class_number>8|9|1[0-2])/(?P<class_title>A|B|V|G)/$',
-        views.CertainClassExamsView.as_view(),
-        name='certain-class-exam-list'
+        CertainClassExamsList.as_view(),
+        name='get_certain_class_exams'
     ),
 ]
