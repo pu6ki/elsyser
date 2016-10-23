@@ -2,6 +2,7 @@ from django.conf.urls import url
 
 from .views import ExamsList, AllClassExamsList, CertainClassExamsList
 
+
 app_name = 'exams'
 urlpatterns = [
     url(
