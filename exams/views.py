@@ -1,34 +1,29 @@
 from datetime import datetime, timedelta
 
-from django.views.generic import ListView
+from rest_framework import generics
 
 from .models import Exam, Class
 from .serializers import ExamsSerializer
 
 
-class ExamsList(ListView):
+class ExamsList(generics.ListCreateAPIView):
 
-    model = Exam
-    template_name = 'exams/list.html'
-    context_object_name = 'exams'
-    paginate_by = 5
-
-    def get_queryset(self):
-        return self.model.objects.filter(
-            date__lte=datetime.now()+timedelta(days=5)
-        )
+    queryset = Exam.objects.filter(date__lte=datetime.now()+timedelta(days=5))
+    serializer_class = ExamsSerializer
 
 
-class AllClassExamsList(ExamsList):
+class AllClassExamsList(generics.ListAPIView):
+
+    serializer_class = ExamsSerializer
 
     def get_queryset(self):
-        return self.model.objects.filter(
+        return Exam.objects.filter(
             date__lte=datetime.now()+timedelta(days=5),
             clazz__number=self.kwargs['class_number'],
         )
 
 
-class CertainClassExamsList(ExamsList):
+class CertainClassExamsList(AllClassExamsList):
 
     def get_queryset(self):
         clazz = Class.objects.get(
@@ -36,7 +31,7 @@ class CertainClassExamsList(ExamsList):
             title=self.kwargs['class_title'],
         )
 
-        return self.model.objects.filter(
+        return Exam.objects.filter(
             date__lte=datetime.now()+timedelta(days=5),
             clazz=clazz,
-        )
+)

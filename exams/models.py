@@ -1,9 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.core.exceptions import ValidationError
-from django.contrib.auth.models import User
 
-from datetime import datetime
+from .validators import validate_date
 
 
 class Teacher(models.Model):
@@ -33,11 +31,12 @@ class Subject(models.Model):
 class Class(models.Model):
 
     number = models.IntegerField(
-        choices=[(i, i) for i in range(8, 13)]
+        validators=[MinValueValidator(8), MaxValueValidator(12)],
+        choices=[(i, i) for i in range(8, 13)],
     )
     title = models.CharField(
         max_length=1,
-        choices=[(l, l) for l in ['A', 'B', 'V', 'G']]
+        choices=[(l, l) for l in ['A', 'B', 'V', 'G']],
     )
 
     class Meta:
@@ -50,18 +49,12 @@ class Class(models.Model):
 class Exam(models.Model):
 
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    date = models.DateField(auto_now=False)
+    date = models.DateField(auto_now=False, validators=[validate_date])
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     topic = models.CharField(unique=True, max_length=60)
 
     class Meta:
         ordering = ['date', 'subject', 'clazz']
-
-    def clean(self):
-        if self.date < datetime.now().date():
-            raise ValidationError('Only future dates allowed.')
-        if self.date.weekday() not in range(0, 5):
-            raise ValidationError('Exam can be done only from Monday to Friday.')
 
 
     def __str__(self):

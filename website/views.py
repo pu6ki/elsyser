@@ -1,29 +1,8 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
-from django.contrib.auth import login
+from rest_framework import generics
 
-from .forms import RegistrationForm
-from exams.models import Class
+from .serializers import UserSerializer
 
 
-def home(request):
-    return render(request, 'website/home.html')
+class UserRegistration(generics.CreateAPIView):
 
-
-def register(request):
-    if request.POST:
-        form = RegistrationForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-            login(request, User.objects.latest('id'))
-
-            return redirect('website:profile')
-    else:
-        form = RegistrationForm()
-
-    return render(request, 'registration/register.html', {'form': form})
-
-
-def profile(request):
-    return render(request, 'registration/profile.html')
+    serializer_class = UserSerializer

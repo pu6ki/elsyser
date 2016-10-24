@@ -10,11 +10,4 @@ class ExamsSerializer(serializers.ModelSerializer):
         fields = ('id', 'subject', 'date', 'clazz', 'topic')
 
     def create(self, validated_data):
-        subject = validated_data.pop('subject')
-        clazz = validated_data.pop('clazz')
-
-        return Exam.objects.create(
-            subject=subject,
-            clazz=clazz,
-            **validated_data
-        )
+        return Exam.objects.create_exam(**validated_data)
