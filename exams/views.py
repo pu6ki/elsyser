@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Exam, Class
 from .serializers import ExamsSerializer
@@ -8,12 +9,13 @@ from .serializers import ExamsSerializer
 
 class ExamsList(generics.ListCreateAPIView):
 
+    permission_classes = (IsAuthenticated,)
     queryset = Exam.objects.filter(date__lte=datetime.now()+timedelta(days=5))
     serializer_class = ExamsSerializer
 
 
 class AllClassExamsList(generics.ListAPIView):
-
+    permission_classes = (IsAuthenticated,)
     serializer_class = ExamsSerializer
 
     def get_queryset(self):
