@@ -1,2 +1,2 @@
 # elsyser
-Students' blog for our school.
+Students' system for our school.
