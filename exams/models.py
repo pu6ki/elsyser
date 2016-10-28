@@ -4,25 +4,12 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from .validators import validate_date
 
 
-class Teacher(models.Model):
-
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-
-    class Meta:
-        ordering = ['first_name', 'last_name']
-
-    def __str__(self):
-        return '{} {}'.format(self.first_name, self.last_name)
-
-
 class Subject(models.Model):
 
     title = models.CharField(unique=True, max_length=50)
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ['title', 'teacher']
+        ordering = ['title']
 
     def __str__(self):
         return self.title

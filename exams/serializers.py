@@ -10,4 +10,4 @@ class ExamsSerializer(serializers.ModelSerializer):
         fields = ('id', 'subject', 'date', 'clazz', 'topic')
 
     def create(self, validated_data):
-        return Exam.objects.create_exam(**validated_data)
+        return Exam.objects.create(**validated_data)

@@ -10,7 +10,7 @@ from .serializers import ExamsSerializer
 class ExamsList(generics.ListCreateAPIView):
 
     permission_classes = (IsAuthenticated,)
-    queryset = Exam.objects.filter(date__lte=datetime.now()+timedelta(days=5))
+    queryset = Exam.objects.filter(date__gte=datetime.now().date())
     serializer_class = ExamsSerializer
 
 
@@ -20,7 +20,7 @@ class AllClassExamsList(generics.ListAPIView):
 
     def get_queryset(self):
         return Exam.objects.filter(
-            date__lte=datetime.now()+timedelta(days=5),
+            date__gte=datetime.now().date(),
             clazz__number=self.kwargs['class_number'],
         )
 
@@ -34,6 +34,6 @@ class CertainClassExamsList(AllClassExamsList):
         )
 
         return Exam.objects.filter(
-            date__lte=datetime.now()+timedelta(days=5),
+            date__gte=datetime.now().date(),
             clazz=clazz,
 )
