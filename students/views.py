@@ -5,14 +5,10 @@ from rest_framework.permissions import IsAuthenticated
 from datetime import datetime
 
 from .serializers import StudentSerializer, ExamsSerializer
-from .models import Class, Exam, Student
+from .models import Student, Exam
 
 
 class StudentRegistration(generics.CreateAPIView):
-
-    serializer_class = StudentSerializer
-
-class StudentLogin(generics.CreateAPIView):
 
     serializer_class = StudentSerializer
 
@@ -22,7 +18,7 @@ class StudentProfile(generics.RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = StudentSerializer
 
-    def get(self, request, format=None):
+    def get(self, request):
         student = Student.objects.get(user=request.user)
         serializer = StudentSerializer(student)
 
