@@ -11,7 +11,6 @@ from .models import Student, Exam
 class UserRegistrationSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(
-        write_only=True,
         required=True,
         min_length=6,
         style={
@@ -36,10 +35,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'id', 'username', 'first_name', 'last_name', 'email', 'password',
+            'username', 'first_name', 'last_name', 'email', 'password',
         )
         extra_kwargs = {
             'username': {'read_only': True},
+            'password': {'write_only': True},
         }
 
 
@@ -56,9 +56,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
         first_name = user_data.pop('first_name')
         last_name = user_data.pop('last_name')
-
         username = first_name + '_' + last_name
-
         email = user_data.pop('email')
 
         user = User(
@@ -78,18 +76,8 @@ class StudentSerializer(serializers.ModelSerializer):
         return Student.objects.create(user=user, **validated_data)
 
 
-class StudentLoginSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Student
-        fields = None
-
-
 class ExamsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Exam
         fields = ('subject', 'date', 'topic')
-
-    def create(self, validated_data):
-        return Exam.objects.create(**validated_data)

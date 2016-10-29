@@ -18,7 +18,7 @@ class StudentProfile(generics.RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = StudentSerializer
 
-    def get(self, request):
+    def get(self, request, format=None):
         student = Student.objects.get(user=request.user)
         serializer = StudentSerializer(student)
 
