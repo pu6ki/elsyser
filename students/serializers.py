@@ -8,7 +8,7 @@ from rest_framework.authtoken.models import Token
 from .models import Student, Exam
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserRegistrationSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(
         write_only=True,
@@ -39,14 +39,13 @@ class UserSerializer(serializers.ModelSerializer):
             'id', 'username', 'first_name', 'last_name', 'email', 'password',
         )
         extra_kwargs = {
-            'id': {'read_only': True},
             'username': {'read_only': True},
         }
 
 
 class StudentSerializer(serializers.ModelSerializer):
 
-    user = UserSerializer()
+    user = UserRegistrationSerializer()
 
     class Meta:
         model = Student
@@ -78,11 +77,13 @@ class StudentSerializer(serializers.ModelSerializer):
 
         return Student.objects.create(user=user, **validated_data)
 
+
 class StudentLoginSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ('user__email', 'clazz')
+        fields = None
+
 
 class ExamsSerializer(serializers.ModelSerializer):
 
@@ -91,6 +92,4 @@ class ExamsSerializer(serializers.ModelSerializer):
         fields = ('subject', 'date', 'topic')
 
     def create(self, validated_data):
-        return Exam.objects.filter(
-            clazz=self.context['request'].user.student.clazz
-        )
+        return Exam.objects.create(**validated_data)
