@@ -1,12 +1,14 @@
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.contrib.auth import login
 
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
 
+from .models import Student, Exam
 
-class StudentSerializer(serializers.ModelSerializer):
+
+class UserSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(
         write_only=True,
@@ -41,13 +43,24 @@ class StudentSerializer(serializers.ModelSerializer):
             'username': {'read_only': True},
         }
 
+
+class StudentSerializer(serializers.ModelSerializer):
+
+    user = UserSerializer()
+
+    class Meta:
+        model = Student
+        fields = ('user', 'clazz')
+
     def create(self, validated_data):
-        first_name = validated_data.pop('first_name')
-        last_name = validated_data.pop('last_name')
+        user_data = validated_data.pop('user')
+
+        first_name = user_data.pop('first_name')
+        last_name = user_data.pop('last_name')
 
         username = first_name + '_' + last_name
 
-        email = validated_data.pop('email')
+        email = user_data.pop('email')
 
         user = User(
             username=username,
@@ -56,13 +69,28 @@ class StudentSerializer(serializers.ModelSerializer):
             email=email,
         )
 
-        user.set_password(validated_data.pop('password'))
-
+        user.set_password(user_data.pop('password'))
         user.save()
 
-        Group.objects.get(name='Students').user_set.add(user)
         Token.objects.create(user=user)
 
         login(self.context['request'], user)
 
-        return user
+        return Student.objects.create(user=user, **validated_data)
+
+class StudentLoginSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Student
+        fields = ('user__email', 'clazz')
+
+class ExamsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Exam
+        fields = ('subject', 'date', 'topic')
+
+    def create(self, validated_data):
+        return Exam.objects.filter(
+            clazz=self.context['request'].user.student.clazz
+        )
