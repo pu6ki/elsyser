@@ -3,7 +3,6 @@ from django.contrib.auth import login
 
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-from rest_framework.authtoken.models import Token
 
 from .models import Student, Exam
 
@@ -11,6 +10,7 @@ from .models import Student, Exam
 class UserRegistrationSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(
+        write_only=True,
         required=True,
         min_length=6,
         style={
@@ -68,8 +68,6 @@ class StudentSerializer(serializers.ModelSerializer):
 
         user.set_password(user_data.pop('password'))
         user.save()
-
-        Token.objects.create(user=user)
 
         login(self.context['request'], user)
 
