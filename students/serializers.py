@@ -4,7 +4,7 @@ from django.contrib.auth import login
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from .models import Student, Exam
+from .models import Student, Exam, News
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -79,3 +79,10 @@ class ExamsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Exam
         fields = ('subject', 'date', 'topic')
+
+
+class NewsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = News
+        fields = ('title', 'content', 'date', 'clazz')
