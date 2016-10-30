@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from datetime import datetime
 
-from .serializers import StudentSerializer, ExamsSerializer, NewsSerializer
+from .serializers import StudentSerializer, ExamSerializer, NewsSerializer
 from .models import Student, Exam, News
 
 
@@ -28,7 +28,7 @@ class StudentProfile(generics.RetrieveAPIView):
 class ExamsList(generics.ListAPIView):
 
     permission_classes = (IsAuthenticated,)
-    serializer_class = ExamsSerializer
+    serializer_class = ExamSerializer
 
     def get_queryset(self):
         return Exam.objects.filter(
