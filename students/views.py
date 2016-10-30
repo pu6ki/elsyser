@@ -4,8 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 
 from datetime import datetime
 
-from .serializers import StudentSerializer, ExamsSerializer
-from .models import Student, Exam
+from .serializers import StudentSerializer, ExamsSerializer, NewsSerializer
+from .models import Student, Exam, News
 
 
 class StudentRegistration(generics.CreateAPIView):
@@ -33,5 +33,16 @@ class ExamsList(generics.ListAPIView):
     def get_queryset(self):
         return Exam.objects.filter(
             date__gte=datetime.now().date(),
+            clazz=self.request.user.student.clazz,
+        )
+
+
+class NewsList(generics.ListAPIView):
+
+    permission_classes = (IsAuthenticated,)
+    serializer_class = NewsSerializer
+
+    def get_queryset(self):
+        return News.objects.filter(
             clazz=self.request.user.student.clazz,
         )
