@@ -3,12 +3,11 @@ from django.contrib.auth import login
 
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-from rest_framework.authtoken.models import Token
 
 from .models import Student, Exam
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserRegistrationSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(
         write_only=True,
@@ -36,17 +35,17 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'id', 'username', 'first_name', 'last_name', 'email', 'password',
+            'username', 'first_name', 'last_name', 'email', 'password',
         )
         extra_kwargs = {
-            'id': {'read_only': True},
             'username': {'read_only': True},
+            'password': {'write_only': True},
         }
 
 
 class StudentSerializer(serializers.ModelSerializer):
 
-    user = UserSerializer()
+    user = UserRegistrationSerializer()
 
     class Meta:
         model = Student
@@ -57,9 +56,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
         first_name = user_data.pop('first_name')
         last_name = user_data.pop('last_name')
-
         username = first_name + '_' + last_name
-
         email = user_data.pop('email')
 
         user = User(
@@ -72,25 +69,13 @@ class StudentSerializer(serializers.ModelSerializer):
         user.set_password(user_data.pop('password'))
         user.save()
 
-        Token.objects.create(user=user)
-
         login(self.context['request'], user)
 
         return Student.objects.create(user=user, **validated_data)
 
-class StudentLoginSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Student
-        fields = ('user__email', 'clazz')
 
 class ExamsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Exam
         fields = ('subject', 'date', 'topic')
-
-    def create(self, validated_data):
-        return Exam.objects.filter(
-            clazz=self.context['request'].user.student.clazz
-        )
