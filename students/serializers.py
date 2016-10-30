@@ -4,7 +4,37 @@ from django.contrib.auth import login
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from .models import Student, Exam, News
+from .models import Subject, Class, Student, Exam, News
+
+
+class SubjectSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Subject
+        fields = ('title',)
+
+
+class ClassSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Class
+        fields = ('title', 'number')
+
+
+class ExamSerializer(serializers.ModelSerializer):
+
+    subject = SubjectSerializer()
+
+    class Meta:
+        model = Exam
+        fields = ('subject', 'date', 'topic')
+
+
+class NewsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = News
+        fields = ('title', 'content', 'date')
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -46,6 +76,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 class StudentSerializer(serializers.ModelSerializer):
 
     user = UserRegistrationSerializer()
+    clazz = ClassSerializer()
 
     class Meta:
         model = Student
@@ -72,17 +103,3 @@ class StudentSerializer(serializers.ModelSerializer):
         login(self.context['request'], user)
 
         return Student.objects.create(user=user, **validated_data)
-
-
-class ExamsSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Exam
-        fields = ('subject', 'date', 'topic')
-
-
-class NewsSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = News
-        fields = ('title', 'content', 'date', 'clazz')
