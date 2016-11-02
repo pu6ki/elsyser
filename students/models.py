@@ -18,6 +18,8 @@ class Class(models.Model):
 
     class Meta:
         ordering = ['number', 'title']
+        verbose_name_plural = 'classes'
+
 
     def __str__(self):
         return '{}{}'.format(self.number, self.title)
@@ -39,6 +41,7 @@ class Subject(models.Model):
     class Meta:
         ordering = ['title']
 
+
     def __str__(self):
         return self.title
 
@@ -58,5 +61,25 @@ class Exam(models.Model):
         return '{} - {} ({})'.format(
             self.subject,
             self.clazz,
-            self.date.strftime('%d-%m-%Y')
+            self.date
+        )
+
+
+class News(models.Model):
+
+    title = models.CharField(max_length=50)
+    content = models.TextField(max_length=2048)
+    date = models.DateField(auto_now=True)
+    clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['-date', 'title', 'clazz']
+        verbose_name_plural = 'news'
+
+
+    def __str__(self):
+        return '{} ({}) - {}'.format(
+            self.title,
+            self.date,
+            self.clazz
         )

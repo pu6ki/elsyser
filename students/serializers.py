@@ -4,10 +4,33 @@ from django.contrib.auth import login
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from .models import Student, Exam
+from .models import Subject, Student, Exam, News
 
 
-class UserRegistrationSerializer(serializers.ModelSerializer):
+class SubjectSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Subject
+        fields = ('title',)
+
+
+class ExamSerializer(serializers.ModelSerializer):
+
+    subject = SubjectSerializer()
+
+    class Meta:
+        model = Exam
+        fields = ('subject', 'topic', 'date')
+
+
+class NewsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = News
+        fields = ('title', 'content', 'date')
+
+
+class UserSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(
         write_only=True,
@@ -45,19 +68,19 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 class StudentSerializer(serializers.ModelSerializer):
 
-    user = UserRegistrationSerializer()
+    user = UserSerializer()
 
     class Meta:
         model = Student
         fields = ('user', 'clazz')
 
-    def create(self, validated_data):
-        user_data = validated_data.pop('user')
+    def save(self):
+        user_data = self.validated_data['user']
 
-        first_name = user_data.pop('first_name')
-        last_name = user_data.pop('last_name')
+        first_name = user_data['first_name']
+        last_name = user_data['last_name']
         username = first_name + '_' + last_name
-        email = user_data.pop('email')
+        email = user_data['email']
 
         user = User(
             username=username,
@@ -66,16 +89,20 @@ class StudentSerializer(serializers.ModelSerializer):
             email=email,
         )
 
-        user.set_password(user_data.pop('password'))
+        user.set_password(user_data['password'])
         user.save()
 
         login(self.context['request'], user)
+        self.validated_data['user'] = user
 
-        return Student.objects.create(user=user, **validated_data)
+        return Student.objects.create(**self.validated_data)
 
 
-class ExamsSerializer(serializers.ModelSerializer):
+class StudentProfileSerializer(serializers.ModelSerializer):
+
+    user = UserSerializer()
+    clazz = serializers.StringRelatedField()
 
     class Meta:
-        model = Exam
-        fields = ('subject', 'date', 'topic')
+        model = Student
+        fields = ('user', 'clazz')
