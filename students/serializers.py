@@ -1,11 +1,20 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import login
+from django.utils.six import BytesIO
 
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
+from rest_framework.parsers import JSONParser
 
-from .models import Subject, Student, Exam, News
+from .models import Class, Subject, Student, Exam, News
+
+
+class ClassSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Class
+        fields = ('number', 'letter')
 
 
 class SubjectSerializer(serializers.ModelSerializer):
@@ -70,6 +79,7 @@ class UserSerializer(serializers.ModelSerializer):
 class StudentSerializer(serializers.ModelSerializer):
 
     user = UserSerializer()
+    clazz = ClassSerializer()
 
     class Meta:
         model = Student
@@ -98,13 +108,16 @@ class StudentSerializer(serializers.ModelSerializer):
         login(self.context['request'], user)
         self.validated_data['user'] = user
 
+        clazz, _ = Class.objects.get_or_create(**self.validated_data['clazz'])
+        self.validated_data['clazz'] = clazz
+
         return Student.objects.create(**self.validated_data)
 
 
 class StudentProfileSerializer(serializers.ModelSerializer):
 
     user = UserSerializer()
-    clazz = serializers.StringRelatedField()
+    clazz = ClassSerializer()
 
     class Meta:
         model = Student
