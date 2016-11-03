@@ -11,18 +11,17 @@ class Class(models.Model):
         validators=[MinValueValidator(8), MaxValueValidator(12)],
         choices=[(i, i) for i in range(8, 13)],
     )
-    title = models.CharField(
+    letter = models.CharField(
         max_length=1,
         choices=[(l, l) for l in ['A', 'B', 'V', 'G']],
     )
 
     class Meta:
-        ordering = ['number', 'title']
+        ordering = ['number', 'letter']
         verbose_name_plural = 'classes'
 
-
     def __str__(self):
-        return '{}{}'.format(self.number, self.title)
+        return '{}{}'.format(self.number, self.letter)
 
 
 class Student(models.Model):
@@ -40,7 +39,6 @@ class Subject(models.Model):
 
     class Meta:
         ordering = ['title']
-
 
     def __str__(self):
         return self.title
