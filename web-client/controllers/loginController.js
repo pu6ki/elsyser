@@ -17,9 +17,11 @@ export function loginController() {
 
             $('#submit').on('click', () => {
                 console.log('clicked');
+                
                 body.username = $('#username').val();
                 body.password = $('#password').val();
-                requester.postJSON(authUrl, body)
+                
+                return requester.postJSON(authUrl, body)
                     .then((result) => {
                         if (result.token) {
                             console.log(result.token);
