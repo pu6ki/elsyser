@@ -7,43 +7,47 @@ export function registerController() {
 
     templates.get('register')
         .then((res) => {
-            let hbTemplate = Handlebars.compile(res),
-                template = hbTemplate(),
-                body = {
-                    user: {
-                        first_name: '',
-                        last_name: '',
-                        email: '',
-                        password: '',
-                    },
-                    clazz: {
-                        number: null,
-                        letter: ''
-                    }
-                };
+            return new Promise((resolve, reject) => {
+                let hbTemplate = Handlebars.compile(res),
+                    template = hbTemplate();
 
-            $('#content').html(template);
+                $('#content').html(template);
 
-            $('#registerButton').on('click', () => {
-                console.log('clicked');
-                body.user.first_name = $('#firstName').val();
-                body.user.last_name = $('#lastName').val();
-                body.user.email = $('#email').val();
-                body.user.password = $('#password').val();
-                //body.clazz = $('#studentClassNumber').val() + $('#studentClassLetter').val();
-                body.clazz.number = $('#studentClassNumber').val();
-                body.clazz.letter = $('#studentClassLetter').val();
-
-                requester.postJSON(registerUrl, body)
-                    .then((result) => {
-                        if (result) {
-                            window.location.href = '#/home';
-                        }
-                        else {
-                            console.log(result);
-                        }
-                    });
+                $('#registerButton').on('click', () => {
+                    resolve(requester.postJSON(registerUrl, getDataFromTemplate()));
+                });
+            }).then((result) => {
+                if (result) {
+                    window.location.href = '#/home';
+                }
+                else {
+                    console.log(result);
+                }
             });
-        });
 
+        });
+}
+
+function getDataFromTemplate() {
+    let body = {
+        user: {
+            first_name: '',
+            last_name: '',
+            email: '',
+            password: '',
+        },
+        clazz: {
+            number: null,
+            letter: ''
+        }
+    };
+
+    body.user.first_name = $('#firstName').val();
+    body.user.last_name = $('#lastName').val();
+    body.user.email = $('#email').val();
+    body.user.password = $('#password').val();
+    body.clazz.number = +$('#studentClassNumber').val();
+    body.clazz.letter = $('#studentClassLetter').val();
+
+    return body;
 }
