@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from .models import Class, Student, Subject, Exam, News
 
 
-class RegisterTestCase(TestCase):
+class RegisterViewTestCase(TestCase):
 
     def setUp(self):
         self.client = APIClient()
@@ -35,7 +35,9 @@ class RegisterTestCase(TestCase):
             reverse('students:register'), self.test_data, format='json'
         )
 
-        self.assertEqual(request.data['user']['email'], ['This field may not be blank.'])
+        self.assertEqual(
+            request.data['user']['email'], ['This field may not be blank.']
+        )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
 
@@ -46,7 +48,9 @@ class RegisterTestCase(TestCase):
             reverse('students:register'), self.test_data, format='json'
         )
 
-        self.assertEqual(request.data['user']['email'], ['Enter a valid email address.'])
+        self.assertEqual(
+            request.data['user']['email'], ['Enter a valid email address.']
+        )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
 
@@ -57,7 +61,9 @@ class RegisterTestCase(TestCase):
             reverse('students:register'), self.test_data, format='json'
         )
 
-        self.assertEqual(request.data['user']['password'], ['Password cannot be empty.'])
+        self.assertEqual(
+            request.data['user']['password'], ['Password cannot be empty.']
+        )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
 
@@ -68,7 +74,9 @@ class RegisterTestCase(TestCase):
             reverse('students:register'), self.test_data, format='json'
         )
 
-        self.assertEqual(request.data['user']['password'], ['Password too short.'])
+        self.assertEqual(
+            request.data['user']['password'], ['Password too short.']
+        )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
 
@@ -79,7 +87,9 @@ class RegisterTestCase(TestCase):
             reverse('students:register'), self.test_data, format='json'
         )
 
-        self.assertEqual(request.data['clazz']['number'], ['"0" is not a valid choice.'])
+        self.assertEqual(
+            request.data['clazz']['number'], ['"0" is not a valid choice.']
+        )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
 
@@ -91,7 +101,7 @@ class RegisterTestCase(TestCase):
         self.assertEqual(request.status_code, status.HTTP_201_CREATED)
 
 
-class ProfileTestCase(TestCase):
+class ProfileViewTestCase(TestCase):
 
     def setUp(self):
         self.client = APIClient()
@@ -109,7 +119,10 @@ class ProfileTestCase(TestCase):
     def test_profile_with_anonymous_user(self):
         request = self.client.get(reverse('students:profile'))
 
-        self.assertEqual(request.data['detail'], 'Authentication credentials were not provided.')
+        self.assertEqual(
+            request.data['detail'],
+            'Authentication credentials were not provided.'
+        )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
 
@@ -118,12 +131,14 @@ class ProfileTestCase(TestCase):
 
         request = self.client.get(reverse('students:profile'))
 
-        self.assertIn(self.user.username, request.data['user']['username'])
         self.assertNotIn('password', request.data['user'])
+        self.assertEqual(self.student.user.username, request.data['user']['username'])
+        self.assertEqual(self.student.clazz.number, request.data['clazz']['number'])
+        self.assertEqual(self.student.clazz.letter, request.data['clazz']['letter'])
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
-class ExamsTestCase(TestCase):
+class ExamsViewTestCase(TestCase):
 
     def setUp(self):
         self.client = APIClient()
@@ -142,7 +157,10 @@ class ExamsTestCase(TestCase):
     def test_exams_with_anonymous_user(self):
         request = self.client.get(reverse('students:exams'))
 
-        self.assertEqual(request.data['detail'], 'Authentication credentials were not provided.')
+        self.assertEqual(
+            request.data['detail'],
+            'Authentication credentials were not provided.'
+        )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
 
@@ -166,7 +184,7 @@ class ExamsTestCase(TestCase):
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
-class NewsTestCase(TestCase):
+class NewsViewTestCase(TestCase):
 
     def setUp(self):
         self.client = APIClient()
@@ -174,10 +192,18 @@ class NewsTestCase(TestCase):
         self.clazz = Class.objects.create(number=10, letter='A')
         self.student = Student.objects.create(user=self.user, clazz=self.clazz)
         self.news = News.objects.create(
-            title='test_news',
-            content='blablabla',
-            clazz=self.clazz
+            title='test_news', content='blablabla', clazz=self.clazz
         )
+
+
+    def test_news_with_anonymous_user(self):
+        request = self.client.get(reverse('students:news'))
+
+        self.assertEqual(
+            request.data['detail'],
+            'Authentication credentials were not provided.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
 
     def test_news_with_same_class(self):
@@ -187,7 +213,9 @@ class NewsTestCase(TestCase):
 
         self.assertIn(self.news.title, request.data[0]['title'])
         self.assertIn(self.news.content, request.data[0]['content'])
-        self.assertIn(datetime.now().date().strftime('%Y-%m-%d'), request.data[0]['date'])
+        self.assertIn(
+            datetime.now().date().strftime('%Y-%m-%d'), request.data[0]['date']
+        )
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
