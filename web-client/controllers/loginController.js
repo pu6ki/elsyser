@@ -17,7 +17,6 @@ export function loginController() {
                 });
             }).then((result) => {
                 if (result.token) {
-                    console.log(result.token);
                     localStorage.setItem('token', result.token);
                 }
             });

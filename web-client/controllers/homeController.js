@@ -4,7 +4,6 @@ import { templates } from '../utils/templates.js';
 function homeController () {
     templates.get('home')
              .then((template) => {
-                 console.log(template);
                  $('#content').html(template);
              });
 }
