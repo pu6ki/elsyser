@@ -1,6 +1,2 @@
 # Byte-compiled files
 __pycache__/
-
-# Database files
-*.sqlite3
-*.db
