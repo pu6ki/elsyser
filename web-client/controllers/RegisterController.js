@@ -2,7 +2,7 @@ import { requester } from '../utils/requster.js';
 import { templates } from '../utils/templates.js';
 
 
-export function registerController() {
+export function RegisterController() {
     let registerUrl = 'http://127.0.0.1:8000/api/register/';
 
     templates.get('register')
