@@ -2,7 +2,7 @@ import { requester } from '../utils/requster.js';
 import { templates } from '../utils/templates.js';
 
 
-export function registerController() {
+export function RegisterController() {
     let registerUrl = 'http://127.0.0.1:8000/api/register/';
 
     templates.get('register')
@@ -18,11 +18,11 @@ export function registerController() {
                 });
             }).then((result) => {
                 if (result) {
-                    window.location.href = '#/home';
+                    toastr.success('Registered successfully! Now you can log-in!');
+                    window.location.href = '#/login';
                 }
-                else {
-                    console.log(result);
-                }
+            }).catch((error) => {
+                toastr.error(`Couldn\'t register with the provided info! ${error.responseText}`);
             });
 
         });
