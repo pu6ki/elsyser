@@ -20,6 +20,7 @@ class Class(models.Model):
         ordering = ['number', 'letter']
         verbose_name_plural = 'classes'
 
+
     def __str__(self):
         return '{}{}'.format(self.number, self.letter)
 
@@ -39,6 +40,7 @@ class Subject(models.Model):
 
     class Meta:
         ordering = ['title']
+
 
     def __str__(self):
         return self.title

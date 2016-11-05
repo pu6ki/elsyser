@@ -51,6 +51,7 @@ class UserLoginSerializer(serializers.Serializer):
     email_or_username = serializers.CharField()
     password = serializers.CharField(style={'input_type': 'password'})
 
+
     def validate(self, attrs):
         email_or_username = attrs.get('email_or_username')
         password = attrs.get('password')
@@ -77,6 +78,7 @@ class UserLoginSerializer(serializers.Serializer):
             raise serializers.ValidationError(msg)
 
         attrs['user'] = user
+
         return attrs
 
 
@@ -96,24 +98,13 @@ class StudentSerializer(serializers.ModelSerializer):
         model = Student
         fields = ('user', 'clazz')
 
+
     def save(self):
         user_data = self.validated_data['user']
 
-        first_name = user_data['first_name']
-        last_name = user_data['last_name']
-        username = first_name + '_' + last_name
-        email = user_data['email']
+        user_data['username'] = user_data['first_name'] + '_' + user_data['last_name']
 
-        user = User(
-            username=username,
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-        )
-
-        user.set_password(user_data['password'])
-        user.save()
-
+        user = User.objects.create_user(**user_data)
         Token.objects.create(user=user)
 
         login(self.context['request'], user)
