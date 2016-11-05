@@ -8,6 +8,9 @@ let requester = {
                 method: "GET",
                 success(response) {
                     resolve(response);
+                },
+                error(response) {
+                    reject(response);
                 }
             });
         });
@@ -24,6 +27,9 @@ let requester = {
                 data: JSON.stringify(body),
                 success(response) {
                     resolve(response);
+                },
+                error(response) {
+                    throw Error(response);
                 }
             });
         });
@@ -42,6 +48,9 @@ let requester = {
                 crossDomain: true,
                 success(response) {
                     resolve(response);
+                },
+                error(response) {
+                    reject(response);
                 }
             });
         });
@@ -55,6 +64,9 @@ let requester = {
                 contentType: "application/json",
                 success(response) {
                     resolve(response);
+                },
+                error(response) {
+                    reject(response);
                 }
             });
         });

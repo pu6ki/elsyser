@@ -9,6 +9,10 @@ router
     .on('/', () => { router.navigate('#/home') })
     .on('#/', () => { router.navigate('#/home') })
     .on('#/home', () => { homeController() })
-    .on('#/login', () => { loginController() })
+    .on('#/login', () => {
+         if (loginController()) {
+             router.navigate('#/home');
+         } 
+        })
     .on('#/register', () => { registerController() })
     .resolve();

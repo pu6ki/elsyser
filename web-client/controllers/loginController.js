@@ -18,18 +18,22 @@ export function loginController() {
             }).then((result) => {
                 if (result.token) {
                     localStorage.setItem('token', result.token);
+                    toastr.success('Logged-in successfully!');
+                    window.location.href = '#/home';
                 }
+            }).catch((error) => {
+                toastr.error('Couldn\'t log-in with the provided credentials!');
             });
         });
 }
 
 function getDataFromTemplate() {
     let body = {
-        username: '',
+        email: '',
         password: ''
     };
 
-    body.username = $('#username').val();
+    body.email = $('#email').val();
     body.password = $('#password').val();
 
     return body;
