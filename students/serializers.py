@@ -1,43 +1,13 @@
 from django.contrib.auth.models import User
-from django.contrib.auth import login
-from django.utils.six import BytesIO
+from django.contrib.auth import login, authenticate
+from django.shortcuts import get_object_or_404
+from django.core.validators import validate_email, ValidationError
 
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
-from rest_framework.parsers import JSONParser
 
 from .models import Class, Subject, Student, Exam, News
-
-
-class ClassSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Class
-        fields = ('number', 'letter')
-
-
-class SubjectSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Subject
-        fields = ('title',)
-
-
-class ExamSerializer(serializers.ModelSerializer):
-
-    subject = SubjectSerializer()
-
-    class Meta:
-        model = Exam
-        fields = ('subject', 'topic', 'date')
-
-
-class NewsSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = News
-        fields = ('title', 'content', 'date')
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -74,6 +44,47 @@ class UserSerializer(serializers.ModelSerializer):
             'username': {'read_only': True},
             'password': {'write_only': True},
         }
+
+
+class UserLoginSerializer(serializers.Serializer):
+
+    email_or_username = serializers.CharField()
+    password = serializers.CharField(style={'input_type': 'password'})
+
+    def validate(self, attrs):
+        email_or_username = attrs.get('email_or_username')
+        password = attrs.get('password')
+
+        if email_or_username and password:
+            try:
+                validate_email(email_or_username)
+                user_request = get_object_or_404(User, email=email_or_username)
+                email_or_username = user_request.username
+            except ValidationError:
+                pass
+
+            user = authenticate(username=email_or_username, password=password)
+
+            if user:
+                if not user.is_active:
+                    msg = 'User account is disabled.'
+                    raise serializers.ValidationError(msg)
+            else:
+                msg = 'Unable to log in with provided credentials.'
+                raise serializers.ValidationError(msg)
+        else:
+            msg = 'Must include "email or username" and "password"'
+            raise serializers.ValidationError(msg)
+
+        attrs['user'] = user
+        return attrs
+
+
+class ClassSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Class
+        fields = ('number', 'letter')
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -122,3 +133,26 @@ class StudentProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = ('user', 'clazz')
+
+
+class SubjectSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Subject
+        fields = ('title',)
+
+
+class ExamSerializer(serializers.ModelSerializer):
+
+    subject = SubjectSerializer()
+
+    class Meta:
+        model = Exam
+        fields = ('subject', 'topic', 'date')
+
+
+class NewsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = News
+        fields = ('id', 'title', 'content', 'posted_on')
