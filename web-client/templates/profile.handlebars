@@ -1,24 +1,36 @@
 <div class="panel panel-primary">
-    <div class="panel-heading">User Profile</div>
+    <div class="panel-heading"><strong>User Profile</strong></div>
     <div class="panel-body">
         <div>
+            <i>Username:</i>
             <strong>
-                Username: <span>{{user.username}}</span>
+                <span>
+                    {{user.username}}
+                </span>
             </strong>
         </div>
         <div>
+            <i>Name:</i>
             <strong>
-                Name: <span>{{user.first_name}} {{user.last_name}}</span>
+                <span>
+                    {{user.first_name}} {{user.last_name}}
+                </span>
             </strong>
         </div>
         <div>
+            <i>Email:</i>
             <strong>
-                Email: <span>{{user.email}}</span>
+                <span>
+                    {{user.email}}
+                </span>
             </strong>
         </div>
         <div>
+            <i>Class:</i>
             <strong>
-                Class: <span>{{clazz.number}}{{clazz.letter}}</span>
+                <span>
+                    {{clazz.number}}{{clazz.letter}}
+                </span>
             </strong>
         </div>
     </div>

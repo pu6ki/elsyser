@@ -2,22 +2,28 @@
     <h3>News for my class</h3>
     {{#each this}}
         <div class="panel panel-primary">
-            <div class="panel-heading">{{title}}</div>
+            <div class="panel-heading">
+                <strong>
+                    <span>{{title}}</span>
+                </strong>
+            </div>
             <div class="panel-body">
                 <div>
+                    <i>Posted on:</i>
                     <strong>
-                        Title: <span>{{title}}</span>
+                        <span>
+                            {{posted_on}}
+                        </span>
                     </strong>
                 </div>
                 <div>
-                    <strong>
-                        Posted on: <span>{{posted_on}}</span>
-                    </strong>
-                </div>
-                <div>
-                    <strong>
-                        Content: <span>{{content}}</span>
-                    </strong>
+                    <span>
+                        <strong>
+                            <i>
+                                {{content}}
+                            </i>
+                        </strong>
+                    </span>
                 </div>
             </div>
         </div>
