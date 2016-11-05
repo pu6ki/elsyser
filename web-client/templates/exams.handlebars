@@ -1,22 +1,26 @@
-{{#each this}}
-<div class="panel panel-primary">
-    <h3>Upcoming Exams</h3> 
-    <div class="panel-body">
-        <div>
-            <strong>
-                Date: <span>{{date}}</span>
-            </strong>
+{{#if this}}
+    <h3>Upcoming Exams</h3>
+    {{#each this}}
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <strong>
+                    <span>{{subject.title}}</span>
+                </strong>
+            </div>
+            <div class="panel-body">
+                <div>
+                    <strong>
+                        Date: <span>{{date}}</span>
+                    </strong>
+                </div>
+                <div>
+                    <strong>
+                        Topic: <span>{{topic}}</span>
+                    </strong>
+                </div>
+            </div>
         </div>
-        <div>
-            <strong>
-                Subject: <span>{{this.subject.title}}</span>
-            </strong>
-        </div>
-        <div>
-            <strong>
-                Topic: <span>{{this.topic}}</span>
-            </strong>
-        </div>
-    </div>
-</div>
-{{/each}}
+    {{/each}} 
+    {{else}}
+        <h3>No upcoming exams</h3>
+{{/if}}
