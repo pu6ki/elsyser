@@ -1,3 +1,4 @@
+import { IndexController } from './controllers/IndexController.js';
 import { HomeController } from './controllers/HomeController.js';
 import { LoginController } from './controllers/LoginController.js';
 import { RegisterController } from './controllers/RegisterController.js';
@@ -10,13 +11,21 @@ var router = new Navigo(null, false);
 router
     .on('/', () => { router.navigate('#/home') })
     .on('#/', () => { router.navigate('#/home') })
-    .on('#/home', () => { HomeController() })
+    .on('#/home', () => { 
+        IndexController();
+        HomeController(); 
+    })
     .on('#/login', () => {
-         if (LoginController()) {
-             router.navigate('#/home');
-         } 
-        })
-    .on('#/register', () => { RegisterController() })
-    .on('#/profile', () => { ProfileController() })
+        IndexController();
+        LoginController(); 
+    })
+    .on('#/register', () => {
+        IndexController();
+        RegisterController();
+     })
+    .on('#/profile', () => {
+         IndexController();
+         ProfileController();
+     })
     .on('#/logout', () => { LogoutController() })
     .resolve();

@@ -1,5 +1,25 @@
 <div class="panel panel-primary">
-    <strong>
-        Username: <span>{{user.username}}</span>
-    </strong>
+    User Profile
+    <div class="panel-body">
+        <div>
+            <strong>
+                Username: <span>{{user.username}}</span>
+            </strong>
+        </div>
+        <div>
+            <strong>
+                Name: <span>{{user.first_name}} {{user.last_name}}</span>
+            </strong>
+        </div>
+        <div>
+            <strong>
+                Email: <span>{{user.email}}</span>
+            </strong>
+        </div>
+        <div>
+            <strong>
+                Class: <span>{{clazz.number}}{{clazz.letter}}</span>
+            </strong>
+        </div>
+    </div>
 </div>

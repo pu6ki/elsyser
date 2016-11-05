@@ -2,7 +2,7 @@ import { requester } from '../utils/requster.js';
 import { templates } from '../utils/templates.js';
 
 export function LoginController() {
-    let loginUrl = 'http://127.0.0.1:8000/api-token-auth/';
+    let loginUrl = 'http://127.0.0.1:8000/api/login/';
 
     templates.get('login')
         .then((res) => {
@@ -29,11 +29,11 @@ export function LoginController() {
 
 function getDataFromTemplate() {
     let body = {
-        username: '',
+        email_or_username: '',
         password: ''
     };
 
-    body.username = $('#username').val();
+    body.email_or_username = $('#email-or-username').val();
     body.password = $('#password').val();
 
     return body;

@@ -1,11 +1,10 @@
 /* globals $ Promise */
 
 let requester = {
-    get(url, headers) {
+    get(url) {
         let promise = new Promise((resolve, reject) => {
             $.ajax({
                 url,
-                headers,
                 method: "GET",
                 success(response) {
                     resolve(response);
@@ -19,7 +18,7 @@ let requester = {
     },
     putJSON(url, body, options = {}) {
         let promise = new Promise((resolve, reject) => {
-            let headers = options.headers || {};
+            var headers = options.headers || {};
             $.ajax({
                 url,
                 headers,
@@ -30,7 +29,7 @@ let requester = {
                     resolve(response);
                 },
                 error(response) {
-                    throw Error(response);
+                    reject(response);
                 }
             });
         });
@@ -38,7 +37,7 @@ let requester = {
     },
     postJSON(url, body, options = {}) {
         let promise = new Promise((resolve, reject) => {
-            let headers = options.headers || { };
+            var headers = options.headers || {};
 
             $.ajax({
                 url,
@@ -47,6 +46,10 @@ let requester = {
                 contentType: "application/json",
                 data: JSON.stringify(body),
                 crossDomain: true,
+                beforeSend: (xhr) => {
+                    let token = window.localStorage.getItem('token');
+                    xhr.setRequestHeader('Authorization', `Token ${token}`);
+                },
                 success(response) {
                     resolve(response);
                 },
@@ -57,13 +60,16 @@ let requester = {
         });
         return promise;
     },
-    getJSON(url, headers) {
+    getJSON(url) {
         let promise = new Promise((resolve, reject) => {
             $.ajax({
                 url,
-                headers,
                 method: "GET",
                 contentType: "application/json",
+                beforeSend: (xhr) => {
+                    let token = window.localStorage.getItem('token');
+                    xhr.setRequestHeader('Authorization', `Token ${token}`);
+                },
                 success(response) {
                     resolve(response);
                 },
