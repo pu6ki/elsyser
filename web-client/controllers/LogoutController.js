@@ -1,6 +1,5 @@
 export function LogoutController() {
-    window.localStorage.removeItem('token');
     toastr.success('Logged-out successfully!');
+    window.localStorage.removeItem('token');
     window.location.href = '#/home';
-    window.location.reload(true);
 }

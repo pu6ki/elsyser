@@ -3,8 +3,6 @@ import { templates } from '../utils/templates.js';
 
 
 export function RegisterController() {
-    let registerUrl = 'http://127.0.0.1:8000/api/register/';
-
     templates.get('register')
         .then((res) => {
             return new Promise((resolve, reject) => {
@@ -14,15 +12,8 @@ export function RegisterController() {
                 $('#content').html(template);
 
                 $('#registerButton').on('click', () => {
-                    resolve(requester.postJSON(registerUrl, getDataFromTemplate()));
+                    register();
                 });
-            }).then((result) => {
-                if (result) {
-                    toastr.success('Registered successfully! Now you can log-in!');
-                    window.location.href = '#/login';
-                }
-            }).catch((error) => {
-                toastr.error(`Couldn\'t register with the provided info! ${error.responseText}`);
             });
 
         });
@@ -50,4 +41,17 @@ function getDataFromTemplate() {
     body.clazz.letter = $('#studentClassLetter').val();
 
     return body;
+}
+
+function register() {
+    let registerUrl = 'http://127.0.0.1:8000/api/register/';
+    requester.postJSON(registerUrl, getDataFromTemplate())
+        .then((result) => {
+            if (result) {
+                toastr.success('Registered successfully! Now you can log-in!');
+                window.location.href = '#/login';
+            }
+        }).catch((error) => {
+            toastr.error(`Couldn\'t register with the provided info! ${error.responseText}`);
+        });
 }
