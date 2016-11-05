@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
 from django.core.validators import validate_email, ValidationError
 
@@ -107,10 +107,9 @@ class StudentSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**user_data)
         Token.objects.create(user=user)
 
-        login(self.context['request'], user)
         self.validated_data['user'] = user
 
-        clazz, _ = Class.objects.get_or_create(**self.validated_data['clazz'])
+        clazz = Class.objects.get(**self.validated_data['clazz'])
         self.validated_data['clazz'] = clazz
 
         return Student.objects.create(**self.validated_data)
