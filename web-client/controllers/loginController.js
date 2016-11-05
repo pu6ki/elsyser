@@ -29,11 +29,11 @@ export function loginController() {
 
 function getDataFromTemplate() {
     let body = {
-        email: '',
+        username: '',
         password: ''
     };
 
-    body.email = $('#email').val();
+    body.username = $('#username').val();
     body.password = $('#password').val();
 
     return body;
