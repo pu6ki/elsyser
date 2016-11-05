@@ -39,6 +39,7 @@ class UserLogin(generics.CreateAPIView):
 
 
 class StudentProfile(generics.RetrieveAPIView):
+
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = StudentProfileSerializer
@@ -52,6 +53,7 @@ class StudentProfile(generics.RetrieveAPIView):
 
 class ExamsList(generics.ListAPIView):
 
+    authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = ExamSerializer
 
@@ -64,11 +66,13 @@ class ExamsList(generics.ListAPIView):
 
 class NewsList(generics.ListCreateAPIView):
 
+    authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = NewsSerializer
 
     def get_queryset(self):
         return News.objects.filter(clazz=self.request.user.student.clazz)
+
 
     def post(self, request, format=None):
         news = News.objects.create(
@@ -84,6 +88,7 @@ class NewsList(generics.ListCreateAPIView):
 
 class NewsDetail(generics.RetrieveAPIView):
 
+    authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = NewsSerializer
 
