@@ -5,6 +5,7 @@ import { RegisterController } from './controllers/RegisterController.js';
 import { LogoutController } from './controllers/LogoutController.js';
 import { ProfileController } from './controllers/ProfileController.js';
 import { ExamsController } from './controllers/ExamsController.js';
+import { NewsController } from './controllers/NewsController.js';
 
 var handlebars = Handlebars || handlebars;
 var router = new Navigo(null, false);
@@ -31,6 +32,10 @@ router
     .on('#/exams', () => {
         IndexController();
         ExamsController();
+    })
+    .on('#/news', () => {
+        IndexController();
+        NewsController();
     })
     .on('#/logout', () => { LogoutController() })
     .resolve();
