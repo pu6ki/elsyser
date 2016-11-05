@@ -56,28 +56,20 @@ class Exam(models.Model):
 
 
     def __str__(self):
-        return '{} - {} ({})'.format(
-            self.subject,
-            self.clazz,
-            self.date
-        )
+        return '{} - {} ({})'.format(self.subject, self.clazz, self.date)
 
 
 class News(models.Model):
 
     title = models.CharField(max_length=50)
     content = models.TextField(max_length=2048)
-    date = models.DateField(auto_now=True)
+    posted_on = models.DateField(auto_now=True)
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ['-date', 'title', 'clazz']
+        ordering = ['-posted_on', 'title', 'clazz']
         verbose_name_plural = 'news'
 
 
     def __str__(self):
-        return '{} ({}) - {}'.format(
-            self.title,
-            self.date,
-            self.clazz
-        )
+        return '{} ({}) - {}'.format(self.title, self.posted_on, self.clazz)

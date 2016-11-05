@@ -1,19 +1,22 @@
-from django.test import TestCase
 from django.contrib.auth.models import User
 
+from rest_framework.test import APITestCase
 from rest_framework.test import APIClient
 from rest_framework.reverse import reverse
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 
 from datetime import datetime, timedelta
 
 from .models import Class, Student, Subject, Exam, News
 
 
-class RegisterViewTestCase(TestCase):
+class RegisterViewTestCase(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
+        self.view_name = 'students:register'
+
         self.test_data = {
             'user': {
                 'first_name': 'test',
@@ -32,7 +35,7 @@ class RegisterViewTestCase(TestCase):
         self.test_data['user']['email'] = ''
 
         request = self.client.post(
-            reverse('students:register'), self.test_data, format='json'
+            reverse(self.view_name), self.test_data, format='json'
         )
 
         self.assertEqual(
@@ -45,7 +48,7 @@ class RegisterViewTestCase(TestCase):
         self.test_data['user']['email'] = 'tester'
 
         request = self.client.post(
-            reverse('students:register'), self.test_data, format='json'
+            reverse(self.view_name), self.test_data, format='json'
         )
 
         self.assertEqual(
@@ -58,7 +61,7 @@ class RegisterViewTestCase(TestCase):
         self.test_data['user']['password'] = ''
 
         request = self.client.post(
-            reverse('students:register'), self.test_data, format='json'
+            reverse(self.view_name), self.test_data, format='json'
         )
 
         self.assertEqual(
@@ -71,7 +74,7 @@ class RegisterViewTestCase(TestCase):
         self.test_data['user']['password'] = 'test'
 
         request = self.client.post(
-            reverse('students:register'), self.test_data, format='json'
+            reverse(self.view_name), self.test_data, format='json'
         )
 
         self.assertEqual(
@@ -84,7 +87,7 @@ class RegisterViewTestCase(TestCase):
         self.test_data['clazz']['number'] = 0
 
         request = self.client.post(
-            reverse('students:register'), self.test_data, format='json'
+            reverse(self.view_name), self.test_data, format='json'
         )
 
         self.assertEqual(
@@ -95,16 +98,27 @@ class RegisterViewTestCase(TestCase):
 
     def test_registration_with_valid_data(self):
         request = self.client.post(
-            reverse('students:register'), self.test_data, format='json'
+            reverse(self.view_name), self.test_data, format='json'
         )
 
+        user_data = request.data['user']
+
+        self.assertEqual(
+            user_data['username'],
+            user_data['first_name'] + '_' + user_data['last_name']
+        )
+        self.assertIsNotNone(
+            Token.objects.get(user__username=user_data['username'])
+        )
         self.assertEqual(request.status_code, status.HTTP_201_CREATED)
 
 
-class ProfileViewTestCase(TestCase):
+class ProfileViewTestCase(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
+        self.view_name = 'students:profile'
+
         self.user = User.objects.create(
             username='test_user',
             first_name='test',
@@ -117,31 +131,39 @@ class ProfileViewTestCase(TestCase):
 
 
     def test_profile_with_anonymous_user(self):
-        request = self.client.get(reverse('students:profile'))
+        request = self.client.get(reverse(self.view_name))
 
         self.assertEqual(
             request.data['detail'],
             'Authentication credentials were not provided.'
         )
-        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
     def test_profile_with_authenticated_user(self):
         self.client.force_authenticate(user=self.user)
 
-        request = self.client.get(reverse('students:profile'))
+        request = self.client.get(reverse(self.view_name))
 
+        self.assertEqual(
+            self.student.user.username, request.data['user']['username']
+        )
+        self.assertEqual(
+            self.student.clazz.number, request.data['clazz']['number']
+        )
+        self.assertEqual(
+            self.student.clazz.letter, request.data['clazz']['letter']
+        )
         self.assertNotIn('password', request.data['user'])
-        self.assertEqual(self.student.user.username, request.data['user']['username'])
-        self.assertEqual(self.student.clazz.number, request.data['clazz']['number'])
-        self.assertEqual(self.student.clazz.letter, request.data['clazz']['letter'])
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
-class ExamsViewTestCase(TestCase):
+class ExamsViewTestCase(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
+        self.view_name = 'students:exams'
+
         self.user = User.objects.create(username='test', password='pass')
         self.clazz = Class.objects.create(number=10, letter='A')
         self.student = Student.objects.create(user=self.user, clazz=self.clazz)
@@ -155,7 +177,7 @@ class ExamsViewTestCase(TestCase):
 
 
     def test_exams_with_anonymous_user(self):
-        request = self.client.get(reverse('students:exams'))
+        request = self.client.get(reverse(self.view_name))
 
         self.assertEqual(
             request.data['detail'],
@@ -167,7 +189,7 @@ class ExamsViewTestCase(TestCase):
     def test_exams_with_authenticated_user(self):
         self.client.force_authenticate(user=self.user)
 
-        request = self.client.get(reverse('students:exams'))
+        request = self.client.get(reverse(self.view_name))
 
         self.assertIn(self.subject.title, request.data[0]['subject']['title'])
         self.assertEqual(request.status_code, status.HTTP_200_OK)
@@ -178,16 +200,17 @@ class ExamsViewTestCase(TestCase):
         self.exam.date -= timedelta(days=5)
         self.exam.save()
 
-        request = self.client.get(reverse('students:exams'))
+        request = self.client.get(reverse(self.view_name))
 
         self.assertEqual(request.data, [])
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
-class NewsViewTestCase(TestCase):
+class NewsListViewTestCase(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
+        self.view_name = 'students:news-list'
         self.user = User.objects.create(username='test', password='pass')
         self.clazz = Class.objects.create(number=10, letter='A')
         self.student = Student.objects.create(user=self.user, clazz=self.clazz)
@@ -196,8 +219,8 @@ class NewsViewTestCase(TestCase):
         )
 
 
-    def test_news_with_anonymous_user(self):
-        request = self.client.get(reverse('students:news'))
+    def test_news_list_with_anonymous_user(self):
+        request = self.client.get(reverse(self.view_name))
 
         self.assertEqual(
             request.data['detail'],
@@ -206,24 +229,102 @@ class NewsViewTestCase(TestCase):
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
 
-    def test_news_with_same_class(self):
+    def test_news_list_with_authenticated_user(self):
         self.client.force_authenticate(user=self.user)
 
-        request = self.client.get(reverse('students:news'))
+        request = self.client.get(reverse(self.view_name))
+
+        self.assertIsNotNone(request.data)
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_news_list_with_same_class(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.get(reverse(self.view_name))
 
         self.assertIn(self.news.title, request.data[0]['title'])
         self.assertIn(self.news.content, request.data[0]['content'])
         self.assertIn(
-            datetime.now().date().strftime('%Y-%m-%d'), request.data[0]['date']
+            datetime.now().date().strftime('%Y-%m-%d'),
+            request.data[0]['posted_on']
         )
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
-    def test_news_with_different_class(self):
+    def test_news_list_with_different_class(self):
         self.client.force_authenticate(user=self.user)
         self.student.clazz = Class.objects.create(number=11, letter='V')
 
-        request = self.client.get(reverse('students:news'))
+        request = self.client.get(reverse(self.view_name))
 
         self.assertEqual(request.data, [])
         self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+class NewsDetailViewTestCase(APITestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.view_name = 'students:news-detail'
+
+        self.user = User.objects.create(username='test1', password='pass')
+        self.clazz = Class.objects.create(number=10, letter='A')
+        self.student = Student.objects.create(user=self.user, clazz=self.clazz)
+        self.news = News.objects.create(
+            title='test_news', content='blablabla', clazz=self.clazz
+        )
+
+
+    def test_news_detail_with_anonymous_user(self):
+        request = self.client.get(
+            reverse(self.view_name, kwargs={'pk': self.news.id})
+        )
+
+        self.assertEqual(
+            request.data['detail'],
+            'Authentication credentials were not provided.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
+
+
+    def test_news_detail_with_authenticated_user(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.get(
+            reverse(self.view_name, kwargs={'pk': self.news.id})
+        )
+
+        self.assertIsNotNone(request.data)
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_news_detail_with_valid_id(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.get(
+            reverse(self.view_name, kwargs={'pk': self.news.id})
+        )
+
+        self.assertEqual(request.data['id'], self.news.id)
+        self.assertEqual(request.data['title'], self.news.title)
+        self.assertEqual(request.data['content'], self.news.content)
+        self.assertEqual(
+            request.data['posted_on'],
+            datetime.now().date().strftime('%Y-%m-%d')
+        )
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_news_detail_with_invalid_id(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.get(
+            reverse(self.view_name, kwargs={'pk': self.news.id + 1})
+        )
+
+        self.assertEqual(request.data['detail'], 'Not found.')
+        self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
+
+
+# TODO: Add login view tests
