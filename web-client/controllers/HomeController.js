@@ -6,9 +6,14 @@ export function HomeController() {
         .then((template) => {
             $('#content').html(template);
             if (window.localStorage.getItem('token')) {
-                $('#log-in').addClass('hide');
-                $('#register').addClass('hide');
-                $('#log-out').removeClass('hide');
+                showLoggedInUserHeader();
             }
         });
+}
+
+function showLoggedInUserHeader() {
+    $('#log-in').addClass('hide');
+    $('#register').addClass('hide');
+    $('#profile').removeClass('hide');
+    $('#log-out').removeClass('hide');
 }

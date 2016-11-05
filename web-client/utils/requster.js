@@ -1,10 +1,11 @@
 /* globals $ Promise */
 
 let requester = {
-    get(url) {
+    get(url, headers) {
         let promise = new Promise((resolve, reject) => {
             $.ajax({
                 url,
+                headers,
                 method: "GET",
                 success(response) {
                     resolve(response);
@@ -18,7 +19,7 @@ let requester = {
     },
     putJSON(url, body, options = {}) {
         let promise = new Promise((resolve, reject) => {
-            var headers = options.headers || {};
+            let headers = options.headers || {};
             $.ajax({
                 url,
                 headers,
@@ -37,7 +38,7 @@ let requester = {
     },
     postJSON(url, body, options = {}) {
         let promise = new Promise((resolve, reject) => {
-            var headers = options.headers || { };
+            let headers = options.headers || { };
 
             $.ajax({
                 url,
@@ -56,10 +57,11 @@ let requester = {
         });
         return promise;
     },
-    getJSON(url) {
+    getJSON(url, headers) {
         let promise = new Promise((resolve, reject) => {
             $.ajax({
                 url,
+                headers,
                 method: "GET",
                 contentType: "application/json",
                 success(response) {
