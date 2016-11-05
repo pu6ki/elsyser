@@ -2,9 +2,9 @@ import { requester } from '../utils/requster.js';
 import { templates } from '../utils/templates.js';
 
 export function IndexController() {
-    let header = 'unauthorized';
+    let header = 'unauthorized-header';
     if(window.localStorage.getItem('token')) {
-        header = 'authorized';
+        header = 'authorized-header';
     }
 
     templates.get(header)

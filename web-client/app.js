@@ -4,6 +4,7 @@ import { LoginController } from './controllers/LoginController.js';
 import { RegisterController } from './controllers/RegisterController.js';
 import { LogoutController } from './controllers/LogoutController.js';
 import { ProfileController } from './controllers/ProfileController.js';
+import { ExamsController } from './controllers/ExamsController.js';
 
 var handlebars = Handlebars || handlebars;
 var router = new Navigo(null, false);
@@ -11,21 +12,25 @@ var router = new Navigo(null, false);
 router
     .on('/', () => { router.navigate('#/home') })
     .on('#/', () => { router.navigate('#/home') })
-    .on('#/home', () => { 
+    .on('#/home', () => {
         IndexController();
-        HomeController(); 
+        HomeController();
     })
     .on('#/login', () => {
         IndexController();
-        LoginController(); 
+        LoginController();
     })
     .on('#/register', () => {
         IndexController();
         RegisterController();
-     })
+    })
     .on('#/profile', () => {
-         IndexController();
-         ProfileController();
-     })
+        IndexController();
+        ProfileController();
+    })
+    .on('#/exams', () => {
+        IndexController();
+        ExamsController();
+    })
     .on('#/logout', () => { LogoutController() })
     .resolve();
