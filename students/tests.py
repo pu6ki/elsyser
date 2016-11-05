@@ -113,6 +113,89 @@ class RegisterViewTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_201_CREATED)
 
 
+class LoginViewTestCase(APITestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.view_name = 'students:login'
+
+        self.user_data = {
+            'username': 'test',
+            'email': 'test@email.com',
+            'password': ''.join(map(str, range(1, 10)))
+        }
+        self.user = User.objects.create_user(**self.user_data)
+        self.token = Token.objects.create(user=self.user)
+        self.post_data = {
+            'email_or_username': '',
+            'password': self.user_data['password'],
+        }
+
+
+    def test_login_with_blank_email_or_username(self):
+        request = self.client.post(reverse(self.view_name), self.post_data)
+
+        self.assertEqual(
+            request.data['email_or_username'], ['This field may not be blank.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_login_with_blank_password(self):
+        self.post_data['email_or_username'] = self.user.email
+        self.post_data['password'] = ''
+
+        request = self.client.post(reverse(self.view_name), self.post_data)
+
+        self.assertEqual(
+            request.data['password'], ['This field may not be blank.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_login_with_invalid_email_or_username(self):
+        self.post_data['email_or_username'] = 'invalid'
+
+        request = self.client.post(reverse(self.view_name), self.post_data)
+
+        self.assertEqual(
+            request.data['non_field_errors'],
+            ['Unable to log in with provided credentials.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_login_with_invalid_password(self):
+        self.post_data['email_or_username'] = self.user.email
+        self.post_data['password'] = 'invalidpassword'
+
+        request = self.client.post(reverse(self.view_name), self.post_data)
+
+        self.assertEqual(
+            request.data['non_field_errors'],
+            ['Unable to log in with provided credentials.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_login_with_valid_email_and_password(self):
+        self.post_data['email_or_username'] = self.user.email
+
+        request = self.client.post(reverse(self.view_name), self.post_data)
+
+        self.assertEqual(self.token.key, request.data['token'])
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_login_with_valid_username_and_password(self):
+        self.post_data['email_or_username'] = self.user.username
+
+        request = self.client.post(reverse(self.view_name), self.post_data)
+
+        self.assertEqual(self.token.key, request.data['token'])
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
 class ProfileViewTestCase(APITestCase):
 
     def setUp(self):
@@ -183,7 +266,7 @@ class ExamsViewTestCase(APITestCase):
             request.data['detail'],
             'Authentication credentials were not provided.'
         )
-        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
     def test_exams_with_authenticated_user(self):
@@ -226,7 +309,7 @@ class NewsListViewTestCase(APITestCase):
             request.data['detail'],
             'Authentication credentials were not provided.'
         )
-        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
     def test_news_list_with_authenticated_user(self):
@@ -285,7 +368,7 @@ class NewsDetailViewTestCase(APITestCase):
             request.data['detail'],
             'Authentication credentials were not provided.'
         )
-        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
     def test_news_detail_with_authenticated_user(self):
@@ -325,6 +408,3 @@ class NewsDetailViewTestCase(APITestCase):
 
         self.assertEqual(request.data['detail'], 'Not found.')
         self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
-
-
-# TODO: Add login view tests
