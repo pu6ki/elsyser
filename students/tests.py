@@ -7,12 +7,10 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 
 from datetime import datetime, timedelta
-import os
 
 from .models import Class, Student, Subject, Exam, News
 
 
-# TODO: Test image uploading
 class RegisterViewTestCase(APITestCase):
 
     def setUp(self):

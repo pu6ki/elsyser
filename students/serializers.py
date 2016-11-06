@@ -96,7 +96,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ('user', 'clazz', 'profile_image')
+        fields = ('user', 'clazz')
 
 
     def save(self):
@@ -120,7 +120,7 @@ class StudentProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ('user', 'clazz', 'profile_image')
+        fields = ('user', 'clazz')
 
 
 class SubjectSerializer(serializers.ModelSerializer):
