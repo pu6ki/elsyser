@@ -29,6 +29,7 @@ class Student(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
+    profile_image = models.ImageField(upload_to='images/')
 
     def __str__(self):
         return '{} ({})'.format(self.user.username, self.clazz)
