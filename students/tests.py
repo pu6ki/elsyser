@@ -7,10 +7,12 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 
 from datetime import datetime, timedelta
+import os
 
 from .models import Class, Student, Subject, Exam, News
 
 
+# TODO: Test image uploading
 class RegisterViewTestCase(APITestCase):
 
     def setUp(self):
@@ -100,7 +102,6 @@ class RegisterViewTestCase(APITestCase):
         request = self.client.post(
             reverse(self.view_name), self.test_data, format='json'
         )
-
         user_data = request.data['user']
 
         self.assertEqual(
