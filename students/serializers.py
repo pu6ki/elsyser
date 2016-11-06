@@ -51,7 +51,6 @@ class UserLoginSerializer(serializers.Serializer):
     email_or_username = serializers.CharField()
     password = serializers.CharField(style={'input_type': 'password'})
 
-
     def validate(self, attrs):
         email_or_username = attrs.get('email_or_username')
         password = attrs.get('password')
@@ -93,11 +92,11 @@ class StudentSerializer(serializers.ModelSerializer):
 
     user = UserSerializer()
     clazz = ClassSerializer()
+    profile_image = serializers.ImageField(max_length=256, use_url=True)
 
     class Meta:
         model = Student
-        fields = ('user', 'clazz')
-
+        fields = ('user', 'clazz', 'profile_image')
 
     def save(self):
         user_data = self.validated_data['user']
@@ -120,7 +119,7 @@ class StudentProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ('user', 'clazz')
+        fields = ('user', 'clazz', 'profile_image')
 
 
 class SubjectSerializer(serializers.ModelSerializer):

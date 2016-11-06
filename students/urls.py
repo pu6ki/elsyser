@@ -1,4 +1,6 @@
 from django.conf.urls import url, include
+from django.conf.urls.static import static
+from django.conf import settings
 
 from .views import (
     StudentRegistration,
@@ -17,4 +19,4 @@ urlpatterns = [
     url(r'^exams/$', ExamsList.as_view(), name='exams'),
     url(r'^news/$', NewsList.as_view(), name='news-list'),
     url(r'^news/(?P<pk>[0-9]+)/$', NewsDetail.as_view(), name='news-detail'),
-]
+]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
