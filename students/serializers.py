@@ -101,15 +101,13 @@ class StudentSerializer(serializers.ModelSerializer):
 
     def save(self):
         user_data = self.validated_data['user']
-
         user_data['username'] = user_data['first_name'] + '_' + user_data['last_name']
 
         user = User.objects.create_user(**user_data)
         Token.objects.create(user=user)
-
         self.validated_data['user'] = user
 
-        clazz = Class.objects.get(**self.validated_data['clazz'])
+        clazz, _ = Class.objects.get_or_create(**self.validated_data['clazz'])
         self.validated_data['clazz'] = clazz
 
         return Student.objects.create(**self.validated_data)
