@@ -8,12 +8,13 @@ export function IndexController() {
     const unauthHeader = 'unauthorized-header';
     let userData = {
         username: '',
-        profillePicture: ''
+        profilleImage: ''
     };
     if (window.localStorage.getItem('token')) {
         requester.getJSON(profileUrl)
         .then((result) => {
             //do the same for the profile picture
+            userData.profilleImage = result.profile_image;
             userData.username = result.user.username;
             compileTemplate(authHeader, userData);
         });
