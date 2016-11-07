@@ -7,7 +7,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
 
-from .models import Class, Subject, Student, Exam, News
+from .models import Class, Subject, Student, Exam, News, Homework
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -94,12 +94,11 @@ class StudentSerializer(serializers.ModelSerializer):
 
     user = UserSerializer()
     clazz = ClassSerializer()
-    profile_image = serializers.ImageField(max_length=256, use_url=True)
 
 
     class Meta:
         model = Student
-        fields = ('user', 'clazz', 'profile_image')
+        fields = ('user', 'clazz')
 
 
     def save(self):
@@ -146,6 +145,21 @@ class ExamSerializer(serializers.ModelSerializer):
 
 class NewsSerializer(serializers.ModelSerializer):
 
+    author = UserSerializer()
+
+
     class Meta:
         model = News
-        fields = ('id', 'title', 'content', 'posted_on')
+        fields = ('id', 'title', 'content', 'posted_on', 'author')
+
+
+class HomeworkSerializer(serializers.ModelSerializer):
+
+    subject = SubjectSerializer()
+    clazz = ClassSerializer()
+    materials = serializers.FileField(use_url=False)
+
+
+    class Meta:
+        model = Homework
+        fields = ('subject', 'clazz', 'deadline', 'details', 'materials')
