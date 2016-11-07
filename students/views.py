@@ -81,7 +81,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         news = get_object_or_404(
             News.objects.filter(clazz=self.request.user.student.clazz), id=pk
         )
-        serializer = self.serializer_class(data=news)
+        serializer = self.serializer_class(news)
 
         return Response(serializer.data)
 
@@ -92,7 +92,7 @@ class NewsViewSet(viewsets.ModelViewSet):
             content=request.data['content'],
             clazz=request.user.student.clazz,
         )
-        serializer = self.serializer_class(data=news)
+        serializer = self.serializer_class(news)
         # serializer.is_valid(raise_exception=True)
 
         return Response(serializer.data)
