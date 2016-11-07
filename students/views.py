@@ -75,7 +75,10 @@ class NewsViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
-        return News.objects.filter(clazz=self.request.user.student.clazz)
+        return News.objects.filter(
+            posted_on__gte=datetime.now().date(),
+            clazz=self.request.user.student.clazz
+        )
 
 
     def retrieve(self, request, pk=None):
@@ -107,4 +110,7 @@ class HomeworksList(generics.ListAPIView):
 
 
     def get_queryset(self):
-        return Homework.objects.filter(clazz=self.request.user.student.clazz)
+        return Homework.objects.filter(
+            deadline__gte=datetime.now().date(),
+            clazz=self.request.user.student.clazz
+        )
