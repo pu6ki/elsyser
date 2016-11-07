@@ -16,6 +16,7 @@ class Class(models.Model):
         choices=[(l, l) for l in ['A', 'B', 'V', 'G']],
     )
 
+
     class Meta:
         ordering = ['number', 'letter']
         verbose_name_plural = 'classes'
@@ -31,6 +32,7 @@ class Student(models.Model):
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     profile_image = models.ImageField(upload_to='images/', default='images/default.png')
 
+
     def __str__(self):
         return '{} ({})'.format(self.user.username, self.clazz)
 
@@ -38,6 +40,7 @@ class Student(models.Model):
 class Subject(models.Model):
 
     title = models.CharField(unique=True, max_length=50)
+
 
     class Meta:
         ordering = ['title']
@@ -54,6 +57,7 @@ class Exam(models.Model):
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     topic = models.CharField(unique=True, max_length=60)
 
+
     class Meta:
         ordering = ['date', 'subject', 'clazz']
 
@@ -68,6 +72,7 @@ class News(models.Model):
     content = models.TextField(max_length=2048)
     posted_on = models.DateField(auto_now=True)
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
+
 
     class Meta:
         ordering = ['-posted_on', 'title', 'clazz']

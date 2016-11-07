@@ -16,8 +16,6 @@ class RegisterViewTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
         self.view_name = 'students:register'
-        with open('./media/images/default.png') as f:
-            print(f.size)
 
         self.test_data = {
             'user': {
@@ -30,7 +28,7 @@ class RegisterViewTestCase(APITestCase):
                 'number': 10,
                 'letter': 'A',
             },
-            
+
             # TODO: Test image uploading, because tests fail!
             # Ще бъде красиво в най-скоро време. <3
         }
