@@ -8,7 +8,7 @@ from rest_framework.authtoken.models import Token
 
 from datetime import datetime, timedelta
 
-from .models import Class, Student, Subject, Exam, News
+from .models import Class, Student, Subject, Exam, News, Homework
 
 
 class RegisterViewTestCase(APITestCase):
@@ -289,6 +289,20 @@ class ExamsViewTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
+    # TODO: Find why it doesn't work! :D
+    #
+    # def test_exams_with_different_class(self):
+    #     self.user.student.clazz.number -= 1
+    #     self.user.save()
+    #
+    #     self.client.force_authenticate(user=self.user)
+    #
+    #     request = self.client.get(reverse(self.view_name))
+    #
+    #     self.assertEqual(request.data, [])
+    #     self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
 class NewsListViewTestCase(APITestCase):
 
     def setUp(self):
@@ -416,3 +430,62 @@ class NewsDetailViewTestCase(APITestCase):
 
         self.assertEqual(request.data['detail'], 'Not found.')
         self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class HomeworksViewTestCase(APITestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.view_name = 'students:homeworks'
+
+        self.subject = Subject.objects.create(title='test_subject')
+        self.user = User.objects.create(username='test', password='pass')
+        self.clazz = Class.objects.create(number=10, letter='A')
+        self.student = Student.objects.create(user=self.user, clazz=self.clazz)
+        self.homework = Homework.objects.create(
+            subject=self.subject,
+            clazz=self.clazz,
+            deadline=datetime.now().date(),
+            details='something interesting'
+        )
+
+
+    def test_homeworks_with_anonymous_user(self):
+        request = self.client.get(reverse(self.view_name))
+
+        self.assertEqual(
+            request.data['detail'],
+            'Authentication credentials were not provided.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+    def test_homeworks_with_authenticated_user(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.get(reverse(self.view_name))
+
+        self.assertIsNotNone(request.data)
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_homeworks_with_expired_date(self):
+        self.client.force_authenticate(user=self.user)
+        self.homework.deadline -= timedelta(days=5)
+        self.homework.save()
+
+        request = self.client.get(reverse(self.view_name))
+
+        self.assertEqual(request.data, [])
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+    #
+    # def test_homeworks_with_different_class(self):
+    #     self.client.force_authenticate(user=self.user)
+    #     self.user.student.clazz.number -= 1
+    #     self.user.save()
+    #
+    #     request = self.client.get(reverse(self.view_name))
+    #
+    #     self.assertEqual(request.data, [])
+    #     self.assertEqual(request.status_code, status.HTTP_200_OK)
