@@ -1,5 +1,6 @@
 import { requester } from '../utils/requster.js';
 import { templates } from '../utils/templates.js';
+import { formHandler } from '../utils/formHandler.js';
 
 export function LoginController() {
     templates.get('login')
@@ -9,6 +10,7 @@ export function LoginController() {
                     template = hbTemplate();
 
                 $('#content').html(template);
+                formHandler();
 
                 $('#loginButton').on('click', () => {
                     login();
@@ -42,3 +44,4 @@ function login() {
             toastr.error('Couldn\'t log-in with the provided credentials!');
         });
 }
+

@@ -2,7 +2,6 @@ import { requester } from '../utils/requster.js';
 import { templates } from '../utils/templates.js';
 
 export function HeaderController() {
-
     const profileUrl = 'http://127.0.0.1:8000/api/profile/';
     const authHeader = 'authorized-header';
     const unauthHeader = 'unauthorized-header';
@@ -10,6 +9,9 @@ export function HeaderController() {
         username: '',
         profileImage: ''
     };
+
+
+
     if (window.localStorage.getItem('token')) {
         requester.getJSON(profileUrl)
         .then((result) => {

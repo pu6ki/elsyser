@@ -1,5 +1,6 @@
 import { requester } from '../utils/requster.js';
 import { templates } from '../utils/templates.js';
+import { formHandler } from '../utils/formHandler.js';
 
 
 export function RegisterController() {
@@ -10,6 +11,7 @@ export function RegisterController() {
                     template = hbTemplate();
 
                 $('#content').html(template);
+                formHandler();
 
                 $('#registerButton').on('click', () => {
                     register();
