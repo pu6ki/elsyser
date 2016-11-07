@@ -1,7 +1,7 @@
 import { requester } from '../utils/requster.js';
 import { templates } from '../utils/templates.js';
 
-export function IndexController() {
+export function HeaderController() {
 
     const profileUrl = 'http://127.0.0.1:8000/api/profile/';
     const authHeader = 'authorized-header';
