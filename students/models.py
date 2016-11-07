@@ -2,7 +2,18 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from .validators import validate_date
+import os
+
+from .validators import validate_date, validate_file_extension
+
+
+def homework_material_filename(instance, filename):
+    return os.path.join(
+        'homework_materials',
+        str(instance.clazz),
+        str(instance.subject),
+        filename
+    )
 
 
 class Class(models.Model):
@@ -95,7 +106,10 @@ class Homework(models.Model):
     deadline = models.DateField(auto_now=False, validators=[validate_date])
     details = models.TextField(max_length=256)
     materials = models.FileField(
-        upload_to='homework_materials/', blank=True, null=True
+        upload_to=homework_material_filename,
+        blank=True,
+        null=True,
+        validators=[validate_file_extension]
     )
 
 
