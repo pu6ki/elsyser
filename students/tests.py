@@ -27,10 +27,7 @@ class RegisterViewTestCase(APITestCase):
             'clazz': {
                 'number': 10,
                 'letter': 'A',
-            },
-
-            # TODO: Test image uploading, because tests fail!
-            # Ще бъде красиво в най-скоро време. <3
+            }
         }
 
 
@@ -301,7 +298,10 @@ class NewsListViewTestCase(APITestCase):
         self.clazz = Class.objects.create(number=10, letter='A')
         self.student = Student.objects.create(user=self.user, clazz=self.clazz)
         self.news = News.objects.create(
-            title='test_news', content='blablabla', clazz=self.clazz
+            title='test_news',
+            content='blablabla',
+            author=self.user,
+            clazz=self.clazz
         )
 
 
@@ -329,11 +329,12 @@ class NewsListViewTestCase(APITestCase):
 
         request = self.client.get(reverse(self.view_name))
 
-        self.assertIn(self.news.title, request.data[0]['title'])
-        self.assertIn(self.news.content, request.data[0]['content'])
+        self.assertIn(request.data[0]['title'], self.news.title)
+        self.assertIn(request.data[0]['content'], self.news.content)
+        self.assertIn(request.data[0]['author']['username'], self.user.username)
         self.assertIn(
-            datetime.now().date().strftime('%Y-%m-%d'),
-            request.data[0]['posted_on']
+            request.data[0]['posted_on'],
+            datetime.now().date().strftime('%Y-%m-%d')
         )
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
@@ -358,7 +359,10 @@ class NewsDetailViewTestCase(APITestCase):
         self.clazz = Class.objects.create(number=10, letter='A')
         self.student = Student.objects.create(user=self.user, clazz=self.clazz)
         self.news = News.objects.create(
-            title='test_news', content='blablabla', clazz=self.clazz
+            title='test_news',
+            content='blablabla',
+            author=self.user,
+            clazz=self.clazz
         )
 
 
@@ -395,6 +399,7 @@ class NewsDetailViewTestCase(APITestCase):
         self.assertEqual(request.data['id'], self.news.id)
         self.assertEqual(request.data['title'], self.news.title)
         self.assertEqual(request.data['content'], self.news.content)
+        self.assertEqual(request.data['author']['username'], self.user.username)
         self.assertEqual(
             request.data['posted_on'],
             datetime.now().date().strftime('%Y-%m-%d')
