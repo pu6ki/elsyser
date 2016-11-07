@@ -1,7 +1,6 @@
 from django.shortcuts import get_object_or_404
 
-from rest_framework import generics
-from rest_framework.views import APIView
+from rest_framework import generics, viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
@@ -28,6 +27,7 @@ class UserLogin(generics.CreateAPIView):
 
     serializer_class = UserLoginSerializer
 
+
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -44,6 +44,7 @@ class StudentProfile(generics.RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = StudentProfileSerializer
 
+
     def get(self, request, format=None):
         student = Student.objects.get(user=request.user)
         serializer = self.serializer_class(student)
@@ -57,6 +58,7 @@ class ExamsList(generics.ListAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = ExamSerializer
 
+
     def get_queryset(self):
         return Exam.objects.filter(
             date__gte=datetime.now().date(),
@@ -64,17 +66,27 @@ class ExamsList(generics.ListAPIView):
         )
 
 
-class NewsList(generics.ListCreateAPIView):
+class NewsViewSet(viewsets.ModelViewSet):
 
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = NewsSerializer
 
+
     def get_queryset(self):
         return News.objects.filter(clazz=self.request.user.student.clazz)
 
 
-    def post(self, request, format=None):
+    def retrieve(self, request, pk=None):
+        news = get_object_or_404(
+            News.objects.filter(clazz=self.request.user.student.clazz), id=pk
+        )
+        serializer = self.serializer_class(news)
+
+        return Response(serializer.data)
+
+
+    def create(self, request):
         news = News.objects.create(
             title=request.data['title'],
             content=request.data['content'],
@@ -82,20 +94,5 @@ class NewsList(generics.ListCreateAPIView):
         )
         serializer = self.serializer_class(news)
         serializer.is_valid(raise_exception=True)
-
-        return Response(serializer.data)
-
-
-class NewsDetail(generics.RetrieveAPIView):
-
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
-    serializer_class = NewsSerializer
-
-    def get(self, request, pk, format=None):
-        news = get_object_or_404(
-            News.objects.filter(clazz=self.request.user.student.clazz), id=pk
-        )
-        serializer = self.serializer_class(news)
 
         return Response(serializer.data)
