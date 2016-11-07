@@ -9,7 +9,8 @@ from .views import (
     UserLogin,
     StudentProfile,
     ExamsList,
-    NewsViewSet
+    NewsViewSet,
+    HomeworksList
 )
 
 
@@ -22,6 +23,7 @@ urlpatterns = [
     url(r'^login/$', UserLogin.as_view(), name='login'),
     url(r'^profile/$', StudentProfile.as_view(), name='profile'),
     url(r'^exams/$', ExamsList.as_view(), name='exams'),
+    url(r'^homeworks/$', HomeworksList.as_view(), name='homeworks')
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += router.urls
