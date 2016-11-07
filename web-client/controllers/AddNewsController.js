@@ -1,6 +1,7 @@
 import { requester } from '../utils/requster.js';
 import { templates } from '../utils/templates.js';
 import { formHandler } from '../utils/formHandler.js';
+import { validator } from '../utils/validator.js';
 
 export function AddNewsController() {
     templates.get('add-news')
@@ -24,21 +25,37 @@ function getDataFromTemplate() {
         content: ''
     };
 
-    body.title = $('#news-title').val();
-    body.content = $('#news-content').val();
+    if (validator.title($('#news-title').val())) {
+        body.title = $('#news-title').val();
+    }
+    else {
+        toastr.error('Title shoud be between 3 and 60 characters long!');
+        return;
+    }
+
+    if (validator.content($('#news-content').val())) {
+        body.content = $('#news-content').val();
+    }
+    else {
+        toastr.error('Content shoud be between 5 and 1000 characters long!');
+        return;
+    }
 
     return body;
 }
 
 function addNews() {
     let newsUrl = 'http://127.0.0.1:8000/api/news/';
-    requester.postJSON(newsUrl, getDataFromTemplate())
-        .then((result) => {
-            if (result) {
-                toastr.success('News added!');
-                window.location.href = '#/news';
-            }
-        }).catch(() => {
-            toastr.error('Couldn\'t log-in with the provided credentials!');
-        });
+    let data = getDataFromTemplate();
+    if (data) {
+        requester.postJSON(newsUrl, data)
+            .then((result) => {
+                if (result) {
+                    toastr.success('News added!');
+                    window.location.href = '#/news';
+                }
+            }).catch(() => {
+                toastr.error('Couldn\'t add the news Please check for errors!');
+            });
+    }
 }
