@@ -93,6 +93,6 @@ class NewsViewSet(viewsets.ModelViewSet):
             clazz=request.user.student.clazz,
         )
         serializer = self.serializer_class(data=news)
-        serializer.is_valid(raise_exception=True)
+        # serializer.is_valid(raise_exception=True)
 
         return Response(serializer.data)
