@@ -14,8 +14,9 @@ from .serializers import (
     StudentProfileSerializer,
     ExamSerializer,
     NewsSerializer,
+    HomeworkSerializer
 )
-from .models import Student, Exam, News
+from .models import Student, Exam, News, Homework
 
 
 class StudentRegistration(generics.CreateAPIView):
@@ -74,7 +75,10 @@ class NewsViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
-        return News.objects.filter(clazz=self.request.user.student.clazz)
+        return News.objects.filter(
+            posted_on__gte=datetime.now().date(),
+            clazz=self.request.user.student.clazz
+        )
 
 
     def retrieve(self, request, pk=None):
@@ -90,9 +94,23 @@ class NewsViewSet(viewsets.ModelViewSet):
         news = News.objects.create(
             title=request.data['title'],
             content=request.data['content'],
+            author=request.user,
             clazz=request.user.student.clazz,
         )
         serializer = self.serializer_class(news)
-        # serializer.is_valid(raise_exception=True)
 
         return Response(serializer.data)
+
+
+class HomeworksList(generics.ListAPIView):
+
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = HomeworkSerializer
+
+
+    def get_queryset(self):
+        return Homework.objects.filter(
+            deadline__gte=datetime.now().date(),
+            clazz=self.request.user.student.clazz
+        )

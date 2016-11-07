@@ -2,7 +2,18 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from .validators import validate_date
+import os
+
+from .validators import validate_date, validate_file_extension
+
+
+def homework_material_filename(instance, filename):
+    return os.path.join(
+        'homework_materials',
+        str(instance.clazz),
+        str(instance.subject),
+        filename
+    )
 
 
 class Class(models.Model):
@@ -30,7 +41,9 @@ class Student(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
-    profile_image = models.ImageField(upload_to='images/', default='images/default.png')
+    profile_image = models.ImageField(
+        upload_to='images/', default='images/default.png'
+    )
 
 
     def __str__(self):
@@ -71,6 +84,7 @@ class News(models.Model):
     title = models.CharField(max_length=50)
     content = models.TextField(max_length=2048)
     posted_on = models.DateField(auto_now=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
 
 
@@ -80,4 +94,28 @@ class News(models.Model):
 
 
     def __str__(self):
-        return '{} ({}) - {}'.format(self.title, self.posted_on, self.clazz)
+        return '{} ({}) - {}'.format(
+            self.title, self.posted_on, self.author.student
+        )
+
+
+class Homework(models.Model):
+
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
+    deadline = models.DateField(auto_now=False, validators=[validate_date])
+    details = models.TextField(max_length=256)
+    materials = models.FileField(
+        upload_to=homework_material_filename,
+        blank=True,
+        null=True,
+        validators=[validate_file_extension]
+    )
+
+
+    class Meta:
+        ordering = ['-deadline', 'clazz', 'subject']
+
+
+    def __str__(self):
+        return '{} ({}) - {}'.format(self.subject, self.clazz, self.deadline)
