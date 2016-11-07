@@ -12,7 +12,7 @@ export function LoginController() {
                 $('#content').html(template);
                 formHandler();
 
-                $('#loginButton').on('click', () => {
+                $('#login-button').on('click', () => {
                     login();
                 });
             });
