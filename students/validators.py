@@ -8,7 +8,8 @@ def validate_date(date):
     if date < datetime.now().date():
         raise ValidationError('Only future dates allowed.')
     if date.weekday() not in range(0, 5):
-        raise ValidationError('Exam can be done only from Monday to Friday.')
+        raise ValidationError('Weekend days are not valid.')
+
 
 def validate_file_extension(value):
     ext = os.path.splitext(value.name)[1]
