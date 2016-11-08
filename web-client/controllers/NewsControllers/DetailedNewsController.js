@@ -19,4 +19,6 @@ export function DetailedNewsController(id) {
     }).catch((err) => {
         console.log(err);
     });
+
+    //TODO: Add comment field
 }
