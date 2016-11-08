@@ -81,8 +81,8 @@ class Exam(models.Model):
 
 class News(models.Model):
 
-    title = models.CharField(max_length=50)
-    content = models.TextField(max_length=2048)
+    title = models.CharField(max_length=60, blank=False)
+    content = models.TextField(max_length=1000, blank=False)
     posted_on = models.DateField(auto_now=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
@@ -104,7 +104,7 @@ class Homework(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     deadline = models.DateField(auto_now=False, validators=[validate_date])
-    details = models.TextField(max_length=256)
+    details = models.TextField(max_length=256, blank=True)
     materials = models.FileField(
         upload_to=homework_material_filename,
         blank=True,
