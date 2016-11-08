@@ -10,3 +10,13 @@
   bottom: 2em;
   right: 0.5em;
 }
+
+a {
+  text-decoration: none;
+  color: white;
+}
+
+a:hover {
+  text-decoration: none;
+  color: white;
+}

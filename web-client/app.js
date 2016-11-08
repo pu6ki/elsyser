@@ -7,7 +7,9 @@ import { ProfileController } from './controllers/ProfileController.js';
 import { ExamsController } from './controllers/ExamsController.js';
 import { NewsController } from './controllers/NewsController.js';
 import { AddNewsController } from './controllers/AddNewsController.js';
+import { DetailedNewsController } from './controllers/DetailedNewsController.js';
 import { HomeworksController } from './controllers/HomeworksController.js';
+
 
 var handlebars = Handlebars || handlebars;
 var router = new Navigo(null, false);
@@ -35,6 +37,9 @@ router
     })
     .on('#/news', () => {
         NewsController();
+    })
+    .on('#/news/:id', (params) => {
+        DetailedNewsController(params.id);
     })
     .on('#/add-news', () => {
         AddNewsController();

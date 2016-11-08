@@ -10,7 +10,6 @@ export function AddNewsController() {
                 template = hbTemplate();
 
             $('#content').html(template);
-
             formHandler();
 
             $('#add-news').on('click', () => {
