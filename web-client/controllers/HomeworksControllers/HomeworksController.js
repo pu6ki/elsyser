@@ -1,16 +1,16 @@
-import { requester } from '../utils/requster.js';
-import { templates } from '../utils/templates.js';
+import { requester } from '../../utils/requster.js';
+import { templates } from '../../utils/templates.js';
 
-export function NewsController() {
+export function HomeworksController() {
     let dataFromAPI;
     return new Promise((resolve, reject) => {
-        let newsUrl = 'http://127.0.0.1:8000/api/news/';
+        let examsUrl = 'http://127.0.0.1:8000/api/homeworks/';
 
-        resolve(requester.getJSON(newsUrl));
+        resolve(requester.getJSON(examsUrl));
     }).then((data) => {
         dataFromAPI = data;
         return new Promise((resolve, reject) => {
-            resolve(templates.get('news'));
+            resolve(templates.get('homeworks'));
         });
     }).then((res) => {
         let hbTemplate = Handlebars.compile(res),

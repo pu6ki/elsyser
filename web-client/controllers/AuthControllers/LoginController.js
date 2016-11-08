@@ -1,6 +1,6 @@
-import { requester } from '../utils/requster.js';
-import { templates } from '../utils/templates.js';
-import { formHandler } from '../utils/formHandler.js';
+import { requester } from '../../utils/requster.js';
+import { templates } from '../../utils/templates.js';
+import { formHandler } from '../../utils/formHandler.js';
 
 export function LoginController() {
     templates.get('login')

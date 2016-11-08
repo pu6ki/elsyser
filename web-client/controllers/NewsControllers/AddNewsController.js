@@ -1,7 +1,7 @@
-import { requester } from '../utils/requster.js';
-import { templates } from '../utils/templates.js';
-import { formHandler } from '../utils/formHandler.js';
-import { validator } from '../utils/validator.js';
+import { requester } from '../../utils/requster.js';
+import { templates } from '../../utils/templates.js';
+import { formHandler } from '../../utils/formHandler.js';
+import { validator } from '../../utils/validator.js';
 
 export function AddNewsController() {
     templates.get('add-news')

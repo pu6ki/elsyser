@@ -1,14 +1,18 @@
 import { HeaderController } from './controllers/HeaderController.js';
 import { HomeController } from './controllers/HomeController.js';
-import { LoginController } from './controllers/LoginController.js';
-import { RegisterController } from './controllers/RegisterController.js';
-import { LogoutController } from './controllers/LogoutController.js';
+
+import { LoginController } from './controllers/AuthControllers/LoginController.js';
+import { RegisterController } from './controllers/AuthControllers/RegisterController.js';
+import { LogoutController } from './controllers/AuthControllers/LogoutController.js';
+
 import { ProfileController } from './controllers/ProfileController.js';
 import { ExamsController } from './controllers/ExamsController.js';
-import { NewsController } from './controllers/NewsController.js';
-import { AddNewsController } from './controllers/AddNewsController.js';
-import { DetailedNewsController } from './controllers/DetailedNewsController.js';
-import { HomeworksController } from './controllers/HomeworksController.js';
+
+import { NewsController } from './controllers/NewsControllers/NewsController.js';
+import { AddNewsController } from './controllers/NewsControllers/AddNewsController.js';
+import { DetailedNewsController } from './controllers/NewsControllers/DetailedNewsController.js';
+
+import { HomeworksController } from './controllers/HomeworksControllers/HomeworksController.js';
 
 
 var handlebars = Handlebars || handlebars;
