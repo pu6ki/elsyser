@@ -1,5 +1,5 @@
 {{#if this}}
-    <h3>Assigned homeworks.</h3>
+    <h3>Assigned homeworks</h3>
     {{#each this}}
         <div class="panel panel-primary">
             <div class="panel-heading">
@@ -9,10 +9,18 @@
             </div>
             <div class="panel-body">
                 <div id="deadline">
-                    <i>Deadline <strong><span>{{deadline}}</span></strong></i>
+                    <i>Deadline </i><strong><span>{{deadline}}</span></strong>
                 </div>
                 <div id="details">
-                    {{details}}
+                    <strong>
+                        <i>
+                        {{#if details}}
+                            {{details}}
+                        {{else}}
+                            <strong></i>No details for this homework.</i></strong>
+                        {{/if}}
+                        </i>
+                    </strong>
                 </div>
             </div>
         </div>
