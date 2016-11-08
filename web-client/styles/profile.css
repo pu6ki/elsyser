@@ -1,4 +1,10 @@
 #profile-image {
     max-height: 300px;
     max-width: 300px;
+    border-radius: 10%;
+    margin: 10px;
+}
+
+#profile-info {
+    margin: 10px;
 }

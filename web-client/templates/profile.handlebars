@@ -1,38 +1,42 @@
 <div class="panel panel-primary">
     <div class="panel-heading"><strong>User Profile</strong></div>
-    <div class="panel-body">
-        <img src="http://127.0.0.1:8000/api{{profile_image}}" alt="Profile Image" id="profile-image">
-        <div>
-            <i>Username:</i>
-            <strong>
-                <span>
-                    {{user.username}}
-                </span>
-            </strong>
+    <!--<div class="panel-body">-->
+    <div class="row">
+        <img src="http://127.0.0.1:8000/api{{profile_image}}" alt="Profile Image" class="col-xs-6 col-md-4" id="profile-image">
+        <div class="col-xs-6 col-md-4" id="profile-info">
+            <div>
+                <i>Username:</i>
+                <strong>
+                    <span>
+                        {{user.username}}
+                    </span>
+                </strong>
+            </div>
+            <div>
+                <i>Name:</i>
+                <strong>
+                    <span>
+                        {{user.first_name}} {{user.last_name}}
+                    </span>
+                </strong>
+            </div>
+            <div>
+                <i>Email:</i>
+                <strong>
+                    <span>
+                        {{user.email}}
+                    </span>
+                </strong>
+            </div>
+            <div>
+                <i>Class:</i>
+                <strong>
+                    <span>
+                        {{clazz.number}}{{clazz.letter}}
+                    </span>
+                </strong>
+            </div>
         </div>
-        <div>
-            <i>Name:</i>
-            <strong>
-                <span>
-                    {{user.first_name}} {{user.last_name}}
-                </span>
-            </strong>
-        </div>
-        <div>
-            <i>Email:</i>
-            <strong>
-                <span>
-                    {{user.email}}
-                </span>
-            </strong>
-        </div>
-        <div>
-            <i>Class:</i>
-            <strong>
-                <span>
-                    {{clazz.number}}{{clazz.letter}}
-                </span>
-            </strong>
-        </div>
+        
     </div>
 </div>
