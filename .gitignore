@@ -3,3 +3,6 @@ __pycache__/
 
 # Database files
 *.sqlite3
+
+# Node modules
+node_modules/
