@@ -141,10 +141,10 @@ class ExamSerializer(serializers.ModelSerializer):
         fields = ('subject', 'topic', 'date')
 
 
-
 class AuthorSerializer(serializers.ModelSerializer):
 
     username = serializers.CharField()
+
 
     class Meta:
         model = User
@@ -155,14 +155,19 @@ class NewsSerializer(serializers.ModelSerializer):
 
     title = serializers.CharField(min_length=3, max_length=60)
     content = serializers.CharField(min_length=5, max_length=1000)
-    posted_on = serializers.DateField()
-    author = AuthorSerializer()
 
 
     class Meta:
         model = News
         fields = ('id', 'title', 'content', 'posted_on', 'author')
         depth = 1
+
+
+    def create(self, validated_data):
+        request = self.context['request']
+        user = request.user
+
+        return News.objects.create(author=user, **validated_data)
 
 
 class HomeworkSerializer(serializers.ModelSerializer):
