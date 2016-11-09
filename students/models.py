@@ -83,18 +83,20 @@ class News(models.Model):
 
     title = models.CharField(max_length=60, blank=False)
     content = models.TextField(max_length=1000, blank=False)
-    posted_on = models.DateField(auto_now=True)
+    posted_on = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
     class Meta:
-        ordering = ['-posted_on', 'title']
+        ordering = ['-posted_on']
         verbose_name_plural = 'news'
 
 
     def __str__(self):
         return '{} ({}) - {}'.format(
-            self.title, self.posted_on, self.author.student
+            self.title,
+            self.posted_on.date().strftime('%Y-%m-%d'),
+            self.author.student
         )
 
 
