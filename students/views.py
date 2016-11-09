@@ -94,14 +94,14 @@ class NewsViewSet(viewsets.ModelViewSet):
 
 
     def create(self, request):
-        news = News.objects.create(
-            title=request.data['title'],
-            content=request.data['content'],
-            author=request.user
-        )
-        serializer = self.serializer_class(news)
+        context = {'request': request}
+        serializer = self.serializer_class(context=context, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(
+            serializer.validated_data, status=status.HTTP_201_CREATED
+        )
 
 
 
