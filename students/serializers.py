@@ -16,9 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
         write_only=True,
         required=True,
         min_length=6,
-        style={
-            'input_type': 'password',
-        },
+        style={'input_type': 'password'},
         error_messages={
             'blank': 'Password cannot be empty.',
             'min_length': 'Password too short.',
@@ -43,7 +41,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
         extra_kwargs = {
             'username': {'read_only': True},
-            'password': {'write_only': True},
+            'password': {'write_only': True}
         }
 
 
@@ -143,20 +141,35 @@ class ExamSerializer(serializers.ModelSerializer):
         fields = ('subject', 'topic', 'date')
 
 
+
+class AuthorSerializer(serializers.ModelSerializer):
+
+    username = serializers.CharField()
+
+    class Meta:
+        model = User
+        fields = ('username',)
+
+
 class NewsSerializer(serializers.ModelSerializer):
 
-    author = UserSerializer()
+    title = serializers.CharField(min_length=3, max_length=60)
+    content = serializers.CharField(min_length=5, max_length=1000)
+    posted_on = serializers.DateField()
+    author = AuthorSerializer()
 
 
     class Meta:
         model = News
         fields = ('id', 'title', 'content', 'posted_on', 'author')
+        depth = 1
 
 
 class HomeworkSerializer(serializers.ModelSerializer):
 
     subject = SubjectSerializer()
     clazz = ClassSerializer()
+    details = serializers.CharField(allow_blank=True)
     materials = serializers.FileField(use_url=False)
 
 

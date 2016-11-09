@@ -9,6 +9,7 @@ from rest_framework.authtoken.models import Token
 from datetime import datetime, timedelta
 
 from .models import Class, Student, Subject, Exam, News, Homework
+from .serializers import NewsSerializer
 
 
 class RegisterViewTestCase(APITestCase):
@@ -289,34 +290,24 @@ class ExamsViewTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
-    # TODO: Find why it doesn't work! :D
-    #
-    # def test_exams_with_different_class(self):
-    #     self.user.student.clazz.number -= 1
-    #     self.user.save()
-    #
-    #     self.client.force_authenticate(user=self.user)
-    #
-    #     request = self.client.get(reverse(self.view_name))
-    #
-    #     self.assertEqual(request.data, [])
-    #     self.assertEqual(request.status_code, status.HTTP_200_OK)
-
-
 class NewsListViewTestCase(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
         self.view_name = 'students:news-list'
-        self.user = User.objects.create(username='test', password='pass')
+
+        self.user = User(username='test', email='sisko@gmail.com')
+        self.user.set_password('password123')
+        self.user.save()
+
         self.clazz = Class.objects.create(number=10, letter='A')
         self.student = Student.objects.create(user=self.user, clazz=self.clazz)
         self.news = News.objects.create(
             title='test_news',
             content='blablabla',
             author=self.user,
-            clazz=self.clazz
         )
+        self.date_format = '%Y-%m-%d'
 
 
     def test_news_list_with_anonymous_user(self):
@@ -343,13 +334,16 @@ class NewsListViewTestCase(APITestCase):
 
         request = self.client.get(reverse(self.view_name))
 
-        self.assertIn(request.data[0]['title'], self.news.title)
-        self.assertIn(request.data[0]['content'], self.news.content)
-        self.assertIn(request.data[0]['author']['username'], self.user.username)
-        self.assertIn(
-            request.data[0]['posted_on'],
-            datetime.now().date().strftime('%Y-%m-%d')
+        self.assertEqual(request.data[0]['title'], self.news.title)
+        self.assertEqual(request.data[0]['content'], self.news.content)
+        self.assertEqual(
+            request.data[0]['author']['username'], self.user.username
         )
+        self.assertEqual(
+            request.data[0]['posted_on'],
+            datetime.now().date().strftime(self.date_format)
+        )
+
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
@@ -361,6 +355,54 @@ class NewsListViewTestCase(APITestCase):
 
         self.assertEqual(request.data, [])
         self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_news_list_addition_with_empty_title(self):
+        self.client.force_authenticate(user=self.user)
+        self.news.title = ''
+        post_data = NewsSerializer(self.news).data
+
+        request = self.client.post(
+            reverse(self.view_name), post_data, format='json'
+        )
+
+        self.assertEqual(
+            request.data['title'], ['This field may not be blank.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_news_list_addition_with_empty_content(self):
+        self.client.force_authenticate(user=self.user)
+        self.news.content = ''
+        post_data = NewsSerializer(self.news).data
+
+        request = self.client.post(
+            reverse(self.view_name), post_data, format='json'
+        )
+
+        self.assertEqual(
+            request.data['content'], ['This field may not be blank.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_news_list_addition_with_valid_data(self):
+        self.client.force_authenticate(user=self.user)
+        post_data = NewsSerializer(self.news).data
+
+        request = self.client.post(
+            reverse(self.view_name), post_data, format='json'
+        )
+
+        self.assertEqual(request.data['title'], self.news.title)
+        self.assertEqual(request.data['content'], self.news.content)
+        self.assertEqual(request.data['author']['username'], self.user.username)
+        self.assertEqual(
+            str(request.data['posted_on']),
+            datetime.now().date().strftime(self.date_format)
+        )
+        self.assertEqual(request.status_code, status.HTTP_201_CREATED)
 
 
 class NewsDetailViewTestCase(APITestCase):
@@ -376,7 +418,6 @@ class NewsDetailViewTestCase(APITestCase):
             title='test_news',
             content='blablabla',
             author=self.user,
-            clazz=self.clazz
         )
 
 
@@ -478,14 +519,3 @@ class HomeworksViewTestCase(APITestCase):
 
         self.assertEqual(request.data, [])
         self.assertEqual(request.status_code, status.HTTP_200_OK)
-
-    #
-    # def test_homeworks_with_different_class(self):
-    #     self.client.force_authenticate(user=self.user)
-    #     self.user.student.clazz.number -= 1
-    #     self.user.save()
-    #
-    #     request = self.client.get(reverse(self.view_name))
-    #
-    #     self.assertEqual(request.data, [])
-    #     self.assertEqual(request.status_code, status.HTTP_200_OK)
