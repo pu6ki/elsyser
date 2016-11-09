@@ -85,11 +85,10 @@ class News(models.Model):
     content = models.TextField(max_length=1000, blank=False)
     posted_on = models.DateField(auto_now=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
 
 
     class Meta:
-        ordering = ['-posted_on', 'title', 'clazz']
+        ordering = ['-posted_on', 'title']
         verbose_name_plural = 'news'
 
 
