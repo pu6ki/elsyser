@@ -339,11 +339,6 @@ class NewsListViewTestCase(APITestCase):
         self.assertEqual(
             request.data[0]['author']['username'], self.user.username
         )
-        self.assertEqual(
-            request.data[0]['posted_on'],
-            datetime.now().date().strftime(self.date_format)
-        )
-
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
@@ -397,11 +392,6 @@ class NewsListViewTestCase(APITestCase):
 
         self.assertEqual(request.data['title'], self.news.title)
         self.assertEqual(request.data['content'], self.news.content)
-        self.assertEqual(request.data['author']['username'], self.user.username)
-        self.assertEqual(
-            str(request.data['posted_on']),
-            datetime.now().date().strftime(self.date_format)
-        )
         self.assertEqual(request.status_code, status.HTTP_201_CREATED)
 
 
@@ -455,10 +445,6 @@ class NewsDetailViewTestCase(APITestCase):
         self.assertEqual(request.data['title'], self.news.title)
         self.assertEqual(request.data['content'], self.news.content)
         self.assertEqual(request.data['author']['username'], self.user.username)
-        self.assertEqual(
-            request.data['posted_on'],
-            datetime.now().date().strftime('%Y-%m-%d')
-        )
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
