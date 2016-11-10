@@ -11,7 +11,6 @@ export function NewsController() {
         dataFromAPI = data;
         console.log(dataFromAPI);
         dataFromAPI.forEach((news) => {
-            console.log(news);
             news.posted_on = formatDate(news.posted_on);
         }, this);
         return new Promise((resolve, reject) => {
@@ -27,7 +26,6 @@ export function NewsController() {
 }
 
 function formatDate(date) {
-    console.log(date.slice(0, -8));
     date = date.slice(0, -8);
     date = date.replace('T', ' ');
     return date;
