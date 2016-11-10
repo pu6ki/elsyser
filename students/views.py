@@ -77,9 +77,14 @@ class NewsViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
-        return News.objects.filter(
+        news = News.objects.filter(
             author__student__clazz=self.request.user.student.clazz
         )
+
+        for n in news:
+            n.posted_on = n.posted_on.date().strftime('%Y-%m-%d')
+
+        return news
 
 
     def retrieve(self, request, pk=None):
