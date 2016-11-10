@@ -12,8 +12,8 @@ export let validator = {
         return false;
     },
     password: (password) => {
-        //password should contain atleast one number and one special character and be between 6 and 16 symbols long
-        let regexPattern = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
+        //password should contain atleast one number and one special character and capital letter and be between 6 and 16 symbols long
+        let regexPattern = /^(?=.*[0-9])[a-zA-Z0-9!]{6,16}$/;
         return regexPattern.test(password);
     },
     title: (title) => {

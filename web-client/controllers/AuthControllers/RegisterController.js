@@ -60,7 +60,7 @@ function getDataFromTemplate() {
         body.user.password = $('#password').val();
     }
     else {
-        toastr.error('Password must be between 6 and 16 characters long and contain atleast one number and one special character!');
+        toastr.error('Password must be between 6 and 16 characters long and contain atleast one number!');
         return;
     }
 
