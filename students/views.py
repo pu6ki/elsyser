@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework import viewsets
 from rest_framework import status
+from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
@@ -16,9 +17,10 @@ from .serializers import (
     StudentProfileSerializer,
     ExamSerializer,
     NewsSerializer,
-    HomeworkSerializer
+    HomeworkSerializer,
+    CommentSerializer
 )
-from .models import Student, Exam, News, Homework
+from .models import Student, Exam, News, Homework, Comment
 
 
 class StudentRegistration(generics.CreateAPIView):
@@ -76,17 +78,6 @@ class NewsViewSet(viewsets.ModelViewSet):
     serializer_class = NewsSerializer
 
 
-    def get_queryset(self):
-        news = News.objects.filter(
-            author__student__clazz=self.request.user.student.clazz
-        )
-
-        for n in news:
-            n.posted_on = n.posted_on.strftime('%H:%M %Y-%m-%d')
-
-        return news
-
-
     def retrieve(self, request, pk=None):
         news = get_object_or_404(
             News.objects.filter(
@@ -98,9 +89,34 @@ class NewsViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+    def get_queryset(self):
+        news = News.objects.filter(
+            author__student__clazz=self.request.user.student.clazz
+        )
+
+        for n in news:
+            n.posted_on = n.posted_on.strftime('%H:%M %Y-%m-%d')
+
+        return news
+
+
     def create(self, request):
         context = {'request': request}
         serializer = self.serializer_class(context=context, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        return Response(
+            serializer.validated_data, status=status.HTTP_201_CREATED
+        )
+
+
+    @detail_route(methods=['post'])
+    def add_comment(self, request, pk=None):
+        news = get_object_or_404(News, id=pk)
+        context = {'request': request, 'news': news}
+
+        serializer = CommentSerializer(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
