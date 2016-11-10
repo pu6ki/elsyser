@@ -120,3 +120,14 @@ class Homework(models.Model):
 
     def __str__(self):
         return '{} ({}) - {}'.format(self.subject, self.clazz, self.deadline)
+
+
+class Comment(models.Model):
+
+    news = models.ForeignKey(News, on_delete=models.CASCADE)
+    posted_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField(max_length=256)
+
+
+    def __str__(self):
+        return '{} - {}'.format(self.posted_by.student, self.news.title)
