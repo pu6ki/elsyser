@@ -1,6 +1,8 @@
 from django.shortcuts import get_object_or_404
 
-from rest_framework import generics, viewsets
+from rest_framework import generics
+from rest_framework import viewsets
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
@@ -76,14 +78,15 @@ class NewsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return News.objects.filter(
-            posted_on__gte=datetime.now().date(),
-            clazz=self.request.user.student.clazz
+            author__student__clazz=self.request.user.student.clazz
         )
 
 
     def retrieve(self, request, pk=None):
         news = get_object_or_404(
-            News.objects.filter(clazz=self.request.user.student.clazz), id=pk
+            News.objects.filter(
+                author__student__clazz=self.request.user.student.clazz
+            ), id=pk
         )
         serializer = self.serializer_class(news)
 
@@ -91,15 +94,15 @@ class NewsViewSet(viewsets.ModelViewSet):
 
 
     def create(self, request):
-        news = News.objects.create(
-            title=request.data['title'],
-            content=request.data['content'],
-            author=request.user,
-            clazz=request.user.student.clazz,
-        )
-        serializer = self.serializer_class(news)
+        context = {'request': request}
+        serializer = self.serializer_class(context=context, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
 
-        return Response(serializer.data)
+        return Response(
+            serializer.validated_data, status=status.HTTP_201_CREATED
+        )
+
 
 
 class HomeworksList(generics.ListAPIView):
