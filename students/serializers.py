@@ -7,7 +7,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
 
-from .models import Class, Subject, Student, Exam, News, Homework
+from .models import Class, Subject, Student, Exam, News, Homework, Comment
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -97,6 +97,7 @@ class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = ('user', 'clazz')
+        depth = 1
 
 
     def save(self):
@@ -122,6 +123,7 @@ class StudentProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = ('user', 'clazz', 'profile_image')
+        depth = 1
 
 
 class SubjectSerializer(serializers.ModelSerializer):
@@ -139,27 +141,40 @@ class ExamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Exam
         fields = ('subject', 'topic', 'date')
+        depth = 1
 
 
-class AuthorSerializer(serializers.ModelSerializer):
+class CommentSerializer(serializers.ModelSerializer):
 
-    username = serializers.CharField()
+    content = serializers.CharField(min_length=3, max_length=256)
 
 
     class Meta:
-        model = User
-        fields = ('username',)
+        model = Comment
+        fields = ('content', 'posted_by')
+        depth = 1
+
+
+    def create(self, validated_data):
+        request = self.context['request']
+        news = self.context['news']
+        posted_by = request.user
+
+        return Comment.objects.create(
+            news=news, posted_by=posted_by, **validated_data
+        )
 
 
 class NewsSerializer(serializers.ModelSerializer):
 
     title = serializers.CharField(min_length=3, max_length=60)
     content = serializers.CharField(min_length=5, max_length=1000)
+    comment_set = CommentSerializer(many=True)
 
 
     class Meta:
         model = News
-        fields = ('id', 'title', 'content', 'posted_on', 'author')
+        fields = ('id', 'title', 'content', 'posted_on', 'author', 'comment_set')
         depth = 1
 
 
@@ -181,3 +196,4 @@ class HomeworkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Homework
         fields = ('subject', 'clazz', 'deadline', 'details', 'materials')
+        depth = 1
