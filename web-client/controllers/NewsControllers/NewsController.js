@@ -9,10 +9,6 @@ export function NewsController() {
         resolve(requester.getJSON(newsUrl));
     }).then((data) => {
         dataFromAPI = data;
-        console.log(dataFromAPI);
-        dataFromAPI.forEach((news) => {
-            news.posted_on = formatDate(news.posted_on);
-        }, this);
         return new Promise((resolve, reject) => {
             resolve(templates.get('news'));
         });
@@ -24,9 +20,3 @@ export function NewsController() {
         console.log(err);
     });
 }
-
-function formatDate(date) {
-    date = date.slice(0, -8);
-    date = date.replace('T', ' ');
-    return date;
-} 
