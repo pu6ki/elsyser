@@ -99,7 +99,6 @@ class NewsViewSet(viewsets.ModelViewSet):
 
 
     def create(self, request):
-        print(request.content_params)
         context = {'request': request}
         serializer = self.serializer_class(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)

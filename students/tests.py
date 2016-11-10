@@ -307,7 +307,6 @@ class NewsListViewTestCase(APITestCase):
             content='blablabla',
             author=self.user,
         )
-        self.date_format = '%Y-%m-%d'
 
 
     def test_news_list_with_anonymous_user(self):
