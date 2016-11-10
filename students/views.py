@@ -82,7 +82,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         )
 
         for n in news:
-            n.posted_on = n.posted_on.date().strftime('%Y-%m-%d')
+            n.posted_on = n.posted_on.strftime('%H:%M %Y-%m-%d')
 
         return news
 
