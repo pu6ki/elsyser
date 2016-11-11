@@ -11,5 +11,20 @@
         <div>
             <i>Posted by <strong><span>{{author.username}}</span></strong> on </i><strong><span>{{posted_on}}</span></strong>
         </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                Comments
+            </div>
+            <div class="panel-body">
+                {{#each comment_set}}
+                <div>
+                    <span><strong><i>{{this.content}}</i></strong></span>
+                </div>
+                <div>
+                    <i>Posted by <strong><span>{{this.posted_by.username}}</span></strong></i>
+                </div>
+                {{/each}}
+            </div>
+        </div>
     </div>
 </div>
