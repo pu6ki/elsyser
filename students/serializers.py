@@ -161,7 +161,7 @@ class CommentSerializer(serializers.ModelSerializer):
     posted_by = AuthorSerializer(read_only=True)
     content = serializers.CharField(min_length=3, max_length=256)
     posted_on = serializers.DateTimeField(
-        format='%H:%M %Y:%m:%d',
+        format='%H:%M %Y-%m-%d',
         read_only=True
     )
 
