@@ -81,7 +81,7 @@ class NewsViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk=None):
         news = get_object_or_404(
             News.objects.filter(
-                author__student__clazz=self.request.user.student.clazz
+                author__clazz=self.request.user.student.clazz
             ), id=pk
         )
         serializer = self.serializer_class(news)
@@ -91,7 +91,7 @@ class NewsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return News.objects.filter(
-            author__student__clazz=self.request.user.student.clazz
+            author__clazz=self.request.user.student.clazz
         )
 
 
