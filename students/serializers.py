@@ -161,8 +161,7 @@ class CommentSerializer(serializers.ModelSerializer):
     posted_by = AuthorSerializer(read_only=True)
     content = serializers.CharField(min_length=3, max_length=256)
     posted_on = serializers.DateTimeField(
-        format='%H:%M %Y-%m-%d',
-        read_only=True
+        format='%H:%M %Y-%m-%d', read_only=True
     )
 
     class Meta:
@@ -187,8 +186,7 @@ class NewsSerializer(serializers.ModelSerializer):
     title = serializers.CharField(min_length=3, max_length=60)
     content = serializers.CharField(min_length=5, max_length=1000)
     posted_on = serializers.DateTimeField(
-        format='%H:%M %Y-%m-%d',
-        read_only=True
+        format='%H:%M %Y-%m-%d', read_only=True
     )
     author = AuthorSerializer(read_only=True)
     comment_set = CommentSerializer(read_only=True, many=True)

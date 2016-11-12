@@ -127,9 +127,5 @@ class Comment(models.Model):
     posted_on = models.DateTimeField(auto_now_add=True)
 
 
-    class Meta:
-        unique_together = ('news', 'content')
-
-
     def __str__(self):
         return '{} - {}'.format(self.posted_by, self.news.title)
