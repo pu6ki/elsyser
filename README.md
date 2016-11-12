@@ -65,7 +65,7 @@ This will automatically open the page at http://127.0.0.1:8080/
 4. Here you can add, update and remove your models.
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
 ## Who are we?
 We are two students in 10th grade in ELSYS. We study programming and we are very enthusiastic about this project.
