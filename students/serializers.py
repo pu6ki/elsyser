@@ -144,12 +144,21 @@ class ExamSerializer(serializers.ModelSerializer):
         depth = 1
 
 
-class CommentSerializer(serializers.ModelSerializer):
+class AuthorSerializer(serializers.ModelSerializer):
 
-    posted_by = serializers.SlugRelatedField(
+    user = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True
     )
+
+    class Meta:
+        model = Student
+        fields = ('user', 'profile_image')
+
+
+class CommentSerializer(serializers.ModelSerializer):
+
+    posted_by = AuthorSerializer(read_only=True)
     content = serializers.CharField(min_length=3, max_length=256)
     posted_on = serializers.DateTimeField(
         format='%H:%M %Y:%m:%d',
@@ -164,8 +173,9 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = self.context['request']
+        posted_by = request.user.student
+
         news = self.context['news']
-        posted_by = request.user
 
         return Comment.objects.create(
             news=news, posted_by=posted_by, **validated_data
@@ -180,10 +190,7 @@ class NewsSerializer(serializers.ModelSerializer):
         format='%H:%M %Y-%m-%d',
         read_only=True
     )
-    author = serializers.SlugRelatedField(
-        slug_field='username',
-        read_only=True
-    )
+    author = AuthorSerializer(read_only=True)
     comment_set = CommentSerializer(read_only=True, many=True)
 
 
@@ -197,7 +204,7 @@ class NewsSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = self.context['request']
-        user = request.user
+        user = request.user.student
 
         return News.objects.create(author=user, **validated_data)
 
