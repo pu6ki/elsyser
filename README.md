@@ -12,39 +12,39 @@ It's main purpose is to be helpful at our school. As soon as possible we wish to
 ## Getting started
 How to copy this project to your local machine and run it:
 
-1. Download a copy from GitHub
-    ```
-    $ git clone https://github.com/pu6ki/elsyser.git
-    $ cd elsyser/
-    ```
-2. Setup Django requirements
-    ```
-    $ pip3 install -r requirements.txt
-    $ python3 manage.py makemigrations
-    $ python3 manage.py migrate
+1. Download a copy from GitHub:
 ```
-3. Create a superuser
-    ```
-    $ python3 manage.py createsuperuser
-    ```
-4. Run the tests
-    ```
-    $ python3 manage.py test
-    ```
-5. Run the server locally
-    ```
-    $ python3 manage.py runserver
-    ```
-6. Setup NodeJS requirements
-    ```
-    $ cd web-client/
-    $ npm install
-    $ npm install live-server
-    ```
-7. Run the live server
-    ```
-    $ live-server
-    ```
+$ git clone https://github.com/pu6ki/elsyser.git
+$ cd elsyser/
+```
+2. Setup Django requirements:
+```
+$ pip3 install -r requirements.txt
+$ python3 manage.py makemigrations
+$ python3 manage.py migrate
+```
+3. Create a superuser:
+```
+$ python3 manage.py createsuperuser
+```
+4. Run the tests:
+```
+$ python3 manage.py test
+```
+5. Run the server locally:
+```
+$ python3 manage.py runserver
+```
+6. Setup NodeJS requirements:
+```
+$ cd web-client/
+$ npm install
+$ npm install live-server
+```
+7. Run the live server:
+```
+$ live-server
+```
 
 ## Tutorial
 1. `python3 manage.py runserver` and `live-server` should run simultaneously.
@@ -56,7 +56,7 @@ How to copy this project to your local machine and run it:
     - /news: Latest news
     - /homeworks: Assigned homeworks
     - /profile: Profile info
-    - ...
+    - ...   
 
 ## The admin site
 1. `python3 manage.py runserver`
