@@ -305,7 +305,7 @@ class NewsListViewTestCase(APITestCase):
         self.news = News.objects.create(
             title='test_news',
             content='blablabla',
-            author=self.user,
+            author=self.student,
         )
 
 
@@ -336,7 +336,7 @@ class NewsListViewTestCase(APITestCase):
         self.assertEqual(request.data[0]['title'], self.news.title)
         self.assertEqual(request.data[0]['content'], self.news.content)
         self.assertEqual(
-            request.data[0]['author'], self.user.username
+            request.data[0]['author']['user'], self.user.username
         )
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
@@ -408,11 +408,11 @@ class NewsDetailViewTestCase(APITestCase):
         self.news = News.objects.create(
             title='test_news',
             content='blablabla',
-            author=self.user,
+            author=self.student,
         )
         self.comment = Comment.objects.create(
             news=self.news,
-            posted_by=self.user,
+            posted_by=self.student,
             content='This is a very nice platform!'
         )
 
@@ -453,6 +453,7 @@ class NewsDetailViewTestCase(APITestCase):
 
     def test_news_comment_addition(self):
         self.client.force_authenticate(user=self.user)
+        self.comment.content = 'This is a very nice platorm, man!'
         post_data = CommentSerializer(self.comment).data
 
         request = self.client.post(
@@ -475,12 +476,12 @@ class NewsDetailViewTestCase(APITestCase):
         self.assertEqual(request.data['id'], self.news.id)
         self.assertEqual(request.data['title'], self.news.title)
         self.assertEqual(request.data['content'], self.news.content)
-        self.assertEqual(request.data['author'], self.user.username)
+        self.assertEqual(request.data['author']['user'], self.user.username)
 
         comments_data = request.data['comment_set']
         self.assertEqual(comments_data[0]['content'], self.comment.content)
         self.assertEqual(
-            comments_data[0]['posted_by'], self.comment.posted_by.username
+            comments_data[0]['posted_by']['user'], self.user.username
         )
 
         self.assertEqual(request.status_code, status.HTTP_200_OK)
