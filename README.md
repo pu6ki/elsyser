@@ -30,24 +30,24 @@ $ python3 manage.py migrate
 $ python3 manage.py createsuperuser
 ```
 
-7. Run the tests
+4. Run the tests
 ```
 $ python3 manage.py test
 ```
 
-4. Run the server locally
+5. Run the server locally
 ```
 $ python3 manage.py runserver
 ```
 
-5. Setup NodeJS requirements
+6. Setup NodeJS requirements
 ```
 $ cd web-client/
 $ npm install
 $ npm install live-server
 ```
 
-6. Run the live server
+7. Run the live server
 ```
 $ live-server
 ```
@@ -58,11 +58,11 @@ $ live-server
 3. Click "Register" to create your school account.
 4. Then log in with your credentials.
 5. Everything about your class and you is one click away!
-    - /exams: Upcoming exams
-    - /news: Latest news
-    - /homeworks: Assigned homeworks
-    - /profile: Profile info
-    - ...
+- /exams: Upcoming exams
+- /news: Latest news
+- /homeworks: Assigned homeworks
+- /profile: Profile info
+- ...
 
 ## The admin site
 1. `python3 manage.py runserver`
