@@ -83,21 +83,18 @@ class News(models.Model):
 
     title = models.CharField(max_length=60, blank=False)
     content = models.TextField(max_length=1000, blank=False)
-    posted_on = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+    posted_on = models.DateTimeField(auto_now_add=True)
 
 
     class Meta:
         ordering = ['-posted_on']
         verbose_name_plural = 'news'
+        unique_together = ('title', 'content')
 
 
     def __str__(self):
-        return '{} ({}) - {}'.format(
-            self.title,
-            self.posted_on.date().strftime('%Y-%m-%d'),
-            self.author.student
-        )
+        return '{} ({})'.format(self.title, self.posted_on.date())
 
 
 class Homework(models.Model):
@@ -127,6 +124,11 @@ class Comment(models.Model):
     news = models.ForeignKey(News, on_delete=models.CASCADE)
     posted_by = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField(max_length=256)
+    posted_on = models.DateTimeField(auto_now_add=True)
+
+
+    class Meta:
+        unique_together = ('news', 'content')
 
 
     def __str__(self):

@@ -146,12 +146,19 @@ class ExamSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
 
+    posted_by = serializers.SlugRelatedField(
+        slug_field='username',
+        read_only=True
+    )
     content = serializers.CharField(min_length=3, max_length=256)
-
+    posted_on = serializers.DateTimeField(
+        format='%H:%M %Y:%m:%d',
+        read_only=True
+    )
 
     class Meta:
         model = Comment
-        fields = ('content', 'posted_by')
+        fields = ('posted_by', 'content', 'posted_on')
         depth = 1
 
 
@@ -169,12 +176,22 @@ class NewsSerializer(serializers.ModelSerializer):
 
     title = serializers.CharField(min_length=3, max_length=60)
     content = serializers.CharField(min_length=5, max_length=1000)
-    comment_set = CommentSerializer(many=True)
+    posted_on = serializers.DateTimeField(
+        format='%H:%M %Y-%m-%d',
+        read_only=True
+    )
+    author = serializers.SlugRelatedField(
+        slug_field='username',
+        read_only=True
+    )
+    comment_set = CommentSerializer(read_only=True, many=True)
 
 
     class Meta:
         model = News
-        fields = ('id', 'title', 'content', 'posted_on', 'author', 'comment_set')
+        fields = (
+            'id', 'title', 'content', 'posted_on', 'author', 'comment_set'
+        )
         depth = 1
 
 
