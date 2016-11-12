@@ -9,6 +9,11 @@ export function NewsController() {
         resolve(requester.getJSON(newsUrl));
     }).then((data) => {
         dataFromAPI = data;
+        dataFromAPI.forEach((el) => {
+            if (el.comment_set.length > 0) {
+                el.comments_count = el.comment_set.length;
+            }
+        }, this);
         return new Promise((resolve, reject) => {
             resolve(templates.get('news'));
         });

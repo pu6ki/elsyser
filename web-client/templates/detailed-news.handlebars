@@ -9,7 +9,6 @@
             <span><strong><i>{{content}}</i></strong></span>
         </div>
         <div>
-
             <i>Posted by <strong><span>{{author.user}}</span></strong> on </i><strong><span>{{posted_on}}</span></strong>
         </div>
     </div>
@@ -17,7 +16,7 @@
 
 <div id="comments">
     {{#each comment_set}}
-        <div class="row">
+    <div class="row">
         <div class="col-xs-3 col-lg-1">
             <div class="thumbnail">
                 <img class="img-responsive user-photo" src="http://127.0.0.1:8000/api{{this.posted_by.profile_image}}">

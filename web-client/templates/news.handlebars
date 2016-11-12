@@ -14,6 +14,14 @@
                 <div>
                     <i>Posted by <strong><span>{{author.user}}</span></strong> on </i><strong><span>{{posted_on}}</span></strong>
                 </div>
+                <div>
+                    <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+                    {{#if comments_count}}
+                        <strong><i>{{comments_count}} comments</i></strong>
+                        {{else}}
+                        <strong><i>No comments</i></strong>
+                    {{/if}}
+                </div>
             </div>
         </div>
     {{/each}}
