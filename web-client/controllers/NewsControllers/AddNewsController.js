@@ -13,6 +13,7 @@ export function AddNewsController() {
             formHandler();
 
             $('#add-news').on('click', () => {
+                $(this).prop('disabled', true);
                 addNews();
             });
         });
@@ -51,7 +52,9 @@ function addNews() {
             .then((result) => {
                 if (result) {
                     toastr.success('News added!');
+                    $('#add-news').prop('disabled', false);
                     window.location.href = '#/news';
+                    
                 }
             }).catch(() => {
                 toastr.error('Couldn\'t add the news Please check for errors!');
