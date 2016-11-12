@@ -90,14 +90,9 @@ class NewsViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
-        news = News.objects.filter(
+        return News.objects.filter(
             author__student__clazz=self.request.user.student.clazz
         )
-
-        for n in news:
-            n.posted_on = n.posted_on.strftime('%H:%M %Y-%m-%d')
-
-        return news
 
 
     def create(self, request):
