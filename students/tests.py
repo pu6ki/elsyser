@@ -8,8 +8,8 @@ from rest_framework.authtoken.models import Token
 
 from datetime import datetime, timedelta
 
-from .models import Class, Student, Subject, Exam, News, Homework
-from .serializers import NewsSerializer
+from .models import Class, Student, Subject, Exam, News, Homework, Comment
+from .serializers import NewsSerializer, CommentSerializer
 
 
 class RegisterViewTestCase(APITestCase):
@@ -336,7 +336,7 @@ class NewsListViewTestCase(APITestCase):
         self.assertEqual(request.data[0]['title'], self.news.title)
         self.assertEqual(request.data[0]['content'], self.news.content)
         self.assertEqual(
-            request.data[0]['author']['username'], self.user.username
+            request.data[0]['author'], self.user.username
         )
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
@@ -383,13 +383,14 @@ class NewsListViewTestCase(APITestCase):
 
     def test_news_list_addition_with_valid_data(self):
         self.client.force_authenticate(user=self.user)
+        self.news.title = 'testNews'
+        self.news.content = 'testContent'
         post_data = NewsSerializer(self.news).data
 
         request = self.client.post(
             reverse(self.view_name), post_data, format='json'
         )
 
-        self.assertEqual(request.data['title'], self.news.title)
         self.assertEqual(request.data['content'], self.news.content)
         self.assertEqual(request.status_code, status.HTTP_201_CREATED)
 
@@ -398,7 +399,8 @@ class NewsDetailViewTestCase(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.view_name = 'students:news-detail'
+        self.detail_view_name = 'students:news-detail'
+        self.add_comment_view_name = 'students:news-add-comment'
 
         self.user = User.objects.create(username='test1', password='pass')
         self.clazz = Class.objects.create(number=10, letter='A')
@@ -408,11 +410,16 @@ class NewsDetailViewTestCase(APITestCase):
             content='blablabla',
             author=self.user,
         )
+        self.comment = Comment.objects.create(
+            news=self.news,
+            posted_by=self.user,
+            content='This is a very nice platform!'
+        )
 
 
     def test_news_detail_with_anonymous_user(self):
         request = self.client.get(
-            reverse(self.view_name, kwargs={'pk': self.news.id})
+            reverse(self.detail_view_name, kwargs={'pk': self.news.id})
         )
 
         self.assertEqual(
@@ -426,24 +433,10 @@ class NewsDetailViewTestCase(APITestCase):
         self.client.force_authenticate(user=self.user)
 
         request = self.client.get(
-            reverse(self.view_name, kwargs={'pk': self.news.id})
+            reverse(self.detail_view_name, kwargs={'pk': self.news.id})
         )
 
         self.assertIsNotNone(request.data)
-        self.assertEqual(request.status_code, status.HTTP_200_OK)
-
-
-    def test_news_detail_with_valid_id(self):
-        self.client.force_authenticate(user=self.user)
-
-        request = self.client.get(
-            reverse(self.view_name, kwargs={'pk': self.news.id})
-        )
-
-        self.assertEqual(request.data['id'], self.news.id)
-        self.assertEqual(request.data['title'], self.news.title)
-        self.assertEqual(request.data['content'], self.news.content)
-        self.assertEqual(request.data['author']['username'], self.user.username)
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
@@ -451,11 +444,46 @@ class NewsDetailViewTestCase(APITestCase):
         self.client.force_authenticate(user=self.user)
 
         request = self.client.get(
-            reverse(self.view_name, kwargs={'pk': self.news.id + 1})
+            reverse(self.detail_view_name, kwargs={'pk': self.news.id + 1})
         )
 
         self.assertEqual(request.data['detail'], 'Not found.')
         self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
+
+
+    def test_news_comment_addition(self):
+        self.client.force_authenticate(user=self.user)
+        post_data = CommentSerializer(self.comment).data
+
+        request = self.client.post(
+            reverse(self.add_comment_view_name, kwargs={'pk': self.news.id}),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(request.data['content'], self.comment.content)
+        self.assertEqual(request.status_code, status.HTTP_201_CREATED)
+
+
+    def test_news_detail_with_valid_id(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.get(
+            reverse(self.detail_view_name, kwargs={'pk': self.news.id})
+        )
+
+        self.assertEqual(request.data['id'], self.news.id)
+        self.assertEqual(request.data['title'], self.news.title)
+        self.assertEqual(request.data['content'], self.news.content)
+        self.assertEqual(request.data['author'], self.user.username)
+
+        comments_data = request.data['comment_set']
+        self.assertEqual(comments_data[0]['content'], self.comment.content)
+        self.assertEqual(
+            comments_data[0]['posted_by'], self.comment.posted_by.username
+        )
+
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
 class HomeworksViewTestCase(APITestCase):
