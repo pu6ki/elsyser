@@ -83,7 +83,7 @@ class News(models.Model):
 
     title = models.CharField(max_length=60, blank=False)
     content = models.TextField(max_length=1000, blank=False)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(Student, on_delete=models.CASCADE)
     posted_on = models.DateTimeField(auto_now_add=True)
 
 
@@ -122,7 +122,7 @@ class Homework(models.Model):
 class Comment(models.Model):
 
     news = models.ForeignKey(News, on_delete=models.CASCADE)
-    posted_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    posted_by = models.ForeignKey(Student, on_delete=models.CASCADE)
     content = models.TextField(max_length=256)
     posted_on = models.DateTimeField(auto_now_add=True)
 
@@ -132,4 +132,4 @@ class Comment(models.Model):
 
 
     def __str__(self):
-        return '{} - {}'.format(self.posted_by.student, self.news.title)
+        return '{} - {}'.format(self.posted_by, self.news.title)
