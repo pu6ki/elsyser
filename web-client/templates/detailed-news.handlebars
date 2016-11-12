@@ -9,11 +9,8 @@
             <span><strong><i>{{content}}</i></strong></span>
         </div>
         <div>
-<<<<<<< HEAD
-            <i>Posted by <strong><span>{{author}}</span></strong> on </i><strong><span>{{posted_on}}</span></strong>
-=======
+
             <i>Posted by <strong><span>{{author.user}}</span></strong> on </i><strong><span>{{posted_on}}</span></strong>
->>>>>>> fc316253ba6dfdfdfcc1191be440b07224189506
         </div>
     </div>
 </div>
@@ -23,14 +20,14 @@
         <div class="row">
         <div class="col-xs-3 col-lg-1">
             <div class="thumbnail">
-                <img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png">
+                <img class="img-responsive user-photo" src="http://127.0.0.1:8000/api{{this.posted_by.profile_image}}">
             </div>
         </div>
 
         <div class="col-xs-9 col-lg-10">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <strong>{{this.posted_by}}</strong> commented on <span class="text-muted">{{this.posted_on}}</span>
+                    <strong>{{this.posted_by.user}}</strong> commented on <span class="text-muted">{{this.posted_on}}</span>
                 </div>
                 <div class="panel-body">
                     {{this.content}}
