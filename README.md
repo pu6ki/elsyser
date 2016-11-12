@@ -1,49 +1,50 @@
 # elsyser
-**elsyser** is a students' system for ELSYS, Sofia. Upcoming exams, homeworks, news about your class, everything is here!
+**elsyser** is a students' system for ELSYS, Sofia.
+Upcoming exams, homeworks, news about your class, everything is here!
 It's main purpose is to be helpful at our school. As soon as possible we wish to integrate it in the educational process.
 
 ## Prerequisites
-- Python 3.5
+- python 3.5
 - pip 9.0.1
-- NodeJS 7.0.0
+- nodejs 7.0.0
 - npm 3.10.8
 
 ## Getting started
 How to copy this project to your local machine and run it:
 1. Download a copy from GitHub:
-    ```
-    $ git clone https://github.com/pu6ki/elsyser.git
-    $ cd elsyser/
-    ```
+```
+$ git clone https://github.com/pu6ki/elsyser.git
+$ cd elsyser/
+```
 2. Setup Django requirements:
-    ```
-    $ pip3 install -r requirements.txt
-    $ python3 manage.py makemigrations
-    $ python3 manage.py migrate
-    ```
+```
+$ pip3 install -r requirements.txt
+$ python3 manage.py makemigrations
+$ python3 manage.py migrate
+```
 3. Create a superuser:
-    ```
-    $ python3 manage.py createsuperuser
-    ```
-    Follow the instructions to create your superuser.
+```
+$ python3 manage.py createsuperuser
+```
+Follow the instructions to create your superuser.
 7. Run the tests:
-    ```
-    $ python3 manage.py test
-    ```
+```
+$ python3 manage.py test
+```
 4. Run the server locally:
-    ```
-    $ python3 manage.py runserver
-    ```
+```
+$ python3 manage.py runserver
+```
 5. Setup NodeJS requirements:
-    ```
-    $ cd web-client/
-    $ npm install
-    ```
+```
+$ cd web-client/
+$ npm install
+```
 6. Run the live server:
-    ```
-    $ live-server
-    ```
-    This will automatically open the page at http://127.0.0.1:8080/
+```
+$ live-server
+```
+This will automatically open the page at http://127.0.0.1:8080/
 
 ## Tutorial
 1. Check that your both servers are running.
