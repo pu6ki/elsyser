@@ -1,6 +1,6 @@
 # elsyser
-**elsyser** is a students' system for ELSYS, Sofia.
-Upcoming exams, homeworks, news about your class, everything is here!
+**elsyser** is a *single page application (SPA), consuming RESTful services from the Django web server.*<br/>
+This is a students' system for ELSYS, Sofia. Upcoming exams, homeworks, news about your class, everything is here!<br/>
 It's main purpose is to be helpful at our school. As soon as possible we wish to integrate it in the educational process.
 
 ## Prerequisites
@@ -39,6 +39,7 @@ $ python3 manage.py runserver
 ```
 $ cd web-client/
 $ npm install
+$ npm install live-sever
 ```
 6. Run the live server:
 ```
@@ -47,10 +48,10 @@ $ live-server
 This will automatically open the page at http://127.0.0.1:8080/
 
 ## Tutorial
-1. Check that your both servers are running.
+1. 'python3 manage.py runserver' & 'live-server' should run simultaneously.
 2. Visit http://127.0.0.1:8080/
-3. Click "Register" to create your school account
-4. Then log in with your credentials
+3. Click "Register" to create your school account.
+4. Then log in with your credentials.
 5. Everything about your class and you is one click away!
     - /exams: Upcoming exams
     - /news: Latest news
@@ -59,9 +60,9 @@ This will automatically open the page at http://127.0.0.1:8080/
     - ...
 
 ## The admin site
-1. Check that the Django server is running.
+1. 'python3 manage.py runserver'
 2. Visit http://127.0.0.1:8000/admin/
-3. Login with your superuser data
+3. Log in with your superuser data.
 4. Here you can add, update and remove your models.
 
 ## License
