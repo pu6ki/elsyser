@@ -9,36 +9,21 @@
             <span><strong><i>{{content}}</i></strong></span>
         </div>
         <div>
-            <i>Posted by <strong><span>{{author.username}}</span></strong> on </i><strong><span>{{posted_on}}</span></strong>
+            <i>Posted by <strong><span>{{author}}</span></strong> on </i><strong><span>{{posted_on}}</span></strong>
         </div>
-        <!--<div class="panel panel-primary">
-            <div class="panel-heading">
-                Comments
-            </div>
-            <div class="panel-body">
-                {{#each comment_set}}
-                <div>
-                    <span><strong><i>{{this.content}}</i></strong></span>
-                </div>
-                <div>
-                    <i>Posted by <strong><span>{{this.posted_by.username}}</span></strong></i>
-                </div>
-                {{/each}}
-            </div>
-        </div>-->
     </div>
 </div>
 
 <div id="comments">
     {{#each comment_set}}
         <div class="row">
-        <div class="col-sm-1">
+        <div class="col-xs-3 col-lg-1">
             <div class="thumbnail">
                 <img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png">
             </div>
         </div>
 
-        <div class="col-sm-10">
+        <div class="col-xs-9 col-lg-10">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <strong>{{this.posted_by}}</strong> commented on <span class="text-muted">{{this.posted_on}}</span>
