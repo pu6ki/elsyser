@@ -90,6 +90,7 @@ class News(models.Model):
     class Meta:
         ordering = ['-posted_on']
         verbose_name_plural = 'news'
+        unique_together = ('title', 'content')
 
 
     def __str__(self):
@@ -127,6 +128,10 @@ class Comment(models.Model):
     news = models.ForeignKey(News, on_delete=models.CASCADE)
     posted_by = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField(max_length=256)
+
+
+    class Meta:
+        unique_together = ('news', 'content')
 
 
     def __str__(self):
