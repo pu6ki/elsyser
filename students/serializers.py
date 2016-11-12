@@ -146,15 +146,19 @@ class ExamSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
 
-    content = serializers.CharField(min_length=3, max_length=256)
     posted_by = serializers.SlugRelatedField(
         slug_field='username',
+        read_only=True
+    )
+    content = serializers.CharField(min_length=3, max_length=256)
+    posted_on = serializers.DateTimeField(
+        format='%H:%M %Y:%m:%d',
         read_only=True
     )
 
     class Meta:
         model = Comment
-        fields = ('content', 'posted_by')
+        fields = ('posted_by', 'content', 'posted_on')
         depth = 1
 
 

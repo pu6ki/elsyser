@@ -128,6 +128,7 @@ class Comment(models.Model):
     news = models.ForeignKey(News, on_delete=models.CASCADE)
     posted_by = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField(max_length=256)
+    posted_on = models.DateTimeField(auto_now_add=True)
 
 
     class Meta:
