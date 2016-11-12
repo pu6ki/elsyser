@@ -60,7 +60,7 @@ This will automatically open the page at http://127.0.0.1:8080/
 
 ## The admin site
 1. Check that the Django server is running.
-2. Visit http://localhost:8000/admin/
+2. Visit http://127.0.0.1:8000/admin/
 3. Login with your superuser data
 4. Here you can add, update and remove your models.
 
