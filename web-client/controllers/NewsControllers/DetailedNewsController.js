@@ -5,10 +5,11 @@ let dataFromAPI;
 let newsUrl = "http://127.0.0.1:8000/api/news/";
 
 export function DetailedNewsController(id) {
+
     return new Promise((resolve, reject) => {
         resolve(requester.getJSON(newsUrl + id + '/'));
-    }).then((data) => {
-        dataFromAPI = data;
+    }).then((newData) => {
+        dataFromAPI = newData;
         return new Promise((resolve, reject) => {
             resolve(templates.get('detailed-news'));
         });
@@ -20,21 +21,28 @@ export function DetailedNewsController(id) {
         console.log(err);
     });
 
-
 }
 
-export function loadNews(id) {
-    console.log('req');
-    requester.getJSON(newsUrl + id + '/')
-        .then((data) => {
-            if (data.comment_set.length > dataFromAPI.comment_set.length) {
-                templates.get('partials/comment')
-                    .then((res) => {
-                        let hbTemplate = Handlebars.compile(res),
-                            template = hbTemplate(data.comment_set[dataFromAPI.comment_set.length]);
-                        $('#comments').append(template);
-                        dataFromAPI = data;
-                    });
-            }
+export function loadComments(id) {
+    let getData = requester.getJSON(newsUrl + id + '/'),
+        getTemplate = templates.get('partials/comment');
+
+    Promise.all([getData, getTemplate]).then((result) => {
+        let newData = result[0],
+            hbTemplate = Handlebars.compile(result[1]),
+            commentsToLoad = [];
+
+        commentsToLoad = newData.comment_set.filter(function (obj) {
+            return !dataFromAPI.comment_set.some(function (obj2) {
+                return obj.content === obj2.content && obj.posted_by.user === obj2.posted_by.user;
+            });
         });
+
+        dataFromAPI.comment_set = newData.comment_set;
+
+        for (let i = 0; i < commentsToLoad.length; i += 1) {
+            let template = hbTemplate(commentsToLoad[i]);
+            $('#comments').append(template);
+        }
+    })
 }
