@@ -45,7 +45,7 @@ class UserLogin(generics.CreateAPIView):
         return Response({'token': token.key})
 
 
-class StudentProfile(generics.RetrieveAPIView):
+class StudentProfile(generics.RetrieveUpdateAPIView):
 
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -88,7 +88,20 @@ class NewsViewSet(viewsets.ModelViewSet):
         )
         serializer = self.serializer_class(news)
 
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    def update(self, request, pk=None):
+        news = get_object_or_404(
+            News.objects.filter(
+                author=self.request.user.student
+            ), id=pk
+        )
+        news.__dict__.update(**request.data)
+
+        serializer = self.serializer_class(news)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
     def get_queryset(self):
@@ -120,7 +133,6 @@ class NewsViewSet(viewsets.ModelViewSet):
         return Response(
             serializer.validated_data, status=status.HTTP_201_CREATED
         )
-
 
 
 class HomeworksList(generics.ListAPIView):
