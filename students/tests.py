@@ -487,6 +487,24 @@ class NewsDetailViewTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
+    def test_news_update(self):
+        self.client.force_authenticate(user=self.user)
+
+        put_data = {
+            'title': 'Amazing!',
+            'content': 'This should work perfectly!'
+        }
+
+        request = self.client.put(
+            reverse(self.detail_view_name, kwargs={'pk': self.news.id}),
+            put_data,
+            format='json'
+        )
+
+        # TODO: Implement tests
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
 class HomeworksViewTestCase(APITestCase):
 
     def setUp(self):
