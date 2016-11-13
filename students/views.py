@@ -92,12 +92,13 @@ class NewsViewSet(viewsets.ModelViewSet):
 
 
     def update(self, request, pk=None):
-        news = get_object_or_404(
-            News.objects.filter(
-                author=self.request.user.student
-            ), id=pk
-        )
-        news.__dict__.update(**request.data)
+        news = get_object_or_404(News, id=pk)
+
+        if news.author != request.user.student:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        news.__dict__.update(**request.data.dict())
+        news.save()
 
         serializer = self.serializer_class(news)
 
