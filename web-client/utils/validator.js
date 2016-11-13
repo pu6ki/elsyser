@@ -34,7 +34,7 @@ export let validator = {
     },
     comment: (comment) => {
         if (typeof comment === 'string') {
-            if (comment.length >= 3 && comment.length <= 1000) {
+            if (comment.length >= 1 && comment.length <= 2048) {
                 return true;
             }
         }

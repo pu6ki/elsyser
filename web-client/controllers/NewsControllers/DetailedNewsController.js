@@ -36,11 +36,11 @@ export function DetailedNewsController(id) {
                         toastr.success('Comment added!');
                         $('#comment-content').val('');
                     }).catch((err) => {
-                        console.log(err);
+                        toastr.error('Comments can\' be empty!')
                     })
             } 
             else {
-                toastr.error('Comment should be between 3 and 1000 characters long!');
+                toastr.error('Comments shold be max 2048 characters long!');
             }
         });
     }).catch((err) => {
