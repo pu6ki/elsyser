@@ -396,7 +396,7 @@ class NewsListViewTestCase(APITestCase):
 
 
 class NewsDetailViewTestCase(APITestCase):
-    
+
     # TODO: Implement more tests
 
     def setUp(self):

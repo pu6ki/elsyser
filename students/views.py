@@ -99,15 +99,13 @@ class NewsViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
-        if not isinstance(request.data, dict):
-            request.data = request.data.dict()
+        serializer = self.serializer_class(
+            news, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
 
-        news.__dict__.update(**request.data)
-        news.save()
-
-        serializer = self.serializer_class(news)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
     def get_queryset(self):
@@ -132,6 +130,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = CommentSerializer
+    queryset = Comment.objects.all()
 
 
     def create(self, request, news_pk=None):
@@ -151,15 +150,13 @@ class CommentsViewSet(viewsets.ModelViewSet):
         news = get_object_or_404(News, id=news_pk)
         comment = get_object_or_404(news.comment_set, id=pk)
 
-        if not isinstance(request.data, dict):
-            request.data = request.data.dict()
+        serializer = self.serializer_class(
+            comment, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
 
-        comment.__dict__.update(**request.data)
-        comment.save()
-
-        serializer = self.serializer_class(comment)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
     def destroy(self, requset, news_pk=None, pk=None):

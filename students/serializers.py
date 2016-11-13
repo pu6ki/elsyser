@@ -181,6 +181,13 @@ class CommentSerializer(serializers.ModelSerializer):
         )
 
 
+    def update(self, instance, validated_data):
+        instance.__dict__.update(**validated_data)
+        instance.save()
+
+        return instance
+
+
 class NewsSerializer(serializers.ModelSerializer):
 
     title = serializers.CharField(min_length=3, max_length=60)
@@ -205,6 +212,13 @@ class NewsSerializer(serializers.ModelSerializer):
         user = request.user.student
 
         return News.objects.create(author=user, **validated_data)
+
+
+    def update(self, instance, validated_data):
+        instance.__dict__.update(**validated_data)
+        instance.save()
+
+        return instance
 
 
 class HomeworkSerializer(serializers.ModelSerializer):
