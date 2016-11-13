@@ -31,5 +31,13 @@ export let validator = {
             }
         }
         return false;
+    },
+    comment: (comment) => {
+        if (typeof comment === 'string') {
+            if (comment.length >= 3 && comment.length <= 1000) {
+                return true;
+            }
+        }
+        return false;
     }
 };

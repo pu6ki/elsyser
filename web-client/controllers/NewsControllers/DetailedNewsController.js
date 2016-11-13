@@ -1,8 +1,10 @@
 import { requester } from '../../utils/requster.js';
 import { templates } from '../../utils/templates.js';
+import { validator } from '../../utils/validator.js';
+import { formHandler } from '../../utils/formHandler.js';
 
 let dataFromAPI;
-let newsUrl = "http://127.0.0.1:8000/api/news/";
+const newsUrl = "http://127.0.0.1:8000/api/news/";
 
 export function DetailedNewsController(id) {
 
@@ -16,7 +18,31 @@ export function DetailedNewsController(id) {
     }).then((res) => {
         let hbTemplate = Handlebars.compile(res),
             template = hbTemplate(dataFromAPI);
+
         $('#content').html(template);
+
+        formHandler();
+
+        $('#add-comment-button').on('click', () => {
+            let body = {
+                content: ''
+            },
+                addCommentUrl = `http://127.0.0.1:8000/api/news/${id}/add_comment/`;
+
+            if (validator.comment($('#comment-content').val())) {
+                body.content = $('#comment-content').val();
+                requester.postJSON(addCommentUrl, body)
+                    .then(() => {
+                        toastr.success('Comment added!');
+                        $('#comment-content').val('');
+                    }).catch((err) => {
+                        console.log(err);
+                    })
+            } 
+            else {
+                toastr.error('Comment should be between 3 and 1000 characters long!');
+            }
+        });
     }).catch((err) => {
         console.log(err);
     });

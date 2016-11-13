@@ -26,3 +26,12 @@
 	border-right-color:#ddd;
 	border-width:8px;
 }
+
+#comment-content {
+	height: 35px;
+	margin: 5px;
+}
+
+#add-comment-button {
+	margin-top: 5px;
+}
