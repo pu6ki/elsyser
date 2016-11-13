@@ -396,11 +396,12 @@ class NewsListViewTestCase(APITestCase):
 
 
 class NewsDetailViewTestCase(APITestCase):
+    
+    # TODO: Implement more tests
 
     def setUp(self):
         self.client = APIClient()
         self.detail_view_name = 'students:news-detail'
-        self.add_comment_view_name = 'students:news-add-comment'
 
         self.user = User.objects.create(username='test1', password='pass')
         self.clazz = Class.objects.create(number=10, letter='A')
@@ -451,21 +452,6 @@ class NewsDetailViewTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
 
 
-    def test_news_comment_addition(self):
-        self.client.force_authenticate(user=self.user)
-        self.comment.content = 'This is a very nice platorm, man!'
-        post_data = CommentSerializer(self.comment).data
-
-        request = self.client.post(
-            reverse(self.add_comment_view_name, kwargs={'pk': self.news.id}),
-            post_data,
-            format='json'
-        )
-
-        self.assertEqual(request.data['content'], self.comment.content)
-        self.assertEqual(request.status_code, status.HTTP_201_CREATED)
-
-
     def test_news_detail_with_valid_id(self):
         self.client.force_authenticate(user=self.user)
 
@@ -501,7 +487,76 @@ class NewsDetailViewTestCase(APITestCase):
             format='json'
         )
 
-        # TODO: Implement tests
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+class CommentsViewSetTestCase(APITestCase):
+
+    # TODO: Implement more tests
+
+    def setUp(self):
+        self.client = APIClient()
+        self.list_view_name = 'students:comments-list'
+        self.detail_view_name = 'students:comments-detail'
+
+        self.user = User.objects.create(username='test1', password='pass')
+        self.clazz = Class.objects.create(number=10, letter='A')
+        self.student = Student.objects.create(user=self.user, clazz=self.clazz)
+        self.news = News.objects.create(
+            title='test_news',
+            content='blablabla',
+            author=self.student,
+        )
+        self.comment = Comment.objects.create(
+            news=self.news,
+            posted_by=self.student,
+            content='This is a very nice platform!'
+        )
+
+
+    def test_comment_addition(self):
+        self.client.force_authenticate(user=self.user)
+        self.comment.content = 'This is a very nice platorm, man!'
+        post_data = CommentSerializer(self.comment).data
+
+        request = self.client.post(
+            reverse(self.list_view_name, kwargs={'news_pk': self.news.id}),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(request.data['content'], self.comment.content)
+        self.assertEqual(request.status_code, status.HTTP_201_CREATED)
+
+
+    def test_comment_update(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={'news_pk': self.news.id, 'pk': self.comment.id}
+            ),
+            {'content': '+1!'},
+            format='json'
+        )
+
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_comment_deletion(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.delete(
+            reverse(
+                self.detail_view_name,
+                kwargs={'news_pk': self.news.id, 'pk': self.comment.id}
+            )
+        )
+
+        self.assertEqual(
+            request.data['message'], 'Comment successfully deleted.'
+        )
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 

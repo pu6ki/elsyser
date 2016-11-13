@@ -2,7 +2,7 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
 
-from rest_framework import routers
+from rest_framework_nested import routers
 
 from .views import (
     StudentRegistration,
@@ -10,12 +10,16 @@ from .views import (
     StudentProfile,
     ExamsList,
     NewsViewSet,
+    CommentsViewSet,
     HomeworksList
 )
 
 
-router = routers.SimpleRouter()
-router.register(r'news', NewsViewSet, base_name='news')
+news_router = routers.SimpleRouter()
+news_router.register(r'news', NewsViewSet, base_name='news')
+
+comments_router = routers.NestedSimpleRouter(news_router, r'news', lookup='news')
+comments_router.register(r'comments', CommentsViewSet, base_name='comments')
 
 app_name = 'students'
 urlpatterns = [
@@ -26,4 +30,5 @@ urlpatterns = [
     url(r'^homeworks/$', HomeworksList.as_view(), name='homeworks')
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-urlpatterns += router.urls
+urlpatterns += news_router.urls
+urlpatterns += comments_router.urls

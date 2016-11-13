@@ -36,7 +36,7 @@ export function DetailedNewsController(id) {
             let body = {
                 content: ''
             },
-                addCommentUrl = `http://127.0.0.1:8000/api/news/${id}/add_comment/`;
+                addCommentUrl = `http://127.0.0.1:8000/api/news/${id}/comments/`;
 
             if (validator.comment($('#comment-content').val())) {
                 body.content = $('#comment-content').val();

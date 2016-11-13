@@ -23,6 +23,7 @@ This is a students' platform for ELSYS, Sofia.
 * [Django](https://github.com/django/django) - A really nice high-level Python web framework
 * [Django Rest Framework](https://github.com/tomchristie/django-rest-framework) - Framework for building REST APIs in Django
 * [django-cors-headers](https://github.com/ottoyiu/django-cors-headers) - Django app for handling the server headers required for Cross-Origin Resource Sharing (CORS)
+* [drf-nested-routers](https://github.com/alanjds/drf-nested-routers) - Django Rest Framework nested routers
 * [Pillow](https://github.com/python-pillow/Pillow) - Python Imaging Library
 * [Bootstrap](https://github.com/twbs/bootstrap) - Framework for developing responsive UI on the web
 * [jQuery](https://github.com/jquery/jquery) - New Wave JavaScript
@@ -31,6 +32,7 @@ This is a students' platform for ELSYS, Sofia.
 * [navigo](https://github.com/krasimir/navigo) - Minimalistic JavaScript router
 * [live-server](https://github.com/tapio/live-server) - A small HTTP web server with live reload
 * [Atom](https://github.com/atom/atom) - A hackable text editor for the 21st century
+* [Visual Studio Code](https://github.com/Microsoft/vscode) - Another cool text editor
 
 ## Getting started
 
@@ -85,7 +87,7 @@ How to copy this project to your local machine and run it:
 
 ## Tutorial
 
-1. `python3 manage.py runserver` and `live-server` should run simultaneously.
+1. `$ python3 manage.py runserver` and `$ live-server` should run simultaneously.
 2. Visit http://127.0.0.1:8080/
 3. Click "Register" to create your school account.
 4. Then log in with your credentials.
@@ -98,7 +100,7 @@ How to copy this project to your local machine and run it:
 
 ## The admin site
 
-1. `python3 manage.py runserver`
+1. `$ python3 manage.py runserver`
 2. Visit http://127.0.0.1:8000/admin/
 3. Log in with your superuser data.
 4. Here you can add, update and remove your models.
@@ -113,8 +115,8 @@ We are students in 10th grade in ELSYS. We study programming and we are very ent
 ### Task list:
 
 - [ ] Make profile editable
-- [ ] Edit your own news
-- [ ] Edit and delete your own comments
+- [x] Edit your own news
+- [x] Edit and delete your own comments
 
 ### License
 
