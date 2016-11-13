@@ -16,7 +16,7 @@
 
 <div id="comments">
     {{#each comment_set}}
-    <div class="row">
+    <div class="row comment">
         <div class="col-xs-3 col-sm-1 col-md-1 col-lg-1 img-container">
             <img class="user-photo" src="http://127.0.0.1:8000/api{{this.posted_by.profile_image}}">
         </div>
@@ -35,7 +35,10 @@
     {{/each}}
 </div>
 
-<div class="row form-wrapper">
-    <input type="text" id="comment-content" class="col-xs-9 col-md-10 col-lg-10"></input>
+<button class="center-block" id="loadMore">Load More</button>
+<button class="toTop btn btn-primary btn-circle btn-lg"><span class="glyphicon glyphicon-circle-arrow-up"></span></button>
+
+<div class="row center-block form-wrapper">
+    <input type="text" id="comment-content" class="col-xs-8 col-sm-10 col-md-10 col-lg-10"></input>
     <button id="add-comment-button" class="btn btn-primary submit">Send<span class="glyphicon glyphicon-send"></span></span></button>
 </div>
