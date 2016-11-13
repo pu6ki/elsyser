@@ -1,4 +1,3 @@
-[![npm (scoped)](https://img.shields.io/npm/v/@cycle/core.svg)](https://github.com/pu6ki/elsyser/tree/master/web-client)
 [![GitHub issues](https://img.shields.io/github/issues/pu6ki/elsyser.svg)](https://github.com/pu6ki/elsyser/issues)
 [![GitHub forks](https://img.shields.io/github/forks/pu6ki/elsyser.svg)](https://github.com/pu6ki/elsyser/network)
 [![GitHub stars](https://img.shields.io/github/stars/pu6ki/elsyser.svg)](https://github.com/pu6ki/elsyser/stargazers)
@@ -26,8 +25,8 @@ This is a students' system for ELSYS, Sofia. It's main purpose is to be helpful 
 * [Bootstrap](https://github.com/twbs/bootstrap) - Enhanced UI for modern websites
 * [jQuery](https://github.com/jquery/jquery)
 * [handlebars](https://github.com/wycats/handlebars.js/) - Semantic templates for JS
-* [toastr](https://github.com/CodeSeven/toastr) - JS library for beautiful notifications
-* [navigo](https://github.com/krasimir/navigo) - JS router
+* [toastr](https://github.com/CodeSeven/toastr) - JS library for representative notifications
+* [navigo](https://github.com/krasimir/navigo) - Minimalistic JS router
 * [Atom](https://github.com/atom/atom) - A really nice text editor
 
 ## Getting started
