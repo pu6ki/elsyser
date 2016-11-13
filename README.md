@@ -1,27 +1,39 @@
 # elsyser
-**elsyser** is a *single page application (SPA), consuming RESTful services from the Django web server.*<br/>
-This is a students' system for ELSYS, Sofia. Upcoming exams, homeworks, news about your class, everything is here!<br/>
-It's main purpose is to be helpful at our school. As soon as possible we wish to integrate it in the educational process.
+**elsyser** is a *single page application (SPA), consuming RESTful services from the Django web server.*
+This is a students' system for ELSYS, Sofia. It's main purpose is to be helpful at our school.
 
 ## Prerequisites
-- python 3.5
-- pip 9.0.1
-- nodejs 7.0.0
-- npm 3.10.8
+- [Python 3.5+](https://www.python.org/downloads/)
+- [pip 9.0.1](https://pypi.python.org/pypi/pip)
+- [Node.js v7.0.0+](https://nodejs.org/en/)
+- [npm 3.10.8](https://docs.npmjs.com/getting-started/installing-node)
+
+## Tech
+
+**elsyser** uses a number of open-source projects to work properly:
+
+* [Django](https://github.com/django/django) - A really nice framework for Python web applications
+* [Django Rest Framework](https://github.com/tomchristie/django-rest-framework) - Framework for building REST APIs in Django
+* [Bootstrap](http://getbootstrap.com/) - Enhanced UI for modern websites
+* [jQuery](https://jquery.com/)
+* [handlebars](http://handlebarsjs.com/) - Semantic templates for JS
+* [toastr](https://github.com/CodeSeven/toastr) - JS library for beautiful notifications
+* [navigo](https://github.com/krasimir/navigo) - JS router
+* [Atom](https://github.com/atom/atom) - A really nice text editor
 
 ## Getting started
 How to copy this project to your local machine and run it:
 
 1. Download a copy from GitHub:
 
-    ```
+    ```sh
     $ git clone https://github.com/pu6ki/elsyser.git
     $ cd elsyser/
     ```
 
 2. Setup Django requirements:
 
-    ```
+    ```sh
     $ pip3 install -r requirements.txt
     $ python3 manage.py makemigrations
     $ python3 manage.py migrate
@@ -29,25 +41,25 @@ How to copy this project to your local machine and run it:
 
 3. Create a superuser:
 
-    ```
+    ```sh
     $ python3 manage.py createsuperuser
     ```
 
 4. Run the tests:
 
-    ```
+    ```sh
     $ python3 manage.py test
     ```
 
 5. Run the server locally:
 
-    ```
+    ```sh
     $ python3 manage.py runserver
     ```
 
-6. Setup NodeJS requirements:
+6. Intstall NodeJS dependencies:
 
-    ```
+    ```sh
     $ cd web-client/
     $ npm install
     $ npm install live-server
@@ -55,10 +67,9 @@ How to copy this project to your local machine and run it:
 
 7. Run the live server:
 
-    ```
+    ```sh
     $ live-server
     ```
-
 
 ## Tutorial
 1. `python3 manage.py runserver` and `live-server` should run simultaneously.
@@ -78,10 +89,15 @@ How to copy this project to your local machine and run it:
 3. Log in with your superuser data.
 4. Here you can add, update and remove your models.
 
-## License
+### License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
-## Who are we?
+### Who are we?
 We are two students in 10th grade in ELSYS. We study programming and we are very enthusiastic about this project.
-* **wencakisa** - *Back-end (Python)* - https://github.com/wencakisa
-* **matir8** - *Front-end (HTML, CSS, JS)* - https://github.com/matir8
+* [**wencakisa**](https://github.com/wencakisa) - *Python*
+* [**matir8**](https://github.com/matir8) - *HTML, CSS, JS*
+
+### Task list:
+- [ ] Make profile editable
+- [ ] Edit your own news
+- [ ] Edit and delete your own comments
