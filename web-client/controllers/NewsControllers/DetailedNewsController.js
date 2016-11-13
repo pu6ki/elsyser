@@ -24,34 +24,37 @@ export function DetailedNewsController(id) {
         formHandler();
 
         $(".comment").slice(0, 2).show();
-        $("#loadMore").on('click', (e) => {
-            e.preventDefault();
+        $("#loadMore").on('click', () => {
             $(".comment:hidden").slice(0, 5).slideDown();
-            if ($(".comment:hidden").length === 0) {
-                $("#loadMore").fadeOut('slow');
-            }
+        });
+
+        $('.toTop').click(function () {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 600);
+            return false;
         });
 
         $('#add-comment-button').on('click', () => {
-            let body = {
-                content: ''
-            },
-                addCommentUrl = `http://127.0.0.1:8000/api/news/${id}/comments/`;
+                let body = {
+                    content: ''
+                },
+                    addCommentUrl = `http://127.0.0.1:8000/api/news/${id}/comments/`;
 
-            if (validator.comment($('#comment-content').val())) {
-                body.content = $('#comment-content').val();
-                requester.postJSON(addCommentUrl, body)
-                    .then(() => {
-                        toastr.success('Comment added!');
-                        $('#comment-content').val('');
-                    }).catch((err) => {
-                        toastr.error('Comments can\' be empty!')
-                    })
-            }
-            else {
-                toastr.error('Comments shold be max 2048 characters long!');
-            }
-        });
+                if (validator.comment($('#comment-content').val())) {
+                    body.content = $('#comment-content').val();
+                    requester.postJSON(addCommentUrl, body)
+                        .then(() => {
+                            toastr.success('Comment added!');
+                            $('#comment-content').val('');
+                        }).catch((err) => {
+                            toastr.error('Comments can\' be empty!')
+                        })
+                }
+                else {
+                    toastr.error('Comments shold be max 2048 characters long!');
+                }
+            });
     }).catch((err) => {
         console.log(err);
     });
