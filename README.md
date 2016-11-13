@@ -7,27 +7,30 @@
 # elsyser
 
 **elsyser** is a *single page application (SPA), consuming RESTful services from the Django web server.*
-This is a students' platform for ELSYS, Sofia. It's main purpose is to be helpful at our school.
+This is a students' platform for ELSYS, Sofia.
 
 ## Prerequisites
 
-- [Python 3.5+](https://www.python.org/downloads/)
-- [pip 9.0.1](https://pypi.python.org/pypi/pip)
+- [Python v3.5+](https://www.python.org/downloads/)
+- [pip v9.0.1](https://pypi.python.org/pypi/pip)
 - [Node.js v7.0.0+](https://nodejs.org/en/)
-- [npm 3.10.8](https://docs.npmjs.com/getting-started/installing-node)
+- [npm v3.10.8](https://docs.npmjs.com/getting-started/installing-node)
 
 ## Tech
 
 **elsyser** uses a number of open-source projects to work properly:
 
-* [Django](https://github.com/django/django) - A really nice framework for Python web applications
+* [Django](https://github.com/django/django) - A really nice high-level Python web framework
 * [Django Rest Framework](https://github.com/tomchristie/django-rest-framework) - Framework for building REST APIs in Django
-* [Bootstrap](https://github.com/twbs/bootstrap) - Enhanced UI for modern websites
-* [jQuery](https://github.com/jquery/jquery)
-* [handlebars](https://github.com/wycats/handlebars.js/) - Semantic templates for JS
-* [toastr](https://github.com/CodeSeven/toastr) - JS library for representative notifications
-* [navigo](https://github.com/krasimir/navigo) - Minimalistic JS router
-* [Atom](https://github.com/atom/atom) - A really nice text editor
+* [django-cors-headers](https://github.com/ottoyiu/django-cors-headers) - Django app for handling the server headers required for Cross-Origin Resource Sharing (CORS)
+* [Pillow](https://github.com/python-pillow/Pillow) - Python Imaging Library
+* [Bootstrap](https://github.com/twbs/bootstrap) - Framework for developing responsive UI on the web
+* [jQuery](https://github.com/jquery/jquery) - New Wave JavaScript
+* [handlebars](https://github.com/wycats/handlebars.js/) - Semantic templates for JavaScript
+* [toastr](https://github.com/CodeSeven/toastr) - JavaScript library for representative notifications
+* [navigo](https://github.com/krasimir/navigo) - Minimalistic JavaScript router
+* [live-server](https://github.com/tapio/live-server) - A small HTTP web server with live reload
+* [Atom](https://github.com/atom/atom) - A hackable text editor for the 21st century
 
 ## Getting started
 
@@ -35,14 +38,14 @@ How to copy this project to your local machine and run it:
 
 1. Download a copy from GitHub:
 
-    ```sh
+    ```
     $ git clone https://github.com/pu6ki/elsyser.git
     $ cd elsyser/
     ```
 
 2. Setup Django requirements:
 
-    ```sh
+    ```
     $ pip3 install -r requirements.txt
     $ python3 manage.py makemigrations
     $ python3 manage.py migrate
@@ -50,33 +53,33 @@ How to copy this project to your local machine and run it:
 
 3. Create a superuser:
 
-    ```sh
+    ```
     $ python3 manage.py createsuperuser
     ```
 
 4. Run the tests:
 
-    ```sh
+    ```
     $ python3 manage.py test
     ```
 
 5. Run the server locally:
 
-    ```sh
+    ```
     $ python3 manage.py runserver
     ```
 
-6. Intstall NodeJS dependencies:
+6. Intstall Node.js dependencies:
 
-    ```sh
+    ```
     $ cd web-client/
     $ npm install
-    $ npm install live-server
+    $ npm install -g live-server
     ```
 
 7. Run the live server:
 
-    ```sh
+    ```
     $ live-server
     ```
 
@@ -86,11 +89,11 @@ How to copy this project to your local machine and run it:
 2. Visit http://127.0.0.1:8080/
 3. Click "Register" to create your school account.
 4. Then log in with your credentials.
-5. Everything about your class and you is one click away!
-    - /exams: Upcoming exams
-    - /news: Latest news
-    - /homeworks: Assigned homeworks
-    - /profile: Profile info
+5. Everything about you and your class is one click away!
+    - Upcoming exams
+    - Latest news with live comments
+    - Assigned homeworks with materials for them
+    - Profile info
     - ...
 
 ## The admin site
@@ -100,18 +103,19 @@ How to copy this project to your local machine and run it:
 3. Log in with your superuser data.
 4. Here you can add, update and remove your models.
 
-### License
+## Authors
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+We are students in 10th grade in ELSYS. We study programming and we are very enthusiastic about this project.
 
-### Who are we?
-
-We are two students in 10th grade in ELSYS. We study programming and we are very enthusiastic about this project.
-* [**wencakisa**](https://github.com/wencakisa) - *Python*
-* [**matir8**](https://github.com/matir8) - *HTML, CSS, JS*
+[![wencakisa](https://img.shields.io/badge/wencakisa-python-blue.svg)](https://github.com/wencakisa)
+[![matir8](https://img.shields.io/badge/matir8-javascript-yellow.svg)](https://github.com/matir8)
 
 ### Task list:
 
 - [ ] Make profile editable
 - [ ] Edit your own news
 - [ ] Edit and delete your own comments
+
+### License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
