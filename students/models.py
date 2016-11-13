@@ -123,7 +123,7 @@ class Comment(models.Model):
 
     news = models.ForeignKey(News, on_delete=models.CASCADE)
     posted_by = models.ForeignKey(Student, on_delete=models.CASCADE)
-    content = models.TextField(max_length=256)
+    content = models.TextField(max_length=2048)
     posted_on = models.DateTimeField(auto_now_add=True)
 
 
