@@ -23,6 +23,15 @@ export function DetailedNewsController(id) {
 
         formHandler();
 
+        $(".comment").slice(0, 2).show();
+        $("#loadMore").on('click', (e) => {
+            e.preventDefault();
+            $(".comment:hidden").slice(0, 5).slideDown();
+            if ($(".comment:hidden").length === 0) {
+                $("#loadMore").fadeOut('slow');
+            }
+        });
+
         $('#add-comment-button').on('click', () => {
             let body = {
                 content: ''
@@ -38,7 +47,7 @@ export function DetailedNewsController(id) {
                     }).catch((err) => {
                         toastr.error('Comments can\' be empty!')
                     })
-            } 
+            }
             else {
                 toastr.error('Comments shold be max 2048 characters long!');
             }
