@@ -7,7 +7,7 @@
 # elsyser
 
 **elsyser** is a *single page application (SPA), consuming RESTful services from the Django web server.*
-This is a students' system for ELSYS, Sofia. It's main purpose is to be helpful at our school.
+This is a students' platform for ELSYS, Sofia. It's main purpose is to be helpful at our school.
 
 ## Prerequisites
 
@@ -91,7 +91,7 @@ How to copy this project to your local machine and run it:
     - /news: Latest news
     - /homeworks: Assigned homeworks
     - /profile: Profile info
-    - ...   
+    - ...
 
 ## The admin site
 
@@ -102,7 +102,7 @@ How to copy this project to your local machine and run it:
 
 ### License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ### Who are we?
 
