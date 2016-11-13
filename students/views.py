@@ -82,9 +82,8 @@ class NewsViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, pk=None):
         news = get_object_or_404(
-            News.objects.filter(
-                author__clazz=self.request.user.student.clazz
-            ), id=pk
+            News.objects.filter(author__clazz=self.request.user.student.clazz),
+            id=pk
         )
         serializer = self.serializer_class(news)
 
@@ -95,9 +94,15 @@ class NewsViewSet(viewsets.ModelViewSet):
         news = get_object_or_404(News, id=pk)
 
         if news.author != request.user.student:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {'message': 'You can only edit your own posts.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
 
-        news.__dict__.update(**request.data.dict())
+        if not isinstance(request.data, dict):
+            request.data = request.data.dict()
+
+        news.__dict__.update(**request.data)
         news.save()
 
         serializer = self.serializer_class(news)
@@ -122,17 +127,49 @@ class NewsViewSet(viewsets.ModelViewSet):
         )
 
 
-    @detail_route(methods=['post'])
-    def add_comment(self, request, pk=None):
-        news = get_object_or_404(News, id=pk)
+class CommentsViewSet(viewsets.ModelViewSet):
+
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = CommentSerializer
+
+
+    def create(self, request, news_pk=None):
+        news = get_object_or_404(News, id=news_pk)
         context = {'request': request, 'news': news}
 
-        serializer = CommentSerializer(context=context, data=request.data)
+        serializer = self.serializer_class(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
         return Response(
             serializer.validated_data, status=status.HTTP_201_CREATED
+        )
+
+
+    def update(self, request, news_pk=None, pk=None):
+        news = get_object_or_404(News, id=news_pk)
+        comment = get_object_or_404(news.comment_set, id=pk)
+
+        if not isinstance(request.data, dict):
+            request.data = request.data.dict()
+
+        comment.__dict__.update(**request.data)
+        comment.save()
+
+        serializer = self.serializer_class(comment)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    def destroy(self, requset, news_pk=None, pk=None):
+        news = get_object_or_404(News, id=news_pk)
+        comment = get_object_or_404(news.comment_set, id=pk)
+        comment.delete()
+
+        return Response(
+            {'message': 'Comment successfully deleted.'},
+            status=status.HTTP_200_OK
         )
 
 
