@@ -1,5 +1,9 @@
 .thumbnail {
-    padding:0px;
+    padding:5px;
+}
+.thumbnail>img {
+    width: 50px;
+    height: 82px;
 }
 .panel {
 	position:relative;
