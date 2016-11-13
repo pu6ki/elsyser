@@ -44,7 +44,12 @@ router
     })
     .on('#/news/:id', (params) => {
         DetailedNewsController(params.id);
-        setInterval(() => { loadComments(params.id) }, 3000);
+        let refreshId = setInterval(() => {
+            loadComments(params.id);
+            if (window.location.href !== `http://127.0.0.1:8080/#/news/${params.id}`) {
+                clearInterval(refreshId);
+            }
+        }, 3000);
     })
     .on('#/add-news', () => {
         AddNewsController();
