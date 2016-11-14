@@ -67,3 +67,7 @@
 .comment {
 	display: none;
 }
+
+.new-comment {
+	display: block;
+}
