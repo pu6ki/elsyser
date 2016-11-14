@@ -22,7 +22,7 @@ export function DetailedNewsController(id) {
 
         $('#content').html(template);
         $('.new-comment').removeClass('new-comment');
-        
+
         formHandler();
 
         $(".comment").slice(0, 2).show();
