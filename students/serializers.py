@@ -118,6 +118,7 @@ class StudentProfileSerializer(serializers.ModelSerializer):
 
     user = UserSerializer()
     clazz = ClassSerializer()
+    profile_image = serializers.ImageField(use_url=True)
 
 
     class Meta:

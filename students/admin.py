@@ -24,7 +24,7 @@ class HomeworkAdmin(admin.ModelAdmin):
 
 class CommentAdmin(admin.ModelAdmin):
     fields = ('news', 'posted_by', 'content')
-    list_display = ['id', 'news', 'posted_by', 'posted_on']
+    list_display = ['id', 'news', 'content', 'posted_by', 'posted_on']
     date_hierarchy = 'posted_on'
 
 
