@@ -13,7 +13,8 @@ from .models import Class, Subject, Student, Exam, News, Homework, Comment
 class UserSerializer(serializers.ModelSerializer):
 
     username = serializers.CharField(
-        max_length=20,
+        min_length=3,
+        max_length=30,
         validators=[
             UniqueValidator(
                 queryset=User.objects.all(),

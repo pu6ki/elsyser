@@ -21,6 +21,7 @@ export function RegisterController() {
 function getDataFromTemplate() {
     let body = {
         user: {
+            username: '',
             first_name: '',
             last_name: '',
             email: '',
@@ -32,18 +33,25 @@ function getDataFromTemplate() {
         }
     };
 
+    if (validator.name($("#username").val())) {
+        body.user.username = $("#username").val();
+    }
+    else {
+        toastr.error('Username should be between 3 and 30 characters long!');
+        return;
+    }
     if (validator.name($('#firstName').val())) {
         body.user.first_name = $('#firstName').val();
     }
     else {
-        toastr.error('First Name shoud be between 3 and 30 characters long!');
+        toastr.error('First name shoud be between 3 and 30 characters long!');
         return;
     }
     if (validator.name($('#lastName').val())) {
         body.user.last_name = $('#lastName').val();
     }
     else {
-        toastr.error('Last Name shoud be between 3 and 30 characters long!');
+        toastr.error('Last name shoud be between 3 and 30 characters long!');
         return;
     }
     if (validator.email($('#email').val())) {
