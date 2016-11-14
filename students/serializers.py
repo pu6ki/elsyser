@@ -12,6 +12,16 @@ from .models import Class, Subject, Student, Exam, News, Homework, Comment
 
 class UserSerializer(serializers.ModelSerializer):
 
+    username = serializers.CharField(
+        max_length=20,
+        validators=[
+            UniqueValidator(
+                queryset=User.objects.all(),
+                message='Student with this username already exists.'
+            )
+        ]
+    )
+
     password = serializers.CharField(
         write_only=True,
         required=True,
@@ -40,7 +50,6 @@ class UserSerializer(serializers.ModelSerializer):
             'username', 'first_name', 'last_name', 'email', 'password',
         )
         extra_kwargs = {
-            'username': {'read_only': True},
             'password': {'write_only': True}
         }
 
@@ -77,7 +86,6 @@ class UserLoginSerializer(serializers.Serializer):
             raise serializers.ValidationError(msg)
 
         attrs['user'] = user
-
         return attrs
 
 
@@ -101,10 +109,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
 
     def save(self):
-        user_data = self.validated_data['user']
-        user_data['username'] = user_data['first_name'] + '_' + user_data['last_name']
-
-        user = User.objects.create_user(**user_data)
+        user = User.objects.create_user(**self.validated_data['user'])
         Token.objects.create(user=user)
         self.validated_data['user'] = user
 
@@ -114,9 +119,19 @@ class StudentSerializer(serializers.ModelSerializer):
         return Student.objects.create(**self.validated_data)
 
 
+class UserInfoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email')
+        extra_kwargs = {
+            'email': {'read_only': True}
+        }
+
+
 class StudentProfileSerializer(serializers.ModelSerializer):
 
-    user = UserSerializer()
+    user = UserInfoSerializer()
     clazz = ClassSerializer()
     profile_image = serializers.ImageField(use_url=True)
 
@@ -131,10 +146,6 @@ class StudentProfileSerializer(serializers.ModelSerializer):
         user_data = validated_data.get('user', {})
         instance.user.__dict__.update(**user_data)
         instance.user.save()
-
-        clazz_data = validated_data.get('clazz', {})
-        instance.clazz.__dict__.update(**clazz_data)
-        instance.clazz.save()
 
         instance.__dict__.update(**validated_data)
         instance.save()
