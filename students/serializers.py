@@ -12,16 +12,7 @@ from .models import Class, Subject, Student, Exam, News, Homework, Comment
 
 class UserSerializer(serializers.ModelSerializer):
 
-    username = serializers.CharField(
-        min_length=3,
-        max_length=30,
-        validators=[
-            UniqueValidator(
-                queryset=User.objects.all(),
-                message='Student with this username already exists.'
-            )
-        ]
-    )
+    username = serializers.CharField(min_length=3, max_length=30)
 
     password = serializers.CharField(
         write_only=True,
