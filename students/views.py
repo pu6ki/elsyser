@@ -59,6 +59,18 @@ class StudentProfile(generics.RetrieveUpdateAPIView):
         return Response(serializer.data)
 
 
+    def update(self, request, format=None):
+        student = Student.objects.get(user=request.user)
+
+        serializer = self.serializer_class(
+            student, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+
 class ExamsList(generics.ListAPIView):
 
     authentication_classes = (TokenAuthentication,)
@@ -88,6 +100,7 @@ class NewsViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         context = {'request': request}
+
         serializer = self.serializer_class(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)

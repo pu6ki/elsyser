@@ -114,9 +114,10 @@ We are students in 10th grade in ELSYS. We study programming and we are very ent
 
 ### Task list:
 
-- [ ] Make profile editable
+- [x] Make profile editable
 - [x] Edit your own news
 - [x] Edit and delete your own comments
+- [ ] Implement tests for profile editition
 
 ### License
 

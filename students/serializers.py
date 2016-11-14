@@ -126,6 +126,21 @@ class StudentProfileSerializer(serializers.ModelSerializer):
         depth = 1
 
 
+    def update(self, instance, validated_data):
+        user_data = validated_data.get('user', {})
+        instance.user.__dict__.update(**user_data)
+        instance.user.save()
+
+        clazz_data = validated_data.get('clazz', {})
+        instance.clazz.__dict__.update(**clazz_data)
+        instance.clazz.save()
+
+        instance.__dict__.update(**validated_data)
+        instance.save()
+
+        return instance
+
+
 class SubjectSerializer(serializers.ModelSerializer):
 
     class Meta:
