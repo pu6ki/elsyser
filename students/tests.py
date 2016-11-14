@@ -9,7 +9,11 @@ from rest_framework.authtoken.models import Token
 from datetime import datetime, timedelta
 
 from .models import Class, Student, Subject, Exam, News, Homework, Comment
-from .serializers import NewsSerializer, CommentSerializer
+from .serializers import (
+    StudentProfileSerializer,
+    NewsSerializer,
+    CommentSerializer
+)
 
 
 class RegisterViewTestCase(APITestCase):
@@ -20,6 +24,7 @@ class RegisterViewTestCase(APITestCase):
 
         self.test_data = {
             'user': {
+                'username': 'tester',
                 'first_name': 'test',
                 'last_name': 'user',
                 'email': 'tester@gmail.com',
@@ -103,11 +108,12 @@ class RegisterViewTestCase(APITestCase):
         )
 
         user_data = request.data['user']
+        user = User.objects.get(**user_data)
 
-        self.assertEqual(
-            user_data['username'],
-            user_data['first_name'] + '_' + user_data['last_name']
-        )
+        self.assertEqual(self.test_data['user']['username'], user.username)
+        self.assertEqual(self.test_data['user']['first_name'], user.first_name)
+        self.assertEqual(self.test_data['user']['last_name'], user.last_name)
+        self.assertEqual(self.test_data['user']['email'], user.email)
         self.assertIsNotNone(
             Token.objects.get(user__username=user_data['username'])
         )
@@ -204,7 +210,7 @@ class ProfileViewTestCase(APITestCase):
         self.view_name = 'students:profile'
 
         self.user = User.objects.create(
-            username='test_user',
+            username='tester',
             first_name='test',
             last_name='user',
             email='tester@gmail.com',
@@ -239,6 +245,68 @@ class ProfileViewTestCase(APITestCase):
             self.student.clazz.letter, request.data['clazz']['letter']
         )
         self.assertNotIn('password', request.data['user'])
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_profile_update_with_invalid_username(self):
+        self.client.force_authenticate(user=self.user)
+        self.student.user.username = ''
+        put_data = StudentProfileSerializer(self.student).data
+
+        request = self.client.put(
+            reverse(self.view_name), put_data, format='json'
+        )
+
+        self.assertEqual(
+            request.data['user']['username'], ['This field may not be blank.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_profile_update_with_invalid_first_name(self):
+        self.client.force_authenticate(user=self.user)
+        self.student.user.first_name = ''
+        put_data = StudentProfileSerializer(self.student).data
+
+        request = self.client.put(
+            reverse(self.view_name), put_data, format='json'
+        )
+
+        self.assertEqual(
+            request.data['user']['first_name'], ['This field may not be blank.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_profile_update_with_invalid_last_name(self):
+        self.client.force_authenticate(user=self.user)
+        self.student.user.last_name = ''
+        put_data = StudentProfileSerializer(self.student).data
+
+        request = self.client.put(
+            reverse(self.view_name), put_data, format='json'
+        )
+
+        self.assertEqual(
+            request.data['user']['last_name'], ['This field may not be blank.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_profile_update_with_valid_data(self):
+        self.client.force_authenticate(user=self.user)
+        self.student.user.username = 'MyNewUsername'
+        self.student.user.first_name = 'John'
+        self.student.user.last_name = 'Travolta'
+        put_data = StudentProfileSerializer(self.student).data
+
+        # TODO: Fix view and try to remove this line.
+        put_data.pop('profile_image')
+
+        request = self.client.put(
+            reverse(self.view_name), put_data, format='json'
+        )
+
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
