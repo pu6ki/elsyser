@@ -12,6 +12,7 @@ export function DetailedNewsController(id) {
         resolve(requester.getJSON(newsUrl + id + '/'));
     }).then((newData) => {
         dataFromAPI = newData;
+        dataFromAPI.comment_set.reverse();
         return new Promise((resolve, reject) => {
             resolve(templates.get('detailed-news'));
         });
@@ -20,12 +21,16 @@ export function DetailedNewsController(id) {
             template = hbTemplate(dataFromAPI);
 
         $('#content').html(template);
-
+        $('.new-comment').removeClass('new-comment');
+        
         formHandler();
 
         $(".comment").slice(0, 2).show();
         $("#loadMore").on('click', () => {
             $(".comment:hidden").slice(0, 5).slideDown();
+            if ($("div:hidden").length === 0) {
+                $("#loadMore").fadeOut('slow');
+            }
         });
 
         $('.toTop').click(function () {
@@ -36,25 +41,25 @@ export function DetailedNewsController(id) {
         });
 
         $('#add-comment-button').on('click', () => {
-                let body = {
-                    content: ''
-                },
-                    addCommentUrl = `http://127.0.0.1:8000/api/news/${id}/comments/`;
+            let body = {
+                content: ''
+            },
+                addCommentUrl = `http://127.0.0.1:8000/api/news/${id}/comments/`;
 
-                if (validator.comment($('#comment-content').val())) {
-                    body.content = $('#comment-content').val();
-                    requester.postJSON(addCommentUrl, body)
-                        .then(() => {
-                            toastr.success('Comment added!');
-                            $('#comment-content').val('');
-                        }).catch((err) => {
-                            toastr.error('Comments can\' be empty!')
-                        })
-                }
-                else {
-                    toastr.error('Comments shold be max 2048 characters long!');
-                }
-            });
+            if (validator.comment($('#comment-content').val())) {
+                body.content = $('#comment-content').val();
+                requester.postJSON(addCommentUrl, body)
+                    .then(() => {
+                        toastr.success('Comment added!');
+                        $('#comment-content').val('');
+                    }).catch((err) => {
+                        toastr.error('Comments can\' be empty!')
+                    })
+            }
+            else {
+                toastr.error('Comments shold be max 2048 characters long!');
+            }
+        });
     }).catch((err) => {
         console.log(err);
     });
@@ -70,6 +75,8 @@ export function loadComments(id) {
             hbTemplate = Handlebars.compile(result[1]),
             commentsToLoad = [];
 
+        newData.comment_set.reverse();
+
         commentsToLoad = newData.comment_set.filter(function (obj) {
             return !dataFromAPI.comment_set.some(function (obj2) {
                 return obj.content === obj2.content && obj.posted_by.user === obj2.posted_by.user;
@@ -80,7 +87,7 @@ export function loadComments(id) {
 
         for (let i = 0; i < commentsToLoad.length; i += 1) {
             let template = hbTemplate(commentsToLoad[i]);
-            $('#comments').append(template);
+            $('#comments').prepend(template);
         }
     })
 }
