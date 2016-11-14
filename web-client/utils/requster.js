@@ -6,6 +6,10 @@ let requester = {
             $.ajax({
                 url,
                 method: "GET",
+                beforeSend: (xhr) => {
+                    let token = window.localStorage.getItem('token');
+                    xhr.setRequestHeader('Authorization', `Token ${token}`);
+                },
                 success(response) {
                     resolve(response);
                 },
@@ -25,6 +29,10 @@ let requester = {
                 method: "PUT",
                 contentType: "application/json",
                 data: JSON.stringify(body),
+                beforeSend: (xhr) => {
+                    let token = window.localStorage.getItem('token');
+                    xhr.setRequestHeader('Authorization', `Token ${token}`);
+                },
                 success(response) {
                     resolve(response);
                 },
@@ -79,6 +87,26 @@ let requester = {
             });
         });
         return promise;
+    },
+
+    putImage(url, body, options) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url,
+                method: "PUT",
+                data: body.profile_image,
+                beforeSend: (xhr) => {
+                    let token = window.localStorage.getItem('token');
+                    xhr.setRequestHeader('Authorization', `Token ${token}`);
+                },
+                success(response) {
+                    resolve(response);
+                },
+                error(response) {
+                    reject(response);
+                }
+            });
+        });
     }
 };
 

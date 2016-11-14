@@ -13,6 +13,9 @@ export function ProfileController() {
                 template = hbTemplate(data);
 
             $('#content').html(template);
+            $('#edit-profile').on('click', () => {
+                window.location.href = '/#/profile/edit';
+            });
         }).catch((err) => {
             console.log(err);
         });

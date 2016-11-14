@@ -1,0 +1,22 @@
+<div class="panel panel-primary">
+    <div class="panel-heading"><strong>User Profile</strong></div>
+    <!--<div class="panel-body">-->
+    <div class="row">
+        <img src="http://127.0.0.1:8000/api{{profile_image}}" alt="Profile Image" class="col-xs-6 col-md-4" id="profile-image">
+        <div class="col-xs-6 col-md-4 form-wrapper" id="profile-info">
+            <div>
+                <strong><i>First Name:</i></strong>
+                <input id="new-first-name" type="text" value="{{user.first_name}}">
+            </div>
+            <div>
+                <strong><i>Last Name:</i></strong>
+                <input id="new-last-name" type="text" value="{{user.last_name}}">
+            </div>
+            <div>
+                <strong><i>Change profile picture:</i></strong>
+                <input id="new-profile-picture" type="file" accept="image/*">
+            </div>
+            <button id="save-button" class="btn btn-primary submit">Save</button>
+        </div>
+    </div>
+</div>

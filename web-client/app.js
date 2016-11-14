@@ -6,6 +6,8 @@ import { RegisterController } from './controllers/AuthControllers/RegisterContro
 import { LogoutController } from './controllers/AuthControllers/LogoutController.js';
 
 import { ProfileController } from './controllers/ProfileController.js';
+import { EditProfileController } from './controllers/EditProfileController.js';
+
 import { ExamsController } from './controllers/ExamsController.js';
 
 import { NewsController } from './controllers/NewsControllers/NewsController.js';
@@ -35,6 +37,9 @@ router
     })
     .on('#/profile', () => {
         ProfileController();
+    })
+    .on('#/profile/edit', () => {
+        EditProfileController();
     })
     .on('#/exams', () => {
         ExamsController();
