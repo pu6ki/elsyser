@@ -14,12 +14,10 @@ export function EditProfileController() {
                 hbTemplate = Handlebars.compile(result[1]),
                 template = hbTemplate(data);
 
-            console.log(data);
             $('#content').html(template);
 
             $('#save-button').on('click', () => {
                 editData();
-                editProfilePicture();
             });
         });
 }
