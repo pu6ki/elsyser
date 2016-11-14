@@ -61,7 +61,7 @@ class StudentProfile(generics.RetrieveUpdateAPIView):
 
     def update(self, request, format=None):
         student = Student.objects.get(user=request.user)
-
+        
         serializer = self.serializer_class(
             student, data=request.data, partial=True
         )

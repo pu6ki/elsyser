@@ -13,7 +13,17 @@ from .models import Class, Subject, Student, Exam, News, Homework, Comment
 class UserSerializer(serializers.ModelSerializer):
 
     username = serializers.CharField(min_length=3, max_length=30)
-
+    first_name = serializers.CharField(min_length=3, max_length=30)
+    last_name = serializers.CharField(min_length=3, max_length=30)
+    email = serializers.EmailField(
+        max_length=100,
+        validators=[
+            UniqueValidator(
+                queryset=User.objects.all(),
+                message='Student with this email already exists.'
+            )
+        ],
+    )
     password = serializers.CharField(
         write_only=True,
         required=True,
@@ -25,31 +35,22 @@ class UserSerializer(serializers.ModelSerializer):
         },
     )
 
-    email = serializers.EmailField(
-        max_length=100,
-        validators=[
-            UniqueValidator(
-                queryset=User.objects.all(),
-                message='Student with this email already exists.'
-            )
-        ],
-    )
-
 
     class Meta:
         model = User
         fields = (
             'username', 'first_name', 'last_name', 'email', 'password',
         )
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
 
 
 class UserLoginSerializer(serializers.Serializer):
 
     email_or_username = serializers.CharField()
-    password = serializers.CharField(style={'input_type': 'password'})
+    password = serializers.CharField(
+        write_only=True,
+        required=True,
+        style={'input_type': 'password'}
+    )
 
 
     def validate(self, attrs):
@@ -113,12 +114,15 @@ class StudentSerializer(serializers.ModelSerializer):
 
 class UserInfoSerializer(serializers.ModelSerializer):
 
+    username = serializers.CharField(min_length=3, max_length=30)
+    first_name = serializers.CharField(min_length=3, max_length=30)
+    last_name = serializers.CharField(min_length=3, max_length=30)
+    email = serializers.EmailField(read_only=True, max_length=100)
+
+
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email')
-        extra_kwargs = {
-            'email': {'read_only': True}
-        }
 
 
 class StudentProfileSerializer(serializers.ModelSerializer):
