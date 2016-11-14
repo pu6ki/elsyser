@@ -2,21 +2,18 @@ import { requester } from '../../utils/requster.js';
 import { templates } from '../../utils/templates.js';
 
 export function HomeworksController() {
-    let dataFromAPI;
-    return new Promise((resolve, reject) => {
-        let examsUrl = 'http://127.0.0.1:8000/api/homeworks/';
+    let examsUrl = 'http://127.0.0.1:8000/api/homeworks/',
+        getData = requester.getJSON(examsUrl),
+        getTemplate = templates.get('homeworks');
 
-        resolve(requester.getJSON(examsUrl));
-    }).then((data) => {
-        dataFromAPI = data;
-        return new Promise((resolve, reject) => {
-            resolve(templates.get('homeworks'));
+    Promise.all([getData, getTemplate])
+        .then((result) => {
+            let data = result[0],
+                hbTemplate = Handlebars.compile(result[1]),
+                template = hbTemplate(data);
+
+            $('#content').html(template);
+        }).catch((err) => {
+            console.log(err);
         });
-    }).then((res) => {
-        let hbTemplate = Handlebars.compile(res),
-            template = hbTemplate(dataFromAPI);
-        $('#content').html(template);
-    }).catch((err) => {
-        console.log(err);
-    });
 }

@@ -10,12 +10,9 @@ export function HeaderController() {
         profileImage: ''
     };
 
-
-
     if (window.localStorage.getItem('token')) {
         requester.getJSON(profileUrl)
         .then((result) => {
-            //do the same for the profile picture
             userData.profileImage = result.profile_image;
             userData.username = result.user.username;
             compileTemplate(authHeader, userData);
@@ -29,7 +26,6 @@ export function HeaderController() {
 }
 
 function compileTemplate(template, data) {
-    
     templates.get(template)
         .then((res) => {
             let hbTemplate = Handlebars.compile(res),

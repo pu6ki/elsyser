@@ -1,4 +1,4 @@
-.btn-circle{
+.btn-circle.btn-lg{
   width: 60px;
   height: 60px;
   padding: 10px 16px;
@@ -9,18 +9,6 @@
   position: fixed;
   bottom: 2em;
   right: 0.5em;
-}
-
-.btn-lg {
-  width: 60px;
-  height: 60px;
-}
-
-.btn-md {
-  width: 40px;
-  height: 40px;
-  padding: 8px 14px;
-  font-size: 15px;
 }
 
 a {

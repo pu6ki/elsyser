@@ -4,24 +4,25 @@ import { templates } from '../../utils/templates.js';
 const newsUrl = 'http://127.0.0.1:8000/api/news/';
 
 export function NewsController() {
-    let dataFromAPI;
-    return new Promise((resolve, reject) => {
-        resolve(requester.getJSON(newsUrl));
-    }).then((data) => {
-        dataFromAPI = data;
-        dataFromAPI.forEach((el) => {
-            if (el.comment_set.length > 0) {
-                el.comments_count = el.comment_set.length;
-            }
-        }, this);
-        return new Promise((resolve, reject) => {
-            resolve(templates.get('news'));
+    let data,
+        getData = requester.getJSON(newsUrl),
+        getTemplate = templates.get('news');
+
+    Promise.all([getData, getTemplate])
+        .then((result) => {
+            let newData = result[0],
+                hbTemplate = Handlebars.compile(result[1]);
+
+            data = newData;
+            data.forEach((el) => {
+                if (el.comment_set.length > 0) {
+                    el.comments_count = el.comment_set.length;
+                }
+            }, this);
+
+            let template = hbTemplate(data);
+            $('#content').html(template);
+        }).catch((err) => {
+            console.log(err);
         });
-    }).then((res) => {
-        let hbTemplate = Handlebars.compile(res),
-            template = hbTemplate(dataFromAPI);
-        $('#content').html(template);
-    }).catch((err) => {
-        console.log(err);
-    });
 }

@@ -6,18 +6,15 @@ import { validator } from '../../utils/validator.js';
 export function RegisterController() {
     templates.get('register')
         .then((res) => {
-            return new Promise((resolve, reject) => {
-                let hbTemplate = Handlebars.compile(res),
-                    template = hbTemplate();
+            let hbTemplate = Handlebars.compile(res),
+                template = hbTemplate();
 
-                $('#content').html(template);
-                formHandler();
+            $('#content').html(template);
+            formHandler();
 
-                $('#registerButton').on('click', () => {
-                    register();
-                });
+            $('#registerButton').on('click', () => {
+                register();
             });
-
         });
 }
 
