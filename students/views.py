@@ -80,6 +80,23 @@ class NewsViewSet(viewsets.ModelViewSet):
     serializer_class = NewsSerializer
 
 
+    def get_queryset(self):
+        return News.objects.filter(
+            author__clazz=self.request.user.student.clazz
+        )
+
+
+    def create(self, request):
+        context = {'request': request}
+        serializer = self.serializer_class(context=context, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        return Response(
+            serializer.validated_data, status=status.HTTP_201_CREATED
+        )
+
+
     def retrieve(self, request, pk=None):
         news = get_object_or_404(
             News.objects.filter(author__clazz=self.request.user.student.clazz),
@@ -108,23 +125,6 @@ class NewsViewSet(viewsets.ModelViewSet):
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
-    def get_queryset(self):
-        return News.objects.filter(
-            author__clazz=self.request.user.student.clazz
-        )
-
-
-    def create(self, request):
-        context = {'request': request}
-        serializer = self.serializer_class(context=context, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-
-        return Response(
-            serializer.validated_data, status=status.HTTP_201_CREATED
-        )
-
-
 class CommentsViewSet(viewsets.ModelViewSet):
 
     authentication_classes = (TokenAuthentication,)
@@ -150,6 +150,12 @@ class CommentsViewSet(viewsets.ModelViewSet):
         news = get_object_or_404(News, id=news_pk)
         comment = get_object_or_404(news.comment_set, id=pk)
 
+        if comment.posted_by != request.user.student:
+            return Response(
+                {'message': 'You can edit only your own comments.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
         serializer = self.serializer_class(
             comment, data=request.data, partial=True
         )
@@ -159,9 +165,16 @@ class CommentsViewSet(viewsets.ModelViewSet):
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
-    def destroy(self, requset, news_pk=None, pk=None):
+    def destroy(self, request, news_pk=None, pk=None):
         news = get_object_or_404(News, id=news_pk)
         comment = get_object_or_404(news.comment_set, id=pk)
+
+        if comment.posted_by != request.user.student:
+            return Response(
+                {'message': 'You can delete only your own comments.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
         comment.delete()
 
         return Response(
