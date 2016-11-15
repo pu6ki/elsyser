@@ -14,6 +14,13 @@
                 <div>
                     <i>Topic: </i><strong><span>{{topic}}</span></strong>
                 </div>
+                <div>
+                    {{#if details}}
+                        <i>Details: </i><strong><span>{{details}}</span></strong>
+                    {{else}}
+                        <i>No details provided.</i>
+                    {{/if}}
+                </div>
             </div>
         </div>
     {{/each}}

@@ -179,7 +179,7 @@ class ExamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Exam
-        fields = ('subject', 'topic', 'date')
+        fields = ('subject', 'topic', 'date', 'details')
         depth = 1
 
 

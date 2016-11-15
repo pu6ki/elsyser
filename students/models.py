@@ -69,6 +69,7 @@ class Exam(models.Model):
     date = models.DateField(auto_now=False, validators=[validate_date])
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     topic = models.CharField(unique=True, max_length=60)
+    details = models.TextField(max_length=1000, blank=True)
 
 
     class Meta:
