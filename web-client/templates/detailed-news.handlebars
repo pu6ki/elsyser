@@ -11,6 +11,12 @@
         <div>
             <i>Posted by <strong><span>{{author.user}}</span></strong> on </i><strong><span>{{posted_on}}</span></strong>
         </div>
+        {{#if editable}}
+            <div class="pull-right edit">
+                <a href="#/news/{{id}}/edit"><span class="glyphicon glyphicon-edit"></span></a>
+                <a href="#/news/{{id}}/delete"><span class="glyphicon glyphicon-trash"></span></a>
+            </div>
+        {{/if}}
     </div>
 </div>
 

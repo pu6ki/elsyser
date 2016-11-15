@@ -2,12 +2,12 @@ import { requester } from '../../utils/requster.js';
 import { templates } from '../../utils/templates.js';
 
 const newsUrl = 'http://127.0.0.1:8000/api/news/';
+const currentUsername = localStorage.getItem('elsyser-username');
 
 export function NewsController() {
     let data,
         getData = requester.getJSON(newsUrl),
-        getTemplate = templates.get('news'),
-        currentUsername = localStorage.getItem('elsyser-username');
+        getTemplate = templates.get('news');
 
     Promise.all([getData, getTemplate])
         .then((result) => {

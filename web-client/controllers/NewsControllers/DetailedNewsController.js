@@ -5,65 +5,68 @@ import { formHandler } from '../../utils/formHandler.js';
 
 let dataFromAPI;
 const newsUrl = "http://127.0.0.1:8000/api/news/";
+const currentUsername = localStorage.getItem('elsyser-username');
 
 export function DetailedNewsController(id) {
+    let getData = requester.getJSON(newsUrl + id + '/'),
+        getTemplate = templates.get('detailed-news');
 
-    return new Promise((resolve, reject) => {
-        resolve(requester.getJSON(newsUrl + id + '/'));
-    }).then((newData) => {
-        dataFromAPI = newData;
-        dataFromAPI.comment_set.reverse();
-        return new Promise((resolve, reject) => {
-            resolve(templates.get('detailed-news'));
-        });
-    }).then((res) => {
-        let hbTemplate = Handlebars.compile(res),
-            template = hbTemplate(dataFromAPI);
+    Promise.all([getData, getTemplate])
+        .then((result) => {
+            dataFromAPI = result[0];
+            let hbTemplate = Handlebars.compile(result[1]);
 
-        $('#content').html(template);
-        $('.new-comment').removeClass('new-comment');
+            dataFromAPI.comment_set.reverse();
 
-        formHandler();
-
-        $(".comment").slice(0, 2).show();
-        $("#loadMore").on('click', () => {
-            $(".comment:hidden").slice(0, 5).slideDown();
-            if ($("div:hidden").length === 0) {
-                $("#loadMore").fadeOut('slow');
+            if (dataFromAPI.author.user === currentUsername) {
+                dataFromAPI.editable = true;
             }
+
+            let template = hbTemplate(dataFromAPI);
+            $('#content').html(template);
+
+            $('.new-comment').removeClass('new-comment');
+
+            formHandler();
+
+            $(".comment").slice(0, 2).show();
+            $("#loadMore").on('click', () => {
+                $(".comment:hidden").slice(0, 5).slideDown();
+                if ($("div:hidden").length === 0) {
+                    $("#loadMore").fadeOut('slow');
+                }
+            });
+
+            $('.toTop').click(function () {
+                $('body,html').animate({
+                    scrollTop: 0
+                }, 600);
+                return false;
+            });
+
+            $('#add-comment-button').on('click', () => {
+                let body = {
+                    content: ''
+                },
+                    addCommentUrl = `http://127.0.0.1:8000/api/news/${id}/comments/`;
+
+                if (validator.comment($('#comment-content').val())) {
+                    body.content = $('#comment-content').val();
+                    requester.postJSON(addCommentUrl, body)
+                        .then(() => {
+                            toastr.success('Comment added!');
+                            $('#comment-content').val('');
+                        }).catch((err) => {
+                            toastr.error('Comments can\' be empty!')
+                        })
+                }
+                else {
+                    toastr.error('Comments shold be max 2048 characters long!');
+                }
+            });
+        }).catch((err) => {
+            console.log(err);
         });
-
-        $('.toTop').click(function () {
-            $('body,html').animate({
-                scrollTop: 0
-            }, 600);
-            return false;
-        });
-
-        $('#add-comment-button').on('click', () => {
-            let body = {
-                content: ''
-            },
-                addCommentUrl = `http://127.0.0.1:8000/api/news/${id}/comments/`;
-
-            if (validator.comment($('#comment-content').val())) {
-                body.content = $('#comment-content').val();
-                requester.postJSON(addCommentUrl, body)
-                    .then(() => {
-                        toastr.success('Comment added!');
-                        $('#comment-content').val('');
-                    }).catch((err) => {
-                        toastr.error('Comments can\' be empty!')
-                    })
-            }
-            else {
-                toastr.error('Comments shold be max 2048 characters long!');
-            }
-        });
-    }).catch((err) => {
-        console.log(err);
-    });
-
 }
 
 export function loadComments(id) {

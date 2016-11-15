@@ -14,6 +14,7 @@ import { NewsController } from './controllers/NewsControllers/NewsController.js'
 import { AddNewsController } from './controllers/NewsControllers/AddNewsController.js';
 import { DetailedNewsController, loadComments } from './controllers/NewsControllers/DetailedNewsController.js';
 import { DeleteNewsController } from './controllers/NewsControllers/DeleteNewsController.js';
+import { EditNewsController } from './controllers/NewsControllers/EditNewsController.js';
 
 import { HomeworksController } from './controllers/HomeworksControllers/HomeworksController.js';
 
