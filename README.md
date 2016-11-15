@@ -114,8 +114,11 @@ We are students in 10th grade in ELSYS. We study programming and we are very ent
 
 ### Task list:
 
-- [ ] **Fix profile image change in profile.**
-- [ ] **Fix profile edition tests.**
+- [ ] Write tests for news deletion
+- [ ] Write tests for student info updating
+- [ ] Write tests for exams detail info
+- [ ] Fix profile image updating in profile.
+- [ ] Write tests for profile image updating.
 
 ### License
 
