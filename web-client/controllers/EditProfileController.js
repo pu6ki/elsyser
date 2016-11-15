@@ -28,7 +28,8 @@ function editData() {
             username: '',
             first_name: '',
             last_name: ''
-        }
+        },
+        info: ''
     };
 
     if (validator.name($('#new-username').val())) {
@@ -53,6 +54,8 @@ function editData() {
         return;
     }
 
+    body.info = $('#new-info').val();
+    
     requester.putJSON(profileUrl, body)
         .then(() => {
             toastr.success('Data updated successfully!');

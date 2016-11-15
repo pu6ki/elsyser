@@ -143,7 +143,7 @@ class StudentProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ('user', 'clazz', 'profile_image')
+        fields = ('user', 'clazz', 'profile_image', 'info')
         depth = 1
 
 

@@ -44,6 +44,7 @@ class Student(models.Model):
     profile_image = models.ImageField(
         upload_to='images/', default='images/default.png'
     )
+    info = models.TextField(max_length=2048, blank=True)
 
 
     def __str__(self):
