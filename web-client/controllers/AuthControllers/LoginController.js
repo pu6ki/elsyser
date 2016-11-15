@@ -1,6 +1,7 @@
 import { requester } from '../../utils/requster.js';
 import { templates } from '../../utils/templates.js';
 import { formHandler } from '../../utils/formHandler.js';
+import { setUsernameToLocalSorage } from '../../utils/helper.js';
 
 export function LoginController() {
     templates.get('login')
@@ -37,6 +38,7 @@ function login() {
         .then((result) => {
             if (result.token) {
                 localStorage.setItem('token', result.token);
+                setUsernameToLocalSorage();
                 toastr.success('Logged-in successfully!');
                 window.location.href = '#/home';
             }
@@ -44,4 +46,3 @@ function login() {
             toastr.error('Couldn\'t log-in with the provided credentials!');
         });
 }
-

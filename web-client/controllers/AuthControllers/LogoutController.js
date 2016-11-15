@@ -1,5 +1,6 @@
 export function LogoutController() {
     toastr.success('Logged-out successfully!');
-    window.localStorage.removeItem('token');
+    localStorage.removeItem('token');
+    localStorage.removeItem('elsyser-username');
     window.location.href = '#/home';
 }
