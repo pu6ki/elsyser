@@ -61,7 +61,7 @@ class StudentProfile(generics.RetrieveUpdateAPIView):
 
     def update(self, request, format=None):
         student = Student.objects.get(user=request.user)
-        
+
         serializer = self.serializer_class(
             student, data=request.data, partial=True
         )
@@ -125,7 +125,7 @@ class NewsViewSet(viewsets.ModelViewSet):
 
         if news.author != request.user.student:
             return Response(
-                {'message': 'You can only edit your own posts.'},
+                {'message': 'You can edint only your own posts.'},
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
@@ -136,6 +136,23 @@ class NewsViewSet(viewsets.ModelViewSet):
         self.perform_update(serializer)
 
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+
+    def destroy(self, request, pk=None):
+        news = get_object_or_404(News, id=pk)
+
+        if news.author != request.user.student:
+            return Response(
+                {'message': 'You can delete only your own posts.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        news.delete()
+
+        return Response(
+            {'message': 'Post successfully deleted.'},
+            status=status.HTTP_200_OK
+        )
 
 
 class CommentsViewSet(viewsets.ModelViewSet):
