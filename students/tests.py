@@ -619,7 +619,7 @@ class NewsDetailViewTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'], 'You can only edit your own posts.'
+            request.data['message'], 'You can edit only your own posts.'
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 

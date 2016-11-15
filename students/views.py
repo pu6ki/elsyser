@@ -125,7 +125,7 @@ class NewsViewSet(viewsets.ModelViewSet):
 
         if news.author != request.user.student:
             return Response(
-                {'message': 'You can edint only your own posts.'},
+                {'message': 'You can edit only your own posts.'},
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
