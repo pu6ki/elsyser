@@ -52,10 +52,11 @@ function editData() {
         });
 }
 
-function editProfilePicture() {
-    let body = {
-        profile_image: new FormData($('#new-profile-picture').prop('files')) 
-    };
+//TODO: Edit profile picture
+// function editProfilePicture() {
+//     let body = {
+//         profile_image: new FormData($('#new-profile-picture').prop('files')) 
+//     };
 
-    Promise.resolve(requester.putImage(profileUrl, body)); 
-}
+//     Promise.resolve(requester.putImage(profileUrl, body)); 
+// }

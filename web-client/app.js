@@ -13,6 +13,7 @@ import { ExamsController } from './controllers/ExamsController.js';
 import { NewsController } from './controllers/NewsControllers/NewsController.js';
 import { AddNewsController } from './controllers/NewsControllers/AddNewsController.js';
 import { DetailedNewsController, loadComments } from './controllers/NewsControllers/DetailedNewsController.js';
+import { DeleteNewsController } from './controllers/NewsControllers/DeleteNewsController.js';
 
 import { HomeworksController } from './controllers/HomeworksControllers/HomeworksController.js';
 
@@ -58,6 +59,12 @@ router
     })
     .on('#/add-news', () => {
         AddNewsController();
+    })
+    .on('#/news/:id/edit', (params) => {
+        EditNewsController(params.id);
+    })
+    .on('#/news/:id/delete', (params) => {
+        DeleteNewsController(params.id);
     })
     .on('#/homework', () => {
         HomeworksController();

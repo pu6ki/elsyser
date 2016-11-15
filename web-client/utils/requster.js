@@ -107,6 +107,26 @@ let requester = {
                 }
             });
         });
+    },
+
+    delete(url) {
+        let promise = new Promise((resolve, reject) => {
+            $.ajax({
+                url,
+                method: "DELETE",
+                beforeSend: (xhr) => {
+                    let token = window.localStorage.getItem('token');
+                    xhr.setRequestHeader('Authorization', `Token ${token}`);
+                },
+                success(response) {
+                    resolve(response);
+                },
+                error(response) {
+                    reject(response);
+                }
+            });
+        });
+        return promise;
     }
 };
 

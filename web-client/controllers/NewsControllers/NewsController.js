@@ -6,7 +6,8 @@ const newsUrl = 'http://127.0.0.1:8000/api/news/';
 export function NewsController() {
     let data,
         getData = requester.getJSON(newsUrl),
-        getTemplate = templates.get('news');
+        getTemplate = templates.get('news'),
+        currentUsername = localStorage.getItem('elsyser-username');
 
     Promise.all([getData, getTemplate])
         .then((result) => {
@@ -17,6 +18,9 @@ export function NewsController() {
             data.forEach((el) => {
                 if (el.comment_set.length > 0) {
                     el.comments_count = el.comment_set.length;
+                }
+                if (el.author.user === currentUsername) {
+                    el.editable = true;
                 }
             }, this);
 
