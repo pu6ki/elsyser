@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.core.validators import validate_email, ValidationError
 
 from rest_framework import serializers
-from rest_framework.validators import UniqueValidator
+from rest_framework.validators import UniqueValidator, UniqueTogetherValidator
 from rest_framework.authtoken.models import Token
 
 from .models import Class, Subject, Student, Exam, News, Homework, Comment
@@ -12,7 +12,16 @@ from .models import Class, Subject, Student, Exam, News, Homework, Comment
 
 class UserSerializer(serializers.ModelSerializer):
 
-    username = serializers.CharField(min_length=3, max_length=30)
+    username = serializers.CharField(
+        min_length=3,
+        max_length=30,
+        validators=[
+            UniqueValidator(
+                queryset=User.objects.all(),
+                message='Student with this username already exists.'
+            )
+        ]
+    )
     first_name = serializers.CharField(min_length=3, max_length=30)
     last_name = serializers.CharField(min_length=3, max_length=30)
     email = serializers.EmailField(
@@ -129,17 +138,24 @@ class StudentProfileSerializer(serializers.ModelSerializer):
 
     user = UserInfoSerializer()
     clazz = ClassSerializer()
-    profile_image = serializers.ImageField(use_url=True)
+    # profile_image = serializers.ImageField(use_url=True)
 
 
     class Meta:
         model = Student
-        fields = ('user', 'clazz', 'profile_image')
+        fields = ('user', 'clazz', 'profile_image', 'info')
         depth = 1
 
 
     def update(self, instance, validated_data):
         user_data = validated_data.get('user', {})
+        username = user_data.get('username', '')
+
+        if User.objects.exclude(pk=instance.user.pk).filter(username=username):
+            raise serializers.ValidationError(
+                'Student with this username already exists.'
+            )
+
         instance.user.__dict__.update(**user_data)
         instance.user.save()
 
@@ -163,7 +179,7 @@ class ExamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Exam
-        fields = ('subject', 'topic', 'date')
+        fields = ('subject', 'topic', 'date', 'details')
         depth = 1
 
 

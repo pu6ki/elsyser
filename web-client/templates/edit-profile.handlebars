@@ -5,17 +5,25 @@
         <img src="http://127.0.0.1:8000/api{{profile_image}}" alt="Profile Image" class="col-xs-6 col-md-4" id="profile-image">
         <div class="col-xs-6 col-md-4 form-wrapper" id="profile-info">
             <div>
-                <strong><i>First Name:</i></strong>
+                <strong><i>Username:</i></strong>
+                <input id="new-username" type="text" value="{{user.username}}">
+            </div>
+            <div>
+                <strong><i>First name:</i></strong>
                 <input id="new-first-name" type="text" value="{{user.first_name}}">
             </div>
             <div>
-                <strong><i>Last Name:</i></strong>
+                <strong><i>Last name:</i></strong>
                 <input id="new-last-name" type="text" value="{{user.last_name}}">
             </div>
-            <!--<div>
+            <div>
+                <strong><i>Info:</i></strong>
+                <textarea id="new-info" rows="3">{{info}}</textarea>
+            </div>
+            <!-- <div>
                 <strong><i>Change profile picture:</i></strong>
                 <input id="new-profile-picture" type="file" accept="image/*">
-            </div>-->
+            </div> -->
             <button id="save-button" class="btn btn-primary submit">Save</button>
         </div>
     </div>

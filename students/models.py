@@ -44,6 +44,7 @@ class Student(models.Model):
     profile_image = models.ImageField(
         upload_to='images/', default='images/default.png'
     )
+    info = models.TextField(max_length=2048, blank=True)
 
 
     def __str__(self):
@@ -69,6 +70,7 @@ class Exam(models.Model):
     date = models.DateField(auto_now=False, validators=[validate_date])
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     topic = models.CharField(unique=True, max_length=60)
+    details = models.TextField(max_length=1000, blank=True)
 
 
     class Meta:

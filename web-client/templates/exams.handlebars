@@ -1,5 +1,4 @@
 {{#if this}}
-    <h3>Upcoming Exams</h3>
     {{#each this}}
         <div class="panel panel-primary">
             <div class="panel-heading">
@@ -13,6 +12,13 @@
                 </div>
                 <div>
                     <i>Topic: </i><strong><span>{{topic}}</span></strong>
+                </div>
+                <div>
+                    {{#if details}}
+                        <i>Details: </i><strong><span>{{details}}</span></strong>
+                    {{else}}
+                        <i>No details provided.</i>
+                    {{/if}}
                 </div>
             </div>
         </div>
