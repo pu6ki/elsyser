@@ -40,8 +40,6 @@ class UserLogin(generics.CreateAPIView):
         user = serializer.validated_data['user']
         token, _ = Token.objects.get_or_create(user=user)
 
-        request.session.set_expiry(1209600)
-
         return Response({'token': token.key})
 
 
