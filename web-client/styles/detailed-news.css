@@ -71,3 +71,7 @@
 .new-comment {
 	display: block;
 }
+
+.edit-comments a{
+	color: #33739E
+}
