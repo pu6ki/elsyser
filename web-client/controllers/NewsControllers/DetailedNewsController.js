@@ -2,20 +2,20 @@ import { requester } from '../../utils/requster.js';
 import { templates } from '../../utils/templates.js';
 import { validator } from '../../utils/validator.js';
 import { formHandler } from '../../utils/formHandler.js';
+import { AddCommentController } from './AddCommentController.js';
 
-let dataFromAPI;
+let dataFromAPI, currentUsername;
 const newsUrl = "http://127.0.0.1:8000/api/news/";
-const currentUsername = localStorage.getItem('elsyser-username');
 
 export function DetailedNewsController(id) {
+    currentUsername = localStorage.getItem('elsyser-username');
     let getData = requester.getJSON(newsUrl + id + '/'),
         getTemplate = templates.get('detailed-news');
 
     Promise.all([getData, getTemplate])
         .then((result) => {
             dataFromAPI = result[0];
-            let hbTemplate = Handlebars.compile(result[1]),
-                template;
+            let hbTemplate = Handlebars.compile(result[1]);
 
             if (dataFromAPI.author.user === currentUsername) {
                 dataFromAPI.editable = true;
@@ -26,12 +26,12 @@ export function DetailedNewsController(id) {
             dataFromAPI.comment_set.forEach((el) => {
                 if (el.posted_by.user === currentUsername) {
                     el.editableComment = true;
-                    template = hbTemplate(dataFromAPI);
-                } else {
-                    template = hbTemplate(dataFromAPI);
+                    $('#content').html(hbTemplate(dataFromAPI));
                 }
             });
 
+
+            let template = hbTemplate(dataFromAPI);
             $('#content').html(template);
 
             $('.new-comment').removeClass('new-comment');
@@ -54,24 +54,7 @@ export function DetailedNewsController(id) {
             });
 
             $('#add-comment-button').on('click', () => {
-                let body = {
-                    content: ''
-                },
-                    addCommentUrl = `http://127.0.0.1:8000/api/news/${id}/comments/`;
-
-                if (validator.comment($('#comment-content').val())) {
-                    body.content = $('#comment-content').val();
-                    requester.postJSON(addCommentUrl, body)
-                        .then(() => {
-                            toastr.success('Comment added!');
-                            $('#comment-content').val('');
-                        }).catch((err) => {
-                            toastr.error('Comments can\' be empty!')
-                        })
-                }
-                else {
-                    toastr.error('Comments shold be max 2048 characters long!');
-                }
+                AddCommentController(id);
             });
         }).catch((err) => {
             console.log(err);
@@ -98,6 +81,10 @@ export function loadComments(id) {
         dataFromAPI.comment_set = newData.comment_set;
 
         for (let i = 0; i < commentsToLoad.length; i += 1) {
+            if (commentsToLoad[i].posted_by.user == currentUsername) {
+                commentsToLoad[i].newsId = id;
+                commentsToLoad[i].editable = true;
+            }
             let template = hbTemplate(commentsToLoad[i]);
             $('#comments').prepend(template);
         }

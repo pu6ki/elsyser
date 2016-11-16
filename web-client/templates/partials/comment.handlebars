@@ -7,6 +7,12 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <strong>{{this.posted_by.user}}</strong> commented on <span class="text-muted">{{this.posted_on}}</span>
+                {{#if editable}}
+                    <div class="pull-right edit">
+                        <a href="#/news/{{newsId}}/comments/{{id}}/edit"><span class="glyphicon glyphicon-edit"></span></a>
+                        <a href="#/news/{{newsId}}/comments/{{id}}/delete"><span class="glyphicon glyphicon-trash"></span></a>
+                    </div>
+                {{/if}}
             </div>
             <div class="panel-body">
                 {{this.content}}

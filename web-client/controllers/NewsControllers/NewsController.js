@@ -19,7 +19,6 @@ export function NewsController() {
                 if (el.comment_set.length > 0) {
                     el.comments_count = el.comment_set.length;
                 }
-                console.log(localStorage);
                 if (el.author.user === currentUsername) {
                     el.editable = true;
                 }
