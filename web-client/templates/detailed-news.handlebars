@@ -31,10 +31,10 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <strong>{{this.posted_by.user}}</strong> commented on <span class="text-muted">{{this.posted_on}}</span>
-                    {{#if editable}}
+                    {{#if editableComment}}
                     <div class="pull-right edit">
-                        <a href="#/news/{{newsId}}/comments/{{commentsId}}/edit"><span class="glyphicon glyphicon-edit"></span></a>
-                        <a href="#/news/{{newsId}}/comments/{{commentsId}}/delete"><span class="glyphicon glyphicon-trash"></span></a>
+                        <a href="#/news/{{../id}}/comments/{{id}}/edit"><span class="glyphicon glyphicon-edit"></span></a>
+                        <a href="#/news/{{../id}}/comments/{{id}}/delete"><span class="glyphicon glyphicon-trash"></span></a>
                     </div>
                     {{/if}}
                 </div>

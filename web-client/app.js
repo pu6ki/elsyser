@@ -15,6 +15,7 @@ import { AddNewsController } from './controllers/NewsControllers/AddNewsControll
 import { DetailedNewsController, loadComments } from './controllers/NewsControllers/DetailedNewsController.js';
 import { DeleteNewsController } from './controllers/NewsControllers/DeleteNewsController.js';
 import { EditNewsController } from './controllers/NewsControllers/EditNewsController.js';
+import { DeleteCommentController } from './controllers/NewsControllers/DeleteCommentController.js';
 
 import { HomeworksController } from './controllers/HomeworksControllers/HomeworksController.js';
 
@@ -67,6 +68,9 @@ router
     .on('#/news/:id/delete', (params) => {
         DeleteNewsController(params.id);
     })
+    .on('#/news/:newsId/comments/:commentId/delete', (params) => {
+        DeleteCommentController(params.newsId, params.commentId);
+    }) 
     .on('#/homework', () => {
         HomeworksController();
     })

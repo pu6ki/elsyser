@@ -14,7 +14,8 @@ export function DetailedNewsController(id) {
     Promise.all([getData, getTemplate])
         .then((result) => {
             dataFromAPI = result[0];
-            let hbTemplate = Handlebars.compile(result[1]);
+            let hbTemplate = Handlebars.compile(result[1]),
+                template;
 
             if (dataFromAPI.author.user === currentUsername) {
                 dataFromAPI.editable = true;
@@ -24,11 +25,13 @@ export function DetailedNewsController(id) {
 
             dataFromAPI.comment_set.forEach((el) => {
                 if (el.posted_by.user === currentUsername) {
-                    el.editable = true;
+                    el.editableComment = true;
+                    template = hbTemplate(dataFromAPI);
+                } else {
+                    template = hbTemplate(dataFromAPI);
                 }
-            })
+            });
 
-            let template = hbTemplate(dataFromAPI);
             $('#content').html(template);
 
             $('.new-comment').removeClass('new-comment');
