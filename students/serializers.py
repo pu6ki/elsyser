@@ -197,7 +197,6 @@ class AuthorSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
 
-    comment_id = serializers.SerializerMethodField('get_id')
     posted_by = AuthorSerializer(read_only=True)
     content = serializers.CharField(max_length=2048)
     posted_on = serializers.DateTimeField(
@@ -206,12 +205,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ('comment_id', 'posted_by', 'content', 'posted_on')
+        fields = ('id', 'posted_by', 'content', 'posted_on')
         depth = 1
-
-
-    def get_id(self, obj):
-        return obj.id
 
 
     def create(self, validated_data):
