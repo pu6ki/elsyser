@@ -5,6 +5,12 @@
                 <strong>
                     <span><a class="heading-anchor" href="#/news/{{id}}">{{title}}</a></span>
                 </strong>
+                {{#if editable}}
+                <div class="pull-right edit">
+                    <a href="#/news/{{id}}/edit"><span class="glyphicon glyphicon-edit"></span></a>
+                    <a href="#/news/{{id}}/delete"><span class="glyphicon glyphicon-trash"></span></a>
+                </div>
+                {{/if}}
             </div>
             <div class="panel-body">
                 <div>
@@ -21,12 +27,6 @@
                         <strong><i>No comments</i></strong>
                     {{/if}}
                 </div>
-                {{#if editable}}
-                <div class="pull-right edit">
-                    <a href="#/news/{{id}}/edit"><span class="glyphicon glyphicon-edit"></span></a>
-                    <a href="#/news/{{id}}/delete"><span class="glyphicon glyphicon-trash"></span></a>
-                </div>
-                {{/if}}
             </div>
         </div>
     {{/each}}
