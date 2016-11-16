@@ -16,11 +16,17 @@ export function DetailedNewsController(id) {
             dataFromAPI = result[0];
             let hbTemplate = Handlebars.compile(result[1]);
 
-            dataFromAPI.comment_set.reverse();
-
             if (dataFromAPI.author.user === currentUsername) {
                 dataFromAPI.editable = true;
             }
+
+            dataFromAPI.comment_set.reverse();
+
+            dataFromAPI.comment_set.forEach((el) => {
+                if (el.posted_by.user === currentUsername) {
+                    el.editable = true;
+                }
+            })
 
             let template = hbTemplate(dataFromAPI);
             $('#content').html(template);

@@ -2,7 +2,13 @@
     <div class="panel-heading">
         <strong>
              <span>{{title}}</span>
-         </strong>
+         </strong> 
+        {{#if editable}}
+        <div class="pull-right edit">
+            <a href="#/news/{{id}}/edit"><span class="glyphicon glyphicon-edit"></span></a>
+            <a href="#/news/{{id}}/delete"><span class="glyphicon glyphicon-trash"></span></a>
+        </div>
+        {{/if}}
     </div>
     <div class="panel-body">
         <div>
@@ -11,12 +17,6 @@
         <div>
             <i>Posted by <strong><span>{{author.user}}</span></strong> on </i><strong><span>{{posted_on}}</span></strong>
         </div>
-        {{#if editable}}
-            <div class="pull-right edit">
-                <a href="#/news/{{id}}/edit"><span class="glyphicon glyphicon-edit"></span></a>
-                <a href="#/news/{{id}}/delete"><span class="glyphicon glyphicon-trash"></span></a>
-            </div>
-        {{/if}}
     </div>
 </div>
 
@@ -31,6 +31,12 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <strong>{{this.posted_by.user}}</strong> commented on <span class="text-muted">{{this.posted_on}}</span>
+                    {{#if editable}}
+                    <div class="pull-right edit">
+                        <a href="#/news/{{newsId}}/comments/{{commentsId}}/edit"><span class="glyphicon glyphicon-edit"></span></a>
+                        <a href="#/news/{{newsId}}/comments/{{commentsId}}/delete"><span class="glyphicon glyphicon-trash"></span></a>
+                    </div>
+                    {{/if}}
                 </div>
                 <div class="panel-body">
                     {{this.content}}
