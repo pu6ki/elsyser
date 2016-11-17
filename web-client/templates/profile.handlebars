@@ -4,11 +4,12 @@
     <div class="row">
         <img src="http://127.0.0.1:8000/api{{profile_image}}" alt="Profile Image" class="col-xs-6 col-md-4" id="profile-image">
         <div class="col-xs-6 col-md-4" id="profile-info">
+            {{#with user}}
             <div>
                 <i>Username:</i>
                 <strong>
                     <span>
-                        {{user.username}}
+                        {{username}}
                     </span>
                 </strong>
             </div>
@@ -16,7 +17,7 @@
                 <i>Name:</i>
                 <strong>
                     <span>
-                        {{user.first_name}} {{user.last_name}}
+                        {{first_name}} {{last_name}}
                     </span>
                 </strong>
             </div>
@@ -24,18 +25,21 @@
                 <i>Email:</i>
                 <strong>
                     <span>
-                        {{user.email}}
+                        {{email}}
                     </span>
                 </strong>
             </div>
+            {{/with}}
+            {{#with clazz}}
             <div>
                 <i>Class:</i>
                 <strong>
                     <span>
-                        {{clazz.number}}{{clazz.letter}}
+                        {{number}}{{letter}}
                     </span>
                 </strong>
             </div>
+            {{/with}}
             <div>
                 {{#if info}}
                     <i>About you:</i>

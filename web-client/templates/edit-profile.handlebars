@@ -4,18 +4,20 @@
     <div class="row">
         <img src="http://127.0.0.1:8000/api{{profile_image}}" alt="Profile Image" class="col-xs-6 col-md-4" id="profile-image">
         <div class="col-xs-6 col-md-4 form-wrapper" id="profile-info">
+            {{#with user}}
             <div>
                 <strong><i>Username:</i></strong>
-                <input id="new-username" type="text" value="{{user.username}}">
+                <input id="new-username" type="text" value="{{username}}">
             </div>
             <div>
                 <strong><i>First name:</i></strong>
-                <input id="new-first-name" type="text" value="{{user.first_name}}">
+                <input id="new-first-name" type="text" value="{{first_name}}">
             </div>
             <div>
                 <strong><i>Last name:</i></strong>
-                <input id="new-last-name" type="text" value="{{user.last_name}}">
+                <input id="new-last-name" type="text" value="{{last_name}}">
             </div>
+            {{/with}}
             <div>
                 <strong><i>Info:</i></strong>
                 <textarea id="new-info" rows="3">{{info}}</textarea>
