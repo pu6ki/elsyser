@@ -1,12 +1,12 @@
 <div class="row comment new-comment">
     <div class="col-xs-2 col-md-1 img-container">
-        <img class="user-photo" src="http://127.0.0.1:8000/api{{this.posted_by.profile_image}}">
+        <img class="user-photo" src="http://127.0.0.1:8000/api{{posted_by.profile_image}}">
     </div>
 
     <div class="col-xs-9 col-md-10">
         <div id="comment-{{id}}" class="panel panel-default">
             <div class="panel-heading">
-                <strong>{{this.posted_by.user}}</strong> commented on <span class="text-muted">{{this.posted_on}}</span>
+                <strong>{{posted_by.user}}</strong> commented <span class="text-muted">{{formatRelative posted_on}}</span>
                 {{#if editable}}
                     <div class="pull-right edit-comments">
                         <a href="#/news/{{newsId}}/comments/{{id}}/edit"><span class="glyphicon glyphicon-edit"></span></a>
@@ -15,7 +15,7 @@
                 {{/if}}
             </div>
             <div class="panel-body">
-                {{this.content}}
+                {{content}}
             </div>
         </div>
     </div>

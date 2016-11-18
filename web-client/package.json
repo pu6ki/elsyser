@@ -11,6 +11,8 @@
   "dependencies": {
     "bootstrap": "3.3.7",
     "handlebars": "4.0.5",
+    "handlebars-helper-intl": "^1.0.0-rc-2",
+    "handlebars-intl": "^1.1.2",
     "jquery": "3.1.1",
     "navigo": "3.3.2",
     "systemjs": "0.19.40",
