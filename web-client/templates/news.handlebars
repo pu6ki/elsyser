@@ -22,7 +22,7 @@
                 <div>
                     <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
                     {{#if comments_count}}
-                        <strong><i>{{comments_count}} comments</i></strong>
+                        <strong><i>{{formatMessage (intlGet "messages.comments") comments_count=comments_count}}</i></strong>
                     {{else}}
                         <strong><i>No comments</i></strong>
                     {{/if}}

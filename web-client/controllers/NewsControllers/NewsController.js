@@ -5,7 +5,7 @@ const newsUrl = 'http://127.0.0.1:8000/api/news/';
 const currentUsername = localStorage.getItem('elsyser-username');
 
 export function NewsController() {
-    let data,
+    let dataFromApi,
         getData = requester.getJSON(newsUrl),
         getTemplate = templates.get('news');
 
@@ -14,8 +14,8 @@ export function NewsController() {
             let newData = result[0],
                 hbTemplate = Handlebars.compile(result[1]);
 
-            data = newData;
-            data.forEach((el) => {
+            dataFromApi = newData;
+            dataFromApi.forEach((el) => {
                 if (el.comment_set.length > 0) {
                     el.comments_count = el.comment_set.length;
                 }
@@ -24,7 +24,19 @@ export function NewsController() {
                 }
             }, this);
 
-            let template = hbTemplate(data);
+            let intlData = {
+                "locales": "en-US",
+                "messages": {
+                    "comments": `{comments_count, plural, 
+                        =1 {One comment}
+                        other {# comments}
+                    }`
+                }
+            }
+
+            let template = hbTemplate(dataFromApi, {
+                data: {intl: intlData}
+            });
             $('#content').html(template);
         }).catch((err) => {
             console.log(err);
