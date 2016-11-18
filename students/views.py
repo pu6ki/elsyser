@@ -3,7 +3,6 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework import viewsets
 from rest_framework import status
-from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
@@ -12,15 +11,13 @@ from rest_framework.authentication import TokenAuthentication
 from datetime import datetime
 
 from .serializers import (
-    StudentSerializer,
-    UserLoginSerializer,
-    StudentProfileSerializer,
+    StudentSerializer, UserLoginSerializer, StudentProfileSerializer,
     ExamSerializer,
-    NewsSerializer,
+    NewsSerializer, CommentSerializer,
     HomeworkSerializer,
-    CommentSerializer
 )
 from .models import Student, Exam, News, Homework, Comment
+from .permissions import IsStudent, IsTeacher
 
 
 class StudentRegistration(generics.CreateAPIView):
@@ -46,7 +43,7 @@ class UserLogin(generics.CreateAPIView):
 class StudentProfile(generics.RetrieveUpdateAPIView):
 
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsStudent)
     serializer_class = StudentProfileSerializer
 
 
@@ -69,11 +66,14 @@ class StudentProfile(generics.RetrieveUpdateAPIView):
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
-class ExamsList(generics.ListAPIView):
+class ExamsViewSet(viewsets.ModelViewSet):
 
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
     serializer_class = ExamSerializer
+    permission_classes_by_action = {
+        'create': [IsAuthenticated, IsTeacher],
+        'list': [IsAuthenticated, IsStudent]
+    }
 
 
     def get_queryset(self):
@@ -83,10 +83,27 @@ class ExamsList(generics.ListAPIView):
         )
 
 
+    def create(self, request):
+        # TODO: Finish this view
+        context = {'request': request}
+
+        serializer = self.serializer_class(context=context, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        return Response(
+            serializer.validated_data, status=status.HTTP_201_CREATED
+        )
+
+
+    def get_permissions(self):
+        return [permission() for permission in self.permission_classes_by_action[self.action]]
+
+
 class NewsViewSet(viewsets.ModelViewSet):
 
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsStudent)
     serializer_class = NewsSerializer
 
 
@@ -156,9 +173,8 @@ class NewsViewSet(viewsets.ModelViewSet):
 class CommentsViewSet(viewsets.ModelViewSet):
 
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsStudent)
     serializer_class = CommentSerializer
-    queryset = Comment.objects.all()
 
 
     def create(self, request, news_pk=None):
@@ -211,11 +227,14 @@ class CommentsViewSet(viewsets.ModelViewSet):
         )
 
 
-class HomeworksList(generics.ListAPIView):
+class HomeworksViewSet(viewsets.ModelViewSet):
 
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
     serializer_class = HomeworkSerializer
+    permission_classes_by_action = {
+        'create': [IsAuthenticated, IsTeacher],
+        'list': [IsAuthenticated, IsStudent]
+    }
 
 
     def get_queryset(self):
@@ -223,3 +242,20 @@ class HomeworksList(generics.ListAPIView):
             deadline__gte=datetime.now().date(),
             clazz=self.request.user.student.clazz
         )
+
+
+    def create(self, request):
+        # TODO: Finish this view
+        context = {'request': request}
+
+        serializer = self.serializer_class(context=context, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        return Response(
+            serializer.validated_data, status=status.HTTP_201_CREATED
+        )
+
+
+    def get_permissions(self):
+        return [permission() for permission in self.permission_classes_by_action[self.action]]
