@@ -217,7 +217,9 @@ class ProfileViewTestCase(APITestCase):
             password='pass'
         )
         self.clazz = Class.objects.create(number=10, letter='A')
-        self.student = Student.objects.create(user=self.user, clazz=self.clazz)
+        self.student = Student.objects.create(
+            user=self.user, clazz=self.clazz, info='I am the lord of the rings.'
+        )
 
 
     def test_profile_with_anonymous_user(self):
@@ -244,6 +246,7 @@ class ProfileViewTestCase(APITestCase):
         self.assertEqual(
             self.student.clazz.letter, request.data['clazz']['letter']
         )
+        self.assertEqual(self.student.info, request.data['info'])
         self.assertNotIn('password', request.data['user'])
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
@@ -319,12 +322,13 @@ class ExamsViewTestCase(APITestCase):
         self.user = User.objects.create(username='test', password='pass')
         self.clazz = Class.objects.create(number=10, letter='A')
         self.student = Student.objects.create(user=self.user, clazz=self.clazz)
-        self.subject = Subject.objects.create(title='test_subject')
+        self.subject = Subject.objects.create(title='Maths')
         self.exam = Exam.objects.create(
             subject=self.subject,
             date=datetime.now().date(),
             clazz=self.clazz,
-            topic='topic'
+            topic='Quadratic inequations',
+            details='This will be the hardest **** ever!!!'
         )
 
 
@@ -343,7 +347,9 @@ class ExamsViewTestCase(APITestCase):
 
         request = self.client.get(reverse(self.view_name))
 
-        self.assertIn(self.subject.title, request.data[0]['subject']['title'])
+        self.assertEqual(
+            self.subject.title, request.data[0]['subject']['title']
+        )
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
@@ -725,6 +731,44 @@ class NewsDetailViewTestCase(APITestCase):
             reverse(self.detail_view_name, kwargs={'pk': self.news.id}),
             {'title': 'So far, so good!', 'content': 'So what?'},
             format='json'
+        )
+
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_news_deletion_of_another_user(self):
+        self.client.force_authenticate(user=self.user)
+
+        new_user = User.objects.create(username='test2', password='pass')
+        new_student = Student.objects.create(user=new_user, clazz=self.clazz)
+        self.news.author = new_student
+        self.news.save()
+
+        request = self.client.delete(
+            reverse(self.detail_view_name, kwargs={'pk': self.news.id}),
+        )
+
+        self.assertEqual(
+            request.data['message'], 'You can delete only your own posts.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+    def test_news_deletion_with_invalid_id(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.delete(
+            reverse(self.detail_view_name, kwargs={'pk': self.news.id + 1})
+        )
+
+        self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
+
+
+    def test_news_deletion_with_valid_id(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.delete(
+            reverse(self.detail_view_name, kwargs={'pk': self.news.id})
         )
 
         self.assertEqual(request.status_code, status.HTTP_200_OK)

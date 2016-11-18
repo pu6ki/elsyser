@@ -24,6 +24,7 @@ This is a students' platform for ELSYS, Sofia.
 * [Django Rest Framework](https://github.com/tomchristie/django-rest-framework) - Framework for building REST APIs in Django
 * [django-cors-headers](https://github.com/ottoyiu/django-cors-headers) - Django app for handling the server headers required for Cross-Origin Resource Sharing (CORS)
 * [drf-nested-routers](https://github.com/alanjds/drf-nested-routers) - Django Rest Framework nested routers
+* [Django suit](https://github.com/darklow/django-suit) - Modern theme for Django admin panel
 * [Pillow](https://github.com/python-pillow/Pillow) - Python Imaging Library
 * [Bootstrap](https://github.com/twbs/bootstrap) - Framework for developing responsive UI on the web
 * [jQuery](https://github.com/jquery/jquery) - New Wave JavaScript
@@ -114,9 +115,9 @@ We are students in 10th grade in ELSYS. We study programming and we are very ent
 
 ### Task list:
 
-- [ ] Write tests for news deletion
-- [ ] Write tests for student info updating
-- [ ] Write tests for exams detail info
+- [x] Write tests for news deletion
+- [x] Write tests for student info updating
+- [x] Write tests for exams detail info
 - [ ] Fix profile image updating in profile.
 - [ ] Write tests for profile image updating.
 
