@@ -11,15 +11,11 @@
                     <i>Deadline </i><strong><span>{{deadline}}</span></strong>
                 </div>
                 <div id="details">
-                    <strong>
-                        <i>
-                        {{#if details}}
-                            {{details}}
-                        {{else}}
-                            <strong></i>No details for this homework.</i></strong>
-                        {{/if}}
-                        </i>
-                    </strong>
+                    {{#if details}}
+                        <i>Details: </i><strong><span>{{details}}</span></strong>
+                    {{else}}
+                        <i>No details provided.</i>
+                    {{/if}}
                 </div>
             </div>
         </div>

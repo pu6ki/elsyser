@@ -182,6 +182,10 @@ class ExamSerializer(serializers.ModelSerializer):
         depth = 1
 
 
+    def create(self, validated_data):
+        return Exam.objects.create(**validated_data)
+
+
 class AuthorSerializer(serializers.ModelSerializer):
 
     user = serializers.SlugRelatedField(slug_field='username', read_only=True)
@@ -263,3 +267,10 @@ class HomeworkSerializer(serializers.ModelSerializer):
         model = Homework
         fields = ('subject', 'clazz', 'deadline', 'details', 'materials')
         depth = 1
+
+
+    def create(self, validated_data):
+        clazz, _ = Class.objects.get_or_create(**validated_data['clazz'])
+        validated_data['clazz'] = clazz
+
+        return Homework.objects.create(**validated_data)
