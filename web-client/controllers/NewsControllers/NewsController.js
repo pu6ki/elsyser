@@ -32,7 +32,7 @@ export function NewsController() {
                         other {# comments}
                     }`
                 }
-            }
+            };
 
             let template = hbTemplate(dataFromApi, {
                 data: {intl: intlData}
