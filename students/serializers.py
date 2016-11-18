@@ -174,7 +174,6 @@ class SubjectSerializer(serializers.ModelSerializer):
 class ExamSerializer(serializers.ModelSerializer):
 
     subject = SubjectSerializer()
-    date = serializers.DateField(format='%B %d', read_only=True)
 
 
     class Meta:
@@ -196,9 +195,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     posted_by = AuthorSerializer(read_only=True)
     content = serializers.CharField(max_length=2048)
-    posted_on = serializers.DateTimeField(
-        format='%B %d at %H:%M', read_only=True
-    )
+
 
     class Meta:
         model = Comment
@@ -228,9 +225,6 @@ class NewsSerializer(serializers.ModelSerializer):
 
     title = serializers.CharField(min_length=3, max_length=60)
     content = serializers.CharField(min_length=5, max_length=1000)
-    posted_on = serializers.DateTimeField(
-        format='%B %d at %H:%M', read_only=True
-    )
     author = AuthorSerializer(read_only=True)
     comment_set = CommentSerializer(read_only=True, many=True)
 
@@ -261,7 +255,6 @@ class HomeworkSerializer(serializers.ModelSerializer):
 
     subject = SubjectSerializer()
     clazz = ClassSerializer()
-    deadline = serializers.DateField(format='%B %d', read_only=True)
     details = serializers.CharField(allow_blank=True)
     materials = serializers.FileField(use_url=False)
 

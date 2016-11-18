@@ -2,7 +2,7 @@
     <div class="panel-heading">
         <strong>
              <span>{{title}}</span>
-         </strong> 
+         </strong>
         {{#if editable}}
         <div class="pull-right edit">
             <a href="#/news/{{id}}/edit"><span class="glyphicon glyphicon-edit"></span></a>
@@ -15,7 +15,7 @@
             <span><strong><i>{{content}}</i></strong></span>
         </div>
         <div>
-            <i>Posted by <strong><span>{{author.user}}</span></strong></i><strong><span> {{formatRelative posted_on}}</span></strong>
+            Posted by <span><strong><i>{{author.user}}</i></strong></span><span> {{formatRelative posted_on}}</span>
         </div>
     </div>
 </div>
