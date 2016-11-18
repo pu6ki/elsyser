@@ -313,11 +313,11 @@ class ProfileViewTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
-class ExamsViewTestCase(APITestCase):
+class ExamsListViewTestCase(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.view_name = 'students:exams'
+        self.view_name = 'students:exams-list'
 
         self.user = User.objects.create(username='test', password='pass')
         self.clazz = Class.objects.create(number=10, letter='A')
@@ -990,11 +990,11 @@ class CommentsViewSetTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
-class HomeworksViewTestCase(APITestCase):
+class HomeworksListViewTestCase(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.view_name = 'students:homeworks'
+        self.view_name = 'students:homeworks-list'
 
         self.subject = Subject.objects.create(title='test_subject')
         self.user = User.objects.create(username='test', password='pass')
