@@ -6,7 +6,7 @@
     <div class="col-xs-9 col-md-10">
         <div id="comment-{{id}}" class="panel panel-default">
             <div class="panel-heading">
-                <strong>{{posted_by.user}}</strong> commented <span class="text-muted">{{formatRelative posted_on}}</span>
+                <strong>{{posted_by.user}}</strong> commented {{formatRelative posted_on}}
                 {{#if editable}}
                     <div class="pull-right edit-comments">
                         <a href="#/news/{{newsId}}/comments/{{id}}/edit"><span class="glyphicon glyphicon-edit"></span></a>
