@@ -80,5 +80,4 @@ router
     .on('#/homework', () => {
         HomeworksController();
     })
-    .on('#/logout', () => { LogoutController() })
     .resolve();

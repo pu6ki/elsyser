@@ -5,8 +5,8 @@
          </strong>
         {{#if editable}}
         <div class="pull-right edit">
-            <a href="#/news/{{id}}/edit"><span class="glyphicon glyphicon-edit"></span></a>
-            <a href="#/news/{{id}}/delete"><span class="glyphicon glyphicon-trash"></span></a>
+            <span id="news-{{id}}-edit" class="edit"><span class="glyphicon glyphicon-edit"></span></span>
+            <span id="news-{{id}}-delete" class="delete"><span class="glyphicon glyphicon-trash"></span></span>
         </div>
         {{/if}}
     </div>

@@ -52,7 +52,7 @@ function editData(id) {
     requester.putJSON(newsUrl + id + '/', body)
         .then(() => {
             toastr.success("News updated successfully!");
-            window.location.href = '#/news'
+            window.location.href = '#/news';
         }).catch(() => {
             toastr.error('Couldn\'t update the selected news!');
         });

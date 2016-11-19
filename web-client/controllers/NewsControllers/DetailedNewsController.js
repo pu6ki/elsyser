@@ -2,9 +2,14 @@ import { requester } from '../../utils/requster.js';
 import { templates } from '../../utils/templates.js';
 import { validator } from '../../utils/validator.js';
 import { formHandler } from '../../utils/formHandler.js';
+
+import { EditNewsController } from './EditNewsController.js';
+import { DeleteNewsController } from './DeleteNewsController.js';
+
 import { AddCommentController } from './AddCommentController.js';
 import { EditCommentController } from './EditCommentController.js';
 import { DeleteCommentController } from './DeleteCommentController.js';
+
 
 let dataFromAPI, currentUsername;
 const newsUrl = "http://127.0.0.1:8000/api/news/";
@@ -47,6 +52,14 @@ export function DetailedNewsController(id) {
             let template = hbTemplate(dataFromAPI);
             $('#content').html(template);
 
+            $(`#news-${newsId}-edit`).on('click', () => {
+                EditNewsController(newsId);
+            })
+
+            $(`#news-${newsId}-delete`).on('click', () => {
+                DeleteNewsController(newsId);
+            })
+
             $('.new-comment').removeClass('new-comment');
 
             formHandler();
@@ -88,7 +101,7 @@ export function loadComments(id) {
 
         commentsToLoad = newData.comment_set.filter(function (obj) {
             return !dataFromAPI.comment_set.some(function (obj2) {
-                return obj.content === obj2.content && obj.posted_by.user === obj2.posted_by.user;
+                return obj.id === obj2.id;
             });
         });
 

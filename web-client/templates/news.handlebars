@@ -3,14 +3,8 @@
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <strong>
-                    <span><a class="heading-anchor" href="#/news/{{id}}">{{title}}</a></span>
+                    <span>{{title}}</span>
                 </strong>
-                {{#if editable}}
-                <div class="pull-right edit">
-                    <a href="#/news/{{id}}/edit"><span class="glyphicon glyphicon-edit"></span></a>
-                    <a href="#/news/{{id}}/delete"><span class="glyphicon glyphicon-trash"></span></a>
-                </div>
-                {{/if}}
             </div>
             <div class="panel-body">
                 <div>
@@ -30,6 +24,7 @@
                         <strong><i>No comments</i></strong>
                     {{/if}}
                 </div>
+                <button id="info-button" class="btn btn-primary"><a class="heading-anchor" href="#/news/{{id}}">Info</a></button>
             </div>
         </div>
     {{/each}}

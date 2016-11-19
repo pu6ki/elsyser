@@ -34,6 +34,10 @@
 	border-width:8px;
 }
 
+.panel-heading {
+	font-size: 16px;
+}
+
 #comment-content {
 	height: 35px;
 	margin: 5px; 

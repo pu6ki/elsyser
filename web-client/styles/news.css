@@ -36,3 +36,19 @@ a {
 input {
   color: #666666
 }
+
+.edit, .delete {
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+}
+
+.panel-body{
+  position: relative;
+}
+
+#info-button {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;  
+}
