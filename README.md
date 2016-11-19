@@ -115,10 +115,13 @@ We are students in 10th grade in ELSYS. We study programming and we are very ent
 
 ### Task list:
 
+- [ ] Implement teachers accounts creation
 - [ ] Implement teachers creation/updating/deleting of exams and homeworks
 - [x] Write tests for news deletion
 - [x] Write tests for student info updating
 - [x] Write tests for exams detail info
+- [x] Write tests for exams detail view
+- [x] Write tests for homeworks detail view
 - [ ] Fix profile image updating in profile.
 - [ ] Write tests for profile image updating.
 

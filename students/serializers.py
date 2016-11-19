@@ -178,7 +178,7 @@ class ExamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Exam
-        fields = ('subject', 'topic', 'date', 'details')
+        fields = ('id', 'subject', 'topic', 'date', 'details')
         depth = 1
 
 
@@ -274,7 +274,7 @@ class HomeworkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Homework
-        fields = ('subject', 'clazz', 'deadline', 'details', 'materials')
+        fields = ('id', 'subject', 'clazz', 'deadline', 'details', 'materials')
         depth = 1
 
 

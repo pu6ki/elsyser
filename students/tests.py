@@ -364,6 +364,72 @@ class ExamsListViewTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
+class ExamsDetailViewTestCase(APITestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.detail_view_name = 'students:exams-detail'
+
+        self.user = User.objects.create(username='test', password='pass')
+        self.clazz = Class.objects.create(number=10, letter='A')
+        self.student = Student.objects.create(user=self.user, clazz=self.clazz)
+        self.subject = Subject.objects.create(title='Maths')
+        self.exam = Exam.objects.create(
+            subject=self.subject,
+            date=datetime.now().date(),
+            clazz=self.clazz,
+            topic='Quadratic inequations',
+            details='This will be the hardest **** ever!!!'
+        )
+
+
+    def test_exams_detail_with_anonymous_user(self):
+        request = self.client.get(
+            reverse(self.detail_view_name, kwargs={'pk': self.exam.id})
+        )
+
+        self.assertEqual(
+            request.data['detail'],
+            'Authentication credentials were not provided.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+    def test_exams_detail_with_authenticated_user(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.get(
+            reverse(self.detail_view_name, kwargs={'pk': self.exam.id})
+        )
+
+        self.assertIsNotNone(request.data)
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_exams_detail_with_invalid_id(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.get(
+            reverse(self.detail_view_name, kwargs={'pk': self.exam.id + 1})
+        )
+
+        self.assertEqual(request.data['detail'], 'Not found.')
+        self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
+
+
+    def test_exams_detail_with_valid_id(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.get(
+            reverse(self.detail_view_name, kwargs={'pk': self.exam.id})
+        )
+
+        self.assertEqual(request.data['details'], self.exam.details)
+        self.assertEqual(request.data['topic'], self.exam.topic)
+        self.assertEqual(request.data['subject']['title'], self.subject.title)
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
 class NewsListViewTestCase(APITestCase):
 
     def setUp(self):
@@ -990,11 +1056,12 @@ class CommentsViewSetTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
-class HomeworksListViewTestCase(APITestCase):
+class HomeworksViewSetTestCase(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.view_name = 'students:homeworks-list'
+        self.list_view_name = 'students:homeworks-list'
+        self.detail_view_name = 'students:homeworks-detail'
 
         self.subject = Subject.objects.create(title='test_subject')
         self.user = User.objects.create(username='test', password='pass')
@@ -1008,8 +1075,8 @@ class HomeworksListViewTestCase(APITestCase):
         )
 
 
-    def test_homeworks_with_anonymous_user(self):
-        request = self.client.get(reverse(self.view_name))
+    def test_homeworks_list_with_anonymous_user(self):
+        request = self.client.get(reverse(self.list_view_name))
 
         self.assertEqual(
             request.data['detail'],
@@ -1018,21 +1085,49 @@ class HomeworksListViewTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-    def test_homeworks_with_authenticated_user(self):
+    def test_homeworks_list_with_authenticated_user(self):
         self.client.force_authenticate(user=self.user)
 
-        request = self.client.get(reverse(self.view_name))
+        request = self.client.get(reverse(self.list_view_name))
 
         self.assertIsNotNone(request.data)
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
-    def test_homeworks_with_expired_date(self):
+    def test_homeworks_list_with_expired_date(self):
         self.client.force_authenticate(user=self.user)
         self.homework.deadline -= timedelta(days=5)
         self.homework.save()
 
-        request = self.client.get(reverse(self.view_name))
+        request = self.client.get(reverse(self.list_view_name))
 
         self.assertEqual(request.data, [])
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_homeworks_detail_with_invalid_id(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.get(
+            reverse(self.detail_view_name, kwargs={'pk': self.homework.id + 1})
+        )
+
+        self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
+
+
+    def test_homeworks_detail_with_valid_id(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.get(
+            reverse(self.detail_view_name, kwargs={'pk': self.homework.id})
+        )
+
+        self.assertEqual(
+            request.data['clazz']['number'], self.student.clazz.number
+        )
+        self.assertEqual(
+            request.data['clazz']['letter'], self.student.clazz.letter
+        )
+        self.assertEqual(request.data['details'], self.homework.details)
+        self.assertEqual(request.data['subject']['title'], self.subject.title)
         self.assertEqual(request.status_code, status.HTTP_200_OK)
