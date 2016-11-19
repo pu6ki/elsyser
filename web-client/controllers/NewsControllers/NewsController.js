@@ -19,6 +19,9 @@ export function NewsController() {
                 if (el.comment_set.length > 0) {
                     el.comments_count = el.comment_set.length;
                 }
+                if (el.content.length > 150) {
+                    el.content = el.content.slice(0, 149) + '...';
+                }
             }, this);
 
             let intlData = {

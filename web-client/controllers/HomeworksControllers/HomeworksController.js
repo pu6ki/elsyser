@@ -9,9 +9,15 @@ export function HomeworksController() {
     Promise.all([getData, getTemplate])
         .then((result) => {
             let data = result[0],
-                hbTemplate = Handlebars.compile(result[1]),
-                template = hbTemplate(data);
+                hbTemplate = Handlebars.compile(result[1]);
 
+            data.forEach((el) => {
+                if (el.details.length > 150) {
+                    el.details = el.details.slice(0, 149) + '...';
+                }
+            });
+
+            let template = hbTemplate(data);
             $('#content').html(template);
         }).catch((err) => {
             console.log(err);
