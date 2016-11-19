@@ -232,8 +232,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class NewsSerializer(serializers.ModelSerializer):
 
-    title = serializers.CharField(min_length=3, max_length=60)
-    content = serializers.CharField(min_length=5, max_length=1000)
+    title = serializers.CharField(min_length=3, max_length=100)
+    content = serializers.CharField(min_length=5, max_length=10000)
     author = AuthorSerializer(read_only=True)
     comment_set = CommentSerializer(read_only=True, many=True)
 

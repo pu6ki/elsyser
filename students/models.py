@@ -83,8 +83,8 @@ class Exam(models.Model):
 
 class News(models.Model):
 
-    title = models.CharField(max_length=60, blank=False)
-    content = models.TextField(max_length=1000, blank=False)
+    title = models.CharField(max_length=100, blank=False)
+    content = models.TextField(max_length=10000, blank=False)
     author = models.ForeignKey(Student, on_delete=models.CASCADE)
     posted_on = models.DateTimeField(auto_now_add=True)
     edited = models.BooleanField(default=False)
