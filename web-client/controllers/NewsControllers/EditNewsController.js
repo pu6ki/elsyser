@@ -29,7 +29,8 @@ export function EditNewsController(id) {
 function editData(id) {
     let body = {
         title: '',
-        content: ''
+        content: '',
+        edited: true
     },
         selectedNewsUrl = newsUrl + id + '/';
 

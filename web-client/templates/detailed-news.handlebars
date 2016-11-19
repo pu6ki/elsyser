@@ -16,6 +16,9 @@
         </div>
         <div>
             Posted by <span><strong><i>{{author.user}}</i></strong></span><span> {{formatRelative posted_on}}</span>
+            {{#if edited}}
+                <span class="text-muted">(last edited {{formatRelative last_edited_on}})</span>
+            {{/if}}
         </div>
     </div>
 </div>
@@ -31,11 +34,14 @@
             <div id="comment-{{id}}" class="panel panel-default">
                 <div class="panel-heading">
                     <strong>{{posted_by.user}}</strong> commented {{formatRelative posted_on}}
+                    {{#if edited}}
+                        <span class="text-muted">(last edited {{formatRelative last_edited_on}})</span>
+                    {{/if}}
                     {{#if editableComment}}
-                    <div class="pull-right edit-comments">
-                        <a href="#/news/{{../id}}/comments/{{id}}/edit"><span class="glyphicon glyphicon-edit"></span></a>
-                        <a href="#/news/{{../id}}/comments/{{id}}/delete"><span class="glyphicon glyphicon-trash"></span></a>
-                    </div>
+                        <div class="pull-right edit-comments">
+                            <a href="#/news/{{../id}}/comments/{{id}}/edit"><span class="glyphicon glyphicon-edit"></span></a>
+                            <a href="#/news/{{../id}}/comments/{{id}}/delete"><span class="glyphicon glyphicon-trash"></span></a>
+                        </div>
                     {{/if}}
                 </div>
                 <div class="panel-body">

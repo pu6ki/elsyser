@@ -15,7 +15,7 @@ export function EditCommentController(newsId, commentId) {
             let data = result[0],
                 hbTemplate = Handlebars.compile(result[1]),
                 template = hbTemplate(data);
-            
+
             $(`#comment-${commentId}`).html(template);
 
             formHandler();
@@ -28,7 +28,8 @@ export function EditCommentController(newsId, commentId) {
 
 function editData(newsId, commentId) {
     let body = {
-        content: ''
+        content: '',
+        edited: true
     };
 
     if (validator.comment($('#new-comment-content').val())) {
