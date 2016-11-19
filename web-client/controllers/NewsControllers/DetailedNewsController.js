@@ -36,6 +36,10 @@ export function DetailedNewsController(id) {
                     $(document).on('click', `#news-${newsId}-edit-comment-${commentId}`, () => {
                         EditCommentController(newsId, commentId);
                     })
+
+                    $(document).on('click', `#news-${newsId}-delete-comment-${commentId}`, () => {
+                        DeleteCommentController(newsId, commentId);
+                    })
                 }
             });
 
