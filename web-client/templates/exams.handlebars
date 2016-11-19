@@ -3,7 +3,7 @@
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <strong>
-                    <a href="#/exams/{{id}}" class="heading-anchor">{{subject.title}}</a>
+                    {{subject.title}}
                 </strong>
             </div>
             <div class="panel-body">
@@ -20,6 +20,7 @@
                         <i>No details provided.</i>
                     {{/if}}
                 </div>
+                <button id="info-button" class="btn btn-primary" onclick="window.location.href = '#/exams/{{id}}'"><a class="heading-anchor" href="#/exams/{{id}}">Info</a></button>
             </div>
         </div>
     {{/each}}
