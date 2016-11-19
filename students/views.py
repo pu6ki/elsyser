@@ -175,6 +175,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated, IsStudent)
     serializer_class = CommentSerializer
+    queryset = Comment.objects.all()
 
 
     def create(self, request, news_pk=None):

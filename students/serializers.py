@@ -203,7 +203,12 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ('id', 'posted_by', 'content', 'posted_on')
+        fields = (
+            'id',
+            'posted_by', 'content',
+            'posted_on',
+            'edited', 'last_edited_on'
+        )
         depth = 1
 
 
@@ -236,7 +241,11 @@ class NewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
         fields = (
-            'id', 'title', 'content', 'posted_on', 'author', 'comment_set'
+            'id',
+            'title', 'content',
+            'posted_on', 'author',
+            'comment_set',
+            'edited', 'last_edited_on'
         )
         depth = 1
 

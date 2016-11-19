@@ -87,10 +87,12 @@ class News(models.Model):
     content = models.TextField(max_length=1000, blank=False)
     author = models.ForeignKey(Student, on_delete=models.CASCADE)
     posted_on = models.DateTimeField(auto_now_add=True)
+    edited = models.BooleanField(default=False)
+    last_edited_on = models.DateTimeField(auto_now=True)
 
 
     class Meta:
-        ordering = ['-posted_on']
+        ordering = ['-last_edited_on']
         verbose_name_plural = 'news'
         unique_together = ('title', 'content')
 
@@ -127,6 +129,8 @@ class Comment(models.Model):
     posted_by = models.ForeignKey(Student, on_delete=models.CASCADE)
     content = models.TextField(max_length=2048)
     posted_on = models.DateTimeField(auto_now_add=True)
+    edited = models.BooleanField(default=False)
+    last_edited_on = models.DateTimeField(auto_now=True)
 
 
     def __str__(self):
