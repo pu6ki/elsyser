@@ -2,12 +2,13 @@ import { requester } from '../../utils/requster.js';
 import { templates } from '../../utils/templates.js';
 import { validator } from '../../utils/validator.js';
 import { formHandler } from '../../utils/formHandler.js';
+import { DetailedNewsController } from './DetailedNewsController.js';
 
 let commentToEditUrl;
 
 export function EditCommentController(newsId, commentId) {
-        commentToEditUrl = `http://127.0.0.1:8000/api/news/${newsId}/comments/${commentId}/`;
-        let getData = requester.getJSON(commentToEditUrl),
+    commentToEditUrl = `http://127.0.0.1:8000/api/news/${newsId}/comments/${commentId}/`;
+    let getData = requester.getJSON(commentToEditUrl),
         getTemplate = templates.get('edit-comment');
 
     Promise.all([getData, getTemplate])
@@ -43,7 +44,7 @@ function editData(newsId, commentId) {
     requester.putJSON(commentToEditUrl, body)
         .then(() => {
             toastr.success('Comment updated successfully!');
-            window.location.href = `#/news/${newsId}`;
+            DetailedNewsController(newsId);
         }).catch(() => {
             toastr.error('Couldn\'t edit the comment!');
             window.location.href = `#/news/${newsId}`;

@@ -23,6 +23,7 @@ import { HomeworksController } from './controllers/HomeworksControllers/Homework
 
 var handlebars = Handlebars || handlebars;
 HandlebarsIntl.registerWith(Handlebars);
+
 var router = new Navigo(null, false);
 
 window.onbeforeunload = HeaderController();

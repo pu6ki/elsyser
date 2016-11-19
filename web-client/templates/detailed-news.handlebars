@@ -39,8 +39,12 @@
                     {{/if}}
                     {{#if editableComment}}
                         <div class="pull-right edit-comments">
-                            <a href="#/news/{{../id}}/comments/{{id}}/edit"><span class="glyphicon glyphicon-edit"></span></a>
-                            <a href="#/news/{{../id}}/comments/{{id}}/delete"><span class="glyphicon glyphicon-trash"></span></a>
+                            <span id="news-{{../id}}-edit-comment-{{id}}" class="edit">
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </span>
+                            <span id="news-{{../id}}-delete-comment-{{id}}" class="delete">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </span>
                         </div>
                     {{/if}}
                 </div>

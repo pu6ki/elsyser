@@ -3,6 +3,8 @@ import { templates } from '../../utils/templates.js';
 import { validator } from '../../utils/validator.js';
 import { formHandler } from '../../utils/formHandler.js';
 import { AddCommentController } from './AddCommentController.js';
+import { EditCommentController } from './EditCommentController.js';
+import { DeleteCommentController } from './DeleteCommentController.js';
 
 let dataFromAPI, currentUsername;
 const newsUrl = "http://127.0.0.1:8000/api/news/";
@@ -15,7 +17,8 @@ export function DetailedNewsController(id) {
     Promise.all([getData, getTemplate])
         .then((result) => {
             dataFromAPI = result[0];
-            let hbTemplate = Handlebars.compile(result[1]);
+            let hbTemplate = Handlebars.compile(result[1]),
+                newsId = dataFromAPI.id;
 
             if (dataFromAPI.author.user === currentUsername) {
                 dataFromAPI.editable = true;
@@ -27,6 +30,12 @@ export function DetailedNewsController(id) {
                 if (el.posted_by.user === currentUsername) {
                     el.editableComment = true;
                     $('#content').html(hbTemplate(dataFromAPI));
+
+                    let commentId = el.id;
+
+                    $(document).on('click', `#news-${newsId}-edit-comment-${commentId}`, () => {
+                        EditCommentController(newsId, commentId);
+                    })
                 }
             });
 
@@ -56,6 +65,7 @@ export function DetailedNewsController(id) {
             $('#add-comment-button').on('click', () => {
                 AddCommentController(id);
             });
+
         }).catch((err) => {
             console.log(err);
         });
@@ -88,5 +98,5 @@ export function loadComments(id) {
             let template = hbTemplate(commentsToLoad[i]);
             $('#comments').prepend(template);
         }
-    })
+    });
 }
