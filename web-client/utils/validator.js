@@ -18,7 +18,7 @@ export let validator = {
     },
     title: (title) => {
         if (typeof title === 'string') {
-            if (title.length >= 3 && title.length <= 60) {
+            if (title.length >= 3 && title.length <= 100) {
                 return true;
             }
         }
@@ -26,7 +26,7 @@ export let validator = {
     },
     content: (content) => {
         if (typeof content === 'string') {
-            if (content.length >= 5 && content.length <= 1000) {
+            if (content.length >= 5 && content.length <= 10000) {
                 return true;
             }
         }

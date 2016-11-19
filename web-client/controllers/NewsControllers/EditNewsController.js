@@ -38,14 +38,14 @@ function editData(id) {
         body.title = $('#new-news-title').val();
     }
     else {
-        toastr.error('Title shoud be between 3 and 60 characters long!');
+        toastr.error('Title shoud be between 3 and 100 characters long!');
         return;
     }
     if (validator.content($('#new-news-content').val())) {
         body.content = $('#new-news-content').val();
     }
     else {
-        toastr.error('Content shoud be between 5 and 1000 characters long!');
+        toastr.error('Content shoud be between 5 and 10000 characters long!');
         return;
     }
 
