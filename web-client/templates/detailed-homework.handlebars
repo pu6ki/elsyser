@@ -1,0 +1,19 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <strong>
+            {{subject.title}}
+        </strong>
+    </div>
+    <div class="panel-body">
+        <div id="deadline">
+            <i>Deadline </i><strong><span>{{formatRelative deadline}}</span></strong>
+        </div>
+        <div id="details">
+            {{#if details}}
+                <i>Details: </i><strong><span>{{details}}</span></strong>
+            {{else}}
+                <i>No details provided.</i>
+            {{/if}}
+        </div>
+    </div>
+</div>

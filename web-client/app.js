@@ -9,6 +9,7 @@ import { ProfileController } from './controllers/ProfileController.js';
 import { EditProfileController } from './controllers/EditProfileController.js';
 
 import { ExamsController } from './controllers/ExamsController.js';
+import { DetailedExamsController } from './controllers/DetailedExamsController.js';
 
 import { NewsController } from './controllers/NewsControllers/NewsController.js';
 import { AddNewsController } from './controllers/NewsControllers/AddNewsController.js';
@@ -18,6 +19,7 @@ import { EditNewsController } from './controllers/NewsControllers/EditNewsContro
 import { DeleteCommentController } from './controllers/NewsControllers/DeleteCommentController.js';
 import { EditCommentController } from './controllers/NewsControllers/EditCommentController.js';
 
+import { DetailedHomeworkController } from './controllers/HomeworksControllers/DetailedHomeworkController.js';
 import { HomeworksController } from './controllers/HomeworksControllers/HomeworksController.js';
 
 
@@ -50,6 +52,9 @@ router
     .on('#/exams', () => {
         ExamsController();
     })
+    .on('#/exams/:id', (params) => {
+        DetailedExamsController(params.id);
+    })
     .on('#/news', () => {
         NewsController();
     })
@@ -79,5 +84,8 @@ router
     }) 
     .on('#/homework', () => {
         HomeworksController();
+    })
+    .on('#/homework/:id', (params) => {
+        DetailedHomeworkController(params.id);
     })
     .resolve();
