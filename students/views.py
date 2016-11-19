@@ -72,8 +72,19 @@ class ExamsViewSet(viewsets.ModelViewSet):
     serializer_class = ExamSerializer
     permission_classes_by_action = {
         'create': [IsAuthenticated, IsTeacher],
-        'list': [IsAuthenticated, IsStudent]
+        'list': [IsAuthenticated, IsStudent],
+        'retrieve': [IsAuthenticated, IsStudent],
     }
+
+
+    def retrieve(self, request, pk=None):
+        exam = get_object_or_404(
+            Exam.objects.filter(clazz=request.user.student.clazz),
+            id=pk
+        )
+        serializer = self.serializer_class(exam)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
     def get_queryset(self):
@@ -234,8 +245,19 @@ class HomeworksViewSet(viewsets.ModelViewSet):
     serializer_class = HomeworkSerializer
     permission_classes_by_action = {
         'create': [IsAuthenticated, IsTeacher],
-        'list': [IsAuthenticated, IsStudent]
+        'list': [IsAuthenticated, IsStudent],
+        'retrieve': [IsAuthenticated, IsStudent],
     }
+
+
+    def retrieve(self, request, pk=None):
+        homework = get_object_or_404(
+            Homework.objects.filter(clazz=request.user.student.clazz),
+            id=pk
+        )
+        serializer = self.serializer_class(homework)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
     def get_queryset(self):
