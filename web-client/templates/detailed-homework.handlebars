@@ -15,5 +15,14 @@
                 <i>No details provided.</i>
             {{/if}}
         </div>
+        <div class="materials">
+            {{#if materials}}
+                <a id="materials" href="http://127.0.0.1:8000/api/media/{{materials}}">
+                    Download materials <span class="glyphicon glyphicon-download-alt"></span>
+                </a>
+            {{else}}
+                <i>No materials provided.</i>
+            {{/if}}
+        </div>
     </div>
 </div>
