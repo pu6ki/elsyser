@@ -40,7 +40,7 @@
 
 #comment-content {
 	height: 35px;
-	margin: 5px; 
+	margin: 5px;
 }
 
 #add-comment-button {
@@ -76,7 +76,7 @@
 	display: block;
 }
 
-.edit-comments span{
+.edit-comments span {
 	color: #33739E;
 	cursor: pointer;
 }
