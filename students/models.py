@@ -4,7 +4,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 import os
 
-from .validators import validate_date, validate_file_extension
+from .validators import validate_date
 
 
 def homework_material_filename(instance, filename):
@@ -108,10 +108,7 @@ class Homework(models.Model):
     deadline = models.DateField(auto_now=False, validators=[validate_date])
     details = models.TextField(max_length=256, blank=True)
     materials = models.FileField(
-        upload_to=homework_material_filename,
-        blank=True,
-        null=True,
-        validators=[validate_file_extension]
+        upload_to=homework_material_filename, blank=True, null=True
     )
 
 

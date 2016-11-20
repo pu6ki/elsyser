@@ -17,6 +17,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='homework',
             name='materials',
-            field=models.FileField(blank=True, null=True, upload_to=students.models.homework_material_filename, validators=[students.validators.validate_file_extension]),
+            field=models.FileField(blank=True, null=True, upload_to=students.models.homework_material_filename),
         ),
     ]
