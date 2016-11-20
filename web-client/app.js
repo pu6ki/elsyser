@@ -1,5 +1,6 @@
 import { HeaderController } from './controllers/HeaderController.js';
 import { HomeController } from './controllers/HomeController.js';
+import { AboutController } from './controllers/AboutController.js';
 
 import { LoginController } from './controllers/AuthControllers/LoginController.js';
 import { RegisterController } from './controllers/AuthControllers/RegisterController.js';
@@ -33,6 +34,9 @@ window.onbeforeunload = HeaderController();
 router
     .on('/', () => { router.navigate('#/home') })
     .on('#/', () => { router.navigate('#/home') })
+    .on('#/about', () => {
+        AboutController();
+    })
     .on('#/home', () => {
         HeaderController();
         HomeController();
@@ -81,7 +85,7 @@ router
     })
     .on('#/news/:newsId/comments/:commentId/edit', (params) => {
         EditCommentController(params.newsId, params.commentId);
-    }) 
+    })
     .on('#/homework', () => {
         HomeworksController();
     })
