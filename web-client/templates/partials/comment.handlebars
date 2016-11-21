@@ -4,14 +4,18 @@
     </div>
 
     <div class="col-xs-9 col-md-10">
-        <div id="comment-{{id}}" class="panel panel-default">
+        <div id="comment-{{newsId}}" class="panel panel-default">
             <div class="panel-heading">
                 <strong>{{posted_by.user}}</strong> commented {{formatRelative posted_on}}
                 {{#if editable}}
                     <div class="pull-right edit-comments">
-                        <a href="#/news/{{newsId}}/comments/{{id}}/edit"><span class="glyphicon glyphicon-edit"></span></a>
-                        <a href="#/news/{{newsId}}/comments/{{id}}/delete"><span class="glyphicon glyphicon-trash"></span></a>
-                    </div>
+                            <span id="news-{{newsId}}-edit-comment-{{id}}" class="edit">
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </span>
+                            <span id="news-{{newsId}}-delete-comment-{{id}}" class="delete">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </span>
+                        </div>
                 {{/if}}
             </div>
             <div class="panel-body">

@@ -13,5 +13,5 @@ export function DetailedHomeworkController(id) {
                 template = hbTemplate(data);
 
             $('#content').html(template);
-        })
+        });
 }

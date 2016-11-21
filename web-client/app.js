@@ -4,7 +4,6 @@ import { AboutController } from './controllers/AboutController.js';
 
 import { LoginController } from './controllers/AuthControllers/LoginController.js';
 import { RegisterController } from './controllers/AuthControllers/RegisterController.js';
-import { LogoutController } from './controllers/AuthControllers/LogoutController.js';
 
 import { ProfileController } from './controllers/ProfileController.js';
 import { EditProfileController } from './controllers/EditProfileController.js';
@@ -15,10 +14,6 @@ import { DetailedExamsController } from './controllers/DetailedExamsController.j
 import { NewsController } from './controllers/NewsControllers/NewsController.js';
 import { AddNewsController } from './controllers/NewsControllers/AddNewsController.js';
 import { DetailedNewsController, loadComments } from './controllers/NewsControllers/DetailedNewsController.js';
-import { DeleteNewsController } from './controllers/NewsControllers/DeleteNewsController.js';
-import { EditNewsController } from './controllers/NewsControllers/EditNewsController.js';
-import { DeleteCommentController } from './controllers/NewsControllers/DeleteCommentController.js';
-import { EditCommentController } from './controllers/NewsControllers/EditCommentController.js';
 
 import { DetailedHomeworkController } from './controllers/HomeworksControllers/DetailedHomeworkController.js';
 import { HomeworksController } from './controllers/HomeworksControllers/HomeworksController.js';
@@ -74,17 +69,8 @@ router
     .on('#/add-news', () => {
         AddNewsController();
     })
-    .on('#/news/:id/edit', (params) => {
-        EditNewsController(params.id);
-    })
     .on('#/news/:id/delete', (params) => {
         DeleteNewsController(params.id);
-    })
-    .on('#/news/:newsId/comments/:commentId/delete', (params) => {
-        DeleteCommentController(params.newsId, params.commentId);
-    })
-    .on('#/news/:newsId/comments/:commentId/edit', (params) => {
-        EditCommentController(params.newsId, params.commentId);
     })
     .on('#/homework', () => {
         HomeworksController();

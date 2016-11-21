@@ -88,8 +88,8 @@ export function DetailedNewsController(id) {
         });
 }
 
-export function loadComments(id) {
-    let getData = requester.getJSON(newsUrl + id + '/'),
+export function loadComments(newsId) {
+    let getData = requester.getJSON(newsUrl + newsId + '/'),
         getTemplate = templates.get('partials/comment');
 
     Promise.all([getData, getTemplate]).then((result) => {
@@ -109,11 +109,19 @@ export function loadComments(id) {
 
         for (let i = 0; i < commentsToLoad.length; i += 1) {
             if (commentsToLoad[i].posted_by.user == currentUsername) {
-                commentsToLoad[i].newsId = id;
+                commentsToLoad[i].newsId = newsId;
                 commentsToLoad[i].editable = true;
             }
             let template = hbTemplate(commentsToLoad[i]);
             $('#comments').prepend(template);
+
+            $(document).on('click', `#news-${newsId}-edit-comment-${commentsToLoad[i].id}`, () => {
+                EditCommentController(newsId, commentsToLoad[i].id);
+            })
+
+            $(document).on('click', `#news-${newsId}-delete-comment-${commentsToLoad[i].id}`, () => {
+                DeleteCommentController(newsId, commentsToLoad[i].id);
+            })
         }
     });
 }
