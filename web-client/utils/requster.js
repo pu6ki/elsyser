@@ -11,10 +11,10 @@ let requester = {
                     xhr.setRequestHeader('Authorization', `Token ${token}`);
                 },
                 success(response) {
-                    resolve(response);
+                    return resolve(response);
                 },
                 error(response) {
-                    reject(response);
+                    return reject(response);
                 }
             });
         });
@@ -34,10 +34,10 @@ let requester = {
                     xhr.setRequestHeader('Authorization', `Token ${token}`);
                 },
                 success(response) {
-                    resolve(response);
+                    return resolve(response);
                 },
                 error(response) {
-                    reject(response);
+                    return reject(response);
                 }
             });
         });
@@ -59,10 +59,10 @@ let requester = {
                     xhr.setRequestHeader('Authorization', `Token ${token}`);
                 },
                 success(response) {
-                    resolve(response);
+                    return resolve(response);
                 },
                 error(response) {
-                    reject(response);
+                    return reject(response);
                 }
             });
         });
@@ -80,9 +80,10 @@ let requester = {
                 },
                 success(response) {
                     resolve(response);
+                    return;
                 },
                 error(response) {
-                    reject(response);
+                    return reject(response);
                 }
             });
         });
@@ -100,10 +101,10 @@ let requester = {
                     xhr.setRequestHeader('Authorization', `Token ${token}`);
                 },
                 success(response) {
-                    resolve(response);
+                    return resolve(response);
                 },
                 error(response) {
-                    reject(response);
+                    return reject(response);
                 }
             });
         });
@@ -119,10 +120,10 @@ let requester = {
                     xhr.setRequestHeader('Authorization', `Token ${token}`);
                 },
                 success(response) {
-                    resolve(response);
+                    return resolve(response);
                 },
                 error(response) {
-                    reject(response);
+                    return reject(response);
                 }
             });
         });
