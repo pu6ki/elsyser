@@ -7,5 +7,8 @@ __pycache__/
 # Node modules
 node_modules/
 
-#VS Code
+# VS Code
 .vscode/
+
+# Media Folder
+media/
