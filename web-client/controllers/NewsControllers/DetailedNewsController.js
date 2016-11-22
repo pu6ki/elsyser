@@ -25,6 +25,8 @@ export function DetailedNewsController(id) {
             let hbTemplate = Handlebars.compile(result[1]),
                 newsId = dataFromAPI.id;
 
+
+            console.log(dataFromAPI.comment_set);
             if (dataFromAPI.author.user === currentUsername) {
                 dataFromAPI.editable = true;
             }
@@ -50,8 +52,11 @@ export function DetailedNewsController(id) {
                 })
 
                 $(`#news-${newsId}-delete-comment-${commentId}`).on('click', () => {
-                    DeleteCommentController(newsId, commentId);
-                    DetailedNewsController(newsId);
+                    alertify.confirm("Are you sure you want to delete this comment?", () => {
+                        DeleteCommentController(newsId, commentId);
+                        DetailedNewsController(newsId);
+                        console.log(dataFromAPI.comment_set);
+                    })
                 })
             })
 
@@ -60,7 +65,7 @@ export function DetailedNewsController(id) {
             })
 
             $(`#news-${newsId}-delete`).on('click', () => {
-                DeleteNewsController(newsId);  
+                DeleteNewsController(newsId);
             })
 
             $('.new-comment').removeClass('new-comment');

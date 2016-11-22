@@ -48,6 +48,4 @@ function editData(newsId, commentId) {
         }).catch(() => {
             toastr.error('Couldn\'t edit the comment!');
         });
-
-    DetailedNewsController(newsId);
 }
