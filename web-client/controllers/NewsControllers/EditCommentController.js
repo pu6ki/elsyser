@@ -44,6 +44,7 @@ function editData(newsId, commentId) {
     Promise.resolve(requester.putJSON(commentToEditUrl, body))
         .then(() => {
             toastr.success('Comment updated successfully!');
+            DetailedNewsController(newsId);
         }).catch(() => {
             toastr.error('Couldn\'t edit the comment!');
         });

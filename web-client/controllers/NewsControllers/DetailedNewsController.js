@@ -35,16 +35,6 @@ export function DetailedNewsController(id) {
                 if (el.posted_by.user === currentUsername) {
                     el.editableComment = true;
                     $('#content').html(hbTemplate(dataFromAPI));
-
-                    let commentId = el.id;
-
-                    $(document).on('click', `#news-${newsId}-edit-comment-${commentId}`, () => {
-                        EditCommentController(newsId, commentId);
-                    })
-
-                    $(document).on('click', `#news-${newsId}-delete-comment-${commentId}`, () => {
-                        DeleteCommentController(newsId, commentId);
-                    })
                 }
             });
 
@@ -52,12 +42,25 @@ export function DetailedNewsController(id) {
             let template = hbTemplate(dataFromAPI);
             $('#content').html(template);
 
+            dataFromAPI.comment_set.forEach((el) => {
+                let commentId = el.id;
+
+                $(`#news-${newsId}-edit-comment-${commentId}`).on('click', () => {
+                    EditCommentController(newsId, commentId);
+                })
+
+                $(`#news-${newsId}-delete-comment-${commentId}`).on('click', () => {
+                    DeleteCommentController(newsId, commentId);
+                    DetailedNewsController(newsId);
+                })
+            })
+
             $(`#news-${newsId}-edit`).on('click', () => {
                 EditNewsController(newsId);
             })
 
             $(`#news-${newsId}-delete`).on('click', () => {
-                DeleteNewsController(newsId);
+                DeleteNewsController(newsId);  
             })
 
             $('.new-comment').removeClass('new-comment');
@@ -81,6 +84,7 @@ export function DetailedNewsController(id) {
 
             $('#add-comment-button').on('click', () => {
                 AddCommentController(id);
+                DetailedNewsController(newsId);
             });
 
         }).catch((err) => {
@@ -114,14 +118,6 @@ export function loadComments(newsId) {
             }
             let template = hbTemplate(commentsToLoad[i]);
             $('#comments').prepend(template);
-
-            $(document).on('click', `#news-${newsId}-edit-comment-${commentsToLoad[i].id}`, () => {
-                EditCommentController(newsId, commentsToLoad[i].id);
-            })
-
-            $(document).on('click', `#news-${newsId}-delete-comment-${commentsToLoad[i].id}`, () => {
-                DeleteCommentController(newsId, commentsToLoad[i].id);
-            })
         }
     });
 }

@@ -22,42 +22,42 @@ import { HomeworksController } from './controllers/HomeworksControllers/Homework
 var handlebars = Handlebars || handlebars;
 HandlebarsIntl.registerWith(Handlebars);
 
-var router = new Navigo(null, false);
+var router = new Navigo(null, true);
 
 window.onbeforeunload = HeaderController();
 
 router
-    .on('/', () => { router.navigate('#/home') })
-    .on('#/', () => { router.navigate('#/home') })
-    .on('#/about', () => {
+    .on('/', () => { router.navigate('/home') })
+    .on('/', () => { router.navigate('/home') })
+    .on('/about', () => {
         AboutController();
     })
-    .on('#/home', () => {
+    .on('/home', () => {
         HeaderController();
         HomeController();
     })
-    .on('#/login', () => {
+    .on('/login', () => {
         LoginController();
     })
-    .on('#/register', () => {
+    .on('/register', () => {
         RegisterController();
     })
-    .on('#/profile', () => {
+    .on('/profile', () => {
         ProfileController();
     })
-    .on('#/profile/edit', () => {
+    .on('/profile/edit', () => {
         EditProfileController();
     })
-    .on('#/exams', () => {
+    .on('/exams', () => {
         ExamsController();
     })
-    .on('#/exams/:id', (params) => {
+    .on('/exams/:id', (params) => {
         DetailedExamsController(params.id);
     })
-    .on('#/news', () => {
+    .on('/news', () => {
         NewsController();
     })
-    .on('#/news/:id', (params) => {
+    .on('/news/:id', (params) => {
         DetailedNewsController(params.id);
         let refreshId = setInterval(() => {
             loadComments(params.id);
@@ -66,16 +66,16 @@ router
             }
         }, 1000);
     })
-    .on('#/add-news', () => {
+    .on('/add-news', () => {
         AddNewsController();
     })
-    .on('#/news/:id/delete', (params) => {
+    .on('/news/:id/delete', (params) => {
         DeleteNewsController(params.id);
     })
-    .on('#/homework', () => {
+    .on('/homework', () => {
         HomeworksController();
     })
-    .on('#/homework/:id', (params) => {
+    .on('/homework/:id', (params) => {
         DetailedHomeworkController(params.id);
     })
     .resolve();

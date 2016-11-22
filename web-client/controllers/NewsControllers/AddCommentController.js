@@ -1,7 +1,6 @@
 import { requester } from '../../utils/requster.js';
 import { templates } from '../../utils/templates.js';
 import { validator } from '../../utils/validator.js';
-import { DetailedNewsController } from './DetailedNewsController.js';
 
 export function AddCommentController(id) {
     let body = {
@@ -11,7 +10,7 @@ export function AddCommentController(id) {
 
     if (validator.comment($('#comment-content').val())) {
         body.content = $('#comment-content').val();
-        Promise.resolve(requester.postJSON(addCommentUrl, body))
+        requester.postJSON(addCommentUrl, body)
             .then(() => {
                 toastr.success('Comment added!');
                 $('#comment-content').val('');
