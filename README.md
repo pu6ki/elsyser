@@ -31,6 +31,7 @@ This is a students' platform for ELSYS, Sofia.
 * [handlebars](https://github.com/wycats/handlebars.js/) - Semantic templates for JavaScript
 * [toastr](https://github.com/CodeSeven/toastr) - JavaScript library for representative notifications
 * [navigo](https://github.com/krasimir/navigo) - Minimalistic JavaScript router
+* [AlertifyJS](https://github.com/MohammadYounes/AlertifyJS) - A JavaScript framework for developing pretty browser dialogs and notifications
 * [handlebars-intl](https://github.com/yahoo/handlebars-intl) - Handlebars helpers for internationalization.
 * [live-server](https://github.com/tapio/live-server) - A small HTTP web server with live reload
 * [Atom](https://github.com/atom/atom) - A hackable text editor for the 21st century

@@ -524,7 +524,7 @@ class NewsListViewTestCase(APITestCase):
 
     def test_news_list_addition_with_too_long_title(self):
         self.client.force_authenticate(user=self.user)
-        self.news.title = 'yo' * 50
+        self.news.title = 'yo' * 120
         post_data = NewsSerializer(self.news).data
 
         request = self.client.post(
@@ -533,7 +533,7 @@ class NewsListViewTestCase(APITestCase):
 
         self.assertEqual(
             request.data['title'],
-            ['Ensure this field has no more than 60 characters.']
+            ['Ensure this field has no more than 100 characters.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -571,7 +571,7 @@ class NewsListViewTestCase(APITestCase):
 
     def test_news_list_addition_with_too_long_content(self):
         self.client.force_authenticate(user=self.user)
-        self.news.content = 'Hey Jude!' * 1024
+        self.news.content = 'Hey Jude!' * 10000
         post_data = NewsSerializer(self.news).data
 
         request = self.client.post(
@@ -580,7 +580,7 @@ class NewsListViewTestCase(APITestCase):
 
         self.assertEqual(
             request.data['content'],
-            ['Ensure this field has no more than 1000 characters.']
+            ['Ensure this field has no more than 10000 characters.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -732,13 +732,13 @@ class NewsDetailViewTestCase(APITestCase):
 
         request = self.client.put(
             reverse(self.detail_view_name, kwargs={'pk': self.news.id}),
-            {'title': 'yo' * 50},
+            {'title': 'yo' * 500},
             format='json'
         )
 
         self.assertEqual(
             request.data['title'],
-            ['Ensure this field has no more than 60 characters.']
+            ['Ensure this field has no more than 100 characters.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -779,13 +779,13 @@ class NewsDetailViewTestCase(APITestCase):
 
         request = self.client.put(
             reverse(self.detail_view_name, kwargs={'pk': self.news.id}),
-            {'content': 'Hey Jude!' * 1024},
+            {'content': 'Hey Jude!' * 10000},
             format='json'
         )
 
         self.assertEqual(
             request.data['content'],
-            ['Ensure this field has no more than 1000 characters.']
+            ['Ensure this field has no more than 10000 characters.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
