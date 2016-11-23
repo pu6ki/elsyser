@@ -25,8 +25,6 @@ export function DetailedNewsController(id) {
             let hbTemplate = Handlebars.compile(result[1]),
                 newsId = dataFromAPI.id;
 
-
-            console.log(dataFromAPI.comment_set);
             if (dataFromAPI.author.user === currentUsername) {
                 dataFromAPI.editable = true;
             }
@@ -46,18 +44,7 @@ export function DetailedNewsController(id) {
 
             dataFromAPI.comment_set.forEach((el) => {
                 let commentId = el.id;
-
-                $(`#news-${newsId}-edit-comment-${commentId}`).on('click', () => {
-                    EditCommentController(newsId, commentId);
-                })
-
-                $(`#news-${newsId}-delete-comment-${commentId}`).on('click', () => {
-                    alertify.confirm("Are you sure you want to delete this comment?", () => {
-                        DeleteCommentController(newsId, commentId);
-                        DetailedNewsController(newsId);
-                        console.log(dataFromAPI.comment_set);
-                    })
-                })
+                attachEditAndDelete(newsId, commentId);
             })
 
             $(`#news-${newsId}-edit`).on('click', () => {
@@ -65,7 +52,9 @@ export function DetailedNewsController(id) {
             })
 
             $(`#news-${newsId}-delete`).on('click', () => {
-                DeleteNewsController(newsId);
+                alertify.confirm("Are you sure you want to delete this news?", () => {
+                    DeleteNewsController(newsId);
+                })
             })
 
             $('.new-comment').removeClass('new-comment');
@@ -123,6 +112,20 @@ export function loadComments(newsId) {
             }
             let template = hbTemplate(commentsToLoad[i]);
             $('#comments').prepend(template);
+            attachEditAndDelete(newsId, commentsToLoad[i].id);
         }
     });
+}
+
+function attachEditAndDelete(newsId, commentId) {
+    $(`#news-${newsId}-edit-comment-${commentId}`).on('click', () => {
+        EditCommentController(newsId, commentId);
+    })
+
+    $(`#news-${newsId}-delete-comment-${commentId}`).on('click', () => {
+        alertify.confirm("Are you sure you want to delete this comment?", () => {
+            DeleteCommentController(newsId, commentId);
+            DetailedNewsController(newsId);
+        })
+    })
 }
