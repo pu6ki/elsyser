@@ -2,13 +2,13 @@
     <li role="presentation">
         <div class="navbar-header"><a class="navbar-brand" href="#/home">ELSYSER</a></div>
     </li>
-    <li id="exams"><a href="#/exams">Exams <span class="glyphicon glyphicon-pencil"></span></a></li>
-    <li id="news"><a href="#/news">News <span class="glyphicon glyphicon-envelope"></span></a></li>
-    <li id="homework"><a href="#/homework">Homeworks <span class="glyphicon glyphicon-book"></span></a></li>
-    <li id="about"><a href="#/about">About <span class="glyphicon glyphicon-tags"></span></a></li>
+    <li id="exams"><a href="#/exams" data-toggle="collapse" data-target=".navbar-collapse.in">Exams <span class="glyphicon glyphicon-pencil"></span></a></li>
+    <li id="news"><a href="#/news" data-toggle="collapse" data-target=".navbar-collapse.in">News <span class="glyphicon glyphicon-envelope"></span></a></li>
+    <li id="homework"><a href="#/homework" data-toggle="collapse" data-target=".navbar-collapse.in">Homeworks <span class="glyphicon glyphicon-book"></span></a></li>
+    <li id="about"><a href="#/about" data-toggle="collapse" data-target=".navbar-collapse.in">About <span class="glyphicon glyphicon-tags"></span></a></li>
 </ul>
 
 <ul class="nav navbar-nav navbar-right">
-    <li id="profile"><a href="#/profile"><img src="http://127.0.0.1:8000/api{{profileImage}}" alt="{{username}}" id="profile-picture">{{username}}</a></li>
-    <li id="log-out"><span>Logout <span class="glyphicon glyphicon-log-out"></span></span></li>
+    <li id="profile"><a href="#/profile" data-toggle="collapse" data-target=".navbar-collapse.in"><img src="http://127.0.0.1:8000/api{{profileImage}}" alt="{{username}}" id="profile-picture">{{username}}</a></li>
+    <li id="log-out"><span data-toggle="collapse" data-target=".navbar-collapse.in">Logout <span class="glyphicon glyphicon-log-out"></span></span></li>
 </ul>
