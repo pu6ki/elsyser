@@ -4,17 +4,15 @@
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/pu6ki/elsyser/master/LICENSE)
 [![Requires.io](https://img.shields.io/requires/github/pu6ki/elsyser.svg)](https://raw.githubusercontent.com/pu6ki/elsyser/master/requirements.txt)
 
-# elsyser
+# [elsyser](https://elsyser.herokuapp.com/)
 
-**elsyser** is a *single page application (SPA), consuming RESTful services from the Django web server.*
-This is a students' platform for ELSYS, Sofia.
+**elsyser** is a *RESTful API*, used for [the ELSYSER platform](https://github.com/pu6ki/elsyser-web-client) - a
+students' platform for [ELSYS, Sofia](http://elsys-bg.org).
 
 ## Prerequisites
 
 - [Python v3.5+](https://www.python.org/downloads/)
 - [pip v9.0.1](https://pypi.python.org/pypi/pip)
-- [Node.js v7.0.0+](https://nodejs.org/en/)
-- [npm v3.10.8](https://docs.npmjs.com/getting-started/installing-node)
 
 ## Tech
 
@@ -26,16 +24,7 @@ This is a students' platform for ELSYS, Sofia.
 * [drf-nested-routers](https://github.com/alanjds/drf-nested-routers) - Django Rest Framework nested routers
 * [Django suit](https://github.com/darklow/django-suit) - Modern theme for Django admin panel
 * [Pillow](https://github.com/python-pillow/Pillow) - Python Imaging Library
-* [Bootstrap](https://github.com/twbs/bootstrap) - Framework for developing responsive UI on the web
-* [jQuery](https://github.com/jquery/jquery) - New Wave JavaScript
-* [handlebars](https://github.com/wycats/handlebars.js/) - Semantic templates for JavaScript
-* [toastr](https://github.com/CodeSeven/toastr) - JavaScript library for representative notifications
-* [navigo](https://github.com/krasimir/navigo) - Minimalistic JavaScript router
-* [AlertifyJS](https://github.com/MohammadYounes/AlertifyJS) - A JavaScript framework for developing pretty browser dialogs and notifications
-* [handlebars-intl](https://github.com/yahoo/handlebars-intl) - Handlebars helpers for internationalization.
-* [live-server](https://github.com/tapio/live-server) - A small HTTP web server with live reload
 * [Atom](https://github.com/atom/atom) - A hackable text editor for the 21st century
-* [Visual Studio Code](https://github.com/Microsoft/vscode) - Another cool text editor
 
 ## Getting started
 
@@ -74,31 +63,19 @@ How to copy this project to your local machine and run it:
     $ python3 manage.py runserver
     ```
 
-6. Intstall Node.js dependencies:
-
-    ```
-    $ cd web-client/
-    $ npm install
-    $ npm install -g live-server
-    ```
-
-7. Run the live server:
-
-    ```
-    $ live-server
-    ```
-
 ## Tutorial
 
 1. `$ python3 manage.py runserver` and `$ live-server` should run simultaneously.
-2. Visit http://127.0.0.1:8080/
-3. Click "Register" to create your school account.
-4. Then log in with your credentials.
-5. Everything about you and your class is one click away!
-    - Upcoming exams
-    - Latest news with live comments
-    - Assigned homeworks with materials for them
-    - Profile info
+2. Visit http://127.0.0.1:8000/api/register
+3. Create your school account.
+4. Then visit http://127.0.0.1:8000/api/login and log in with your credentials.
+    - Here you will receive your authentication token, which you should pass as authentication header for further requests.
+    - *Authentication Token [token]*
+5. You can view everything about you and your class:
+    - */api/exams* - Upcoming exams about your class.
+    - */api/news* - News about your class, which you can post and edit too. Each news has it's own comments.
+    - */api/homeworks*
+    - */api/profile*
     - ...
 
 ## The admin site
@@ -108,12 +85,9 @@ How to copy this project to your local machine and run it:
 3. Log in with your superuser data.
 4. Here you can add, update and remove your models.
 
-## Authors
+## Author
 
-We are students in 10th grade in ELSYS. We study programming and we are very enthusiastic about this project.
-
-[![wencakisa](https://img.shields.io/badge/wencakisa-python-blue.svg)](https://github.com/wencakisa)
-[![matir8](https://img.shields.io/badge/matir8-javascript-yellow.svg)](https://github.com/matir8)
+[![wencakisa](https://img.shields.io/badge/wencakisa-python-blue.svg)](https://github.com/wencakisa) - I am a student in 10th grade in ELSYS. I am developing this back end service, used by [elsyser-web-client](https://github.com/pu6ki/elsyser-web-client), which is developed by my schoolmate [matir8](https://github.com/matir8).
 
 ### Task list:
 
