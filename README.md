@@ -87,7 +87,7 @@ How to copy this project to your local machine and run it:
 
 ## Author
 
-[![wencakisa](https://img.shields.io/badge/wencakisa-python-blue.svg)](https://github.com/wencakisa) - I am a student in 10th grade in ELSYS. I am developing this back end service, used by [elsyser-web-client](https://github.com/pu6ki/elsyser-web-client), which is developed by my schoolmate [matir8](https://github.com/matir8).
+[wencakisa](https://github.com/wencakisa) - I am a student in 10th grade in ELSYS. I am developing this back end service, used by [elsyser-web-client](https://github.com/pu6ki/elsyser-web-client), which is developed by my schoolmate [matir8](https://github.com/matir8).
 
 ### Task list:
 
