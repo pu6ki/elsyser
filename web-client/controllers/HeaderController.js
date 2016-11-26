@@ -13,17 +13,15 @@ export function HeaderController() {
 
     if (window.localStorage.getItem('token')) {
         requester.getJSON(profileUrl)
-        .then((result) => {
-            userData.profileImage = result.profile_image;
-            userData.username = result.user.username;
-            compileTemplate(authHeader, userData);
-        });
+            .then((result) => {
+                userData.profileImage = result.profile_image;
+                userData.username = result.user.username;
+                compileTemplate(authHeader, userData);
+            });
     }
     else {
         compileTemplate(unauthHeader);
     }
-    
-
 }
 
 function compileTemplate(template, data) {
