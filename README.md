@@ -70,7 +70,7 @@ How to copy this project to your local machine and run it:
 3. Create your school account.
 4. Then visit https://elsyser.herokuapp.com/api/login and log in with your credentials.
     - Here you will receive your authentication token, which you should pass as authentication header for further requests.
-    - *Authentication Token [token]*
+    - Postman example: ![Postman example](https://raw.githubusercontent.com/pu6ki/elsyser/master/static/authorization-example.png)
 5. You can view everything about you and your class:
     - */api/exams* - Upcoming exams about your class.
     - */api/news* - News about your class, which you can post and edit too. Each news has it's own comments.
