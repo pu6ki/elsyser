@@ -1,1 +1,1 @@
-web: gunicorn elsyser.wsgi
+web: elsyser.wsgi
