@@ -4,9 +4,9 @@
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/pu6ki/elsyser/master/LICENSE)
 [![Requires.io](https://img.shields.io/requires/github/pu6ki/elsyser.svg)](https://raw.githubusercontent.com/pu6ki/elsyser/master/requirements.txt)
 
-# [elsyser](https://elsyser.herokuapp.com/)
+# [elsyser](https://elsyser.herokuapp.com/api/register/)
 
-**elsyser** is a *RESTful API*, used for [the ELSYSER platform](https://github.com/pu6ki/elsyser-web-client) - a
+**elsyser** is a *RESTful API*, used for [the ELSYSER web client](https://github.com/pu6ki/elsyser-web-client) - a
 students' platform for [ELSYS, Sofia](http://elsys-bg.org).
 
 ## Prerequisites
@@ -87,7 +87,9 @@ How to copy this project to your local machine and run it:
 
 ## Author
 
-[wencakisa](https://github.com/wencakisa) - I am a student in 10th grade in ELSYS. I am developing this back end service, used by [elsyser-web-client](https://github.com/pu6ki/elsyser-web-client), which is developed by my schoolmate [matir8](https://github.com/matir8).
+[wencakisa](https://github.com/wencakisa) - I am a student in 10th grade in ELSYS.
+I am developing this back end service, used by [the ELSYSER web client](https://github.com/pu6ki/elsyser-web-client),
+which is developed by my schoolmate [matir8](https://github.com/matir8).
 
 ### Task list:
 
