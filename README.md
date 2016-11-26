@@ -1,8 +1,8 @@
-[![GitHub issues](https://img.shields.io/github/issues/pu6ki/elsyser.svg)](https://github.com/pu6ki/elsyser/issues)
-[![GitHub forks](https://img.shields.io/github/forks/pu6ki/elsyser.svg)](https://github.com/pu6ki/elsyser/network)
-[![GitHub stars](https://img.shields.io/github/stars/pu6ki/elsyser.svg)](https://github.com/pu6ki/elsyser/stargazers)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/pu6ki/elsyser/master/LICENSE)
-[![Requires.io](https://img.shields.io/requires/github/pu6ki/elsyser.svg)](https://raw.githubusercontent.com/pu6ki/elsyser/master/requirements.txt)
+[![GitHub stars](https://img.shields.io/github/stars/pu6ki/elsyser.svg?style=flat-square)](https://github.com/pu6ki/elsyser/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/pu6ki/elsyser.svg?style=flat-square)](https://github.com/pu6ki/elsyser/network)
+[![GitHub issues](https://img.shields.io/github/issues/pu6ki/elsyser.svg?style=flat-square)](https://github.com/pu6ki/elsyser/issues)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/pu6ki/elsyser/master/LICENSE)
+[![Requires.io](https://img.shields.io/requires/github/pu6ki/elsyser.svg?style=flat-square)](https://raw.githubusercontent.com/pu6ki/elsyser/master/requirements.txt)
 
 # [elsyser](https://elsyser.herokuapp.com/api/register/)
 
