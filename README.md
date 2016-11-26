@@ -66,9 +66,9 @@ How to copy this project to your local machine and run it:
 ## Tutorial
 
 1. `$ python3 manage.py runserver`
-2. Visit https://elsyser.herokuapp.com/api/register
+2. Visit http://localhost:8000/api/register
 3. Create your school account.
-4. Then visit https://elsyser.herokuapp.com/api/login and log in with your credentials.
+4. Then visit http://localhost:8000/api/login and log in with your credentials.
     - Here you will receive your authentication token, which you should pass as authentication header for further requests.
     ![Postman example](https://raw.githubusercontent.com/pu6ki/elsyser/master/static/authorization-example.png)
 5. You can view everything about you and your class:
@@ -81,7 +81,7 @@ How to copy this project to your local machine and run it:
 ## The admin site
 
 1. `$ python3 manage.py runserver`
-2. Visit https://elsyser.herokuapp.com/admin/
+2. Visit http://localhost:8000/admin/
 3. Log in with your superuser data.
 4. Here you can add, update and remove your models.
 
