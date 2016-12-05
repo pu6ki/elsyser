@@ -37,7 +37,9 @@ class UserLogin(generics.CreateAPIView):
         user = serializer.validated_data['user']
         token, _ = Token.objects.get_or_create(user=user)
 
-        return Response({'token': token.key})
+        is_teacher = user.groups.filter(name='Teachers').exists()
+
+        return Response({'token': token.key, 'is_teacher': is_teacher})
 
 
 class StudentProfile(generics.RetrieveUpdateAPIView):
