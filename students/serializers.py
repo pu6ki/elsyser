@@ -111,7 +111,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
 
     def save(self):
-        user = User.objects.create_user(**self.validated_data['user'])
+        user = User.objects.create_user(**self.validated_data['user'], is_staff=True)
         Token.objects.create(user=user)
         self.validated_data['user'] = user
 
