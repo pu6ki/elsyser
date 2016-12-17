@@ -279,12 +279,11 @@ class HomeworkSerializer(serializers.ModelSerializer):
     subject = SubjectSerializer()
     clazz = ClassSerializer()
     details = serializers.CharField(allow_blank=True)
-    materials = serializers.FileField(use_url=False)
 
 
     class Meta:
         model = Homework
-        fields = ('id', 'subject', 'clazz', 'deadline', 'details', 'materials')
+        fields = ('id', 'subject', 'clazz', 'deadline', 'details')
         depth = 1
 
 

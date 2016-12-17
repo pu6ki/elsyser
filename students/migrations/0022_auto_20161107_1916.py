@@ -3,8 +3,6 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import students.models
-import students.validators
 
 
 class Migration(migrations.Migration):
@@ -17,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='homework',
             name='materials',
-            field=models.FileField(blank=True, null=True, upload_to=students.models.homework_material_filename),
+            field=models.FileField(blank=True, null=True),
         ),
     ]
