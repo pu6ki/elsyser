@@ -97,7 +97,6 @@ class ExamsViewSet(viewsets.ModelViewSet):
 
 
     def create(self, request):
-        # TODO: Finish this view
         context = {'request': request}
 
         serializer = self.serializer_class(context=context, data=request.data)
@@ -106,6 +105,28 @@ class ExamsViewSet(viewsets.ModelViewSet):
 
         return Response(
             serializer.validated_data, status=status.HTTP_201_CREATED
+        )
+
+
+    def update(self, request, pk=None):
+        exam = get_object_or_404(Exam, id=pk)
+
+        serializer = self.serializer_class(
+            exam, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+
+    def destroy(self, request, pk=None):
+        exam = get_object_or_404(Exam, id=pk)
+        exam.delete()
+
+        return Response(
+            {'message': 'Exam successfully deleted.'},
+            status=status.HTTP_200_OK
         )
 
 
@@ -118,6 +139,16 @@ class NewsViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated, IsStudent)
     serializer_class = NewsSerializer
+
+
+    def retrieve(self, request, pk=None):
+        news = get_object_or_404(
+            News.objects.filter(author__clazz=self.request.user.student.clazz),
+            id=pk
+        )
+        serializer = self.serializer_class(news)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
     def get_queryset(self):
@@ -136,16 +167,6 @@ class NewsViewSet(viewsets.ModelViewSet):
         return Response(
             serializer.validated_data, status=status.HTTP_201_CREATED
         )
-
-
-    def retrieve(self, request, pk=None):
-        news = get_object_or_404(
-            News.objects.filter(author__clazz=self.request.user.student.clazz),
-            id=pk
-        )
-        serializer = self.serializer_class(news)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
     def update(self, request, pk=None):
@@ -270,7 +291,6 @@ class HomeworksViewSet(viewsets.ModelViewSet):
 
 
     def create(self, request):
-        # TODO: Finish this view
         context = {'request': request}
 
         serializer = self.serializer_class(context=context, data=request.data)
@@ -279,6 +299,28 @@ class HomeworksViewSet(viewsets.ModelViewSet):
 
         return Response(
             serializer.validated_data, status=status.HTTP_201_CREATED
+        )
+
+
+    def update(self, request, pk=None):
+        homework = get_object_or_404(Homework, id=pk)
+
+        serializer = self.serializer_class(
+            homework, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+
+    def destroy(self, request, pk=None):
+        homework = get_object_or_404(Homework, id=pk)
+        homework.delete()
+
+        return Response(
+            {'message': 'Homework successfully deleted.'},
+            status=status.HTTP_200_OK
         )
 
 

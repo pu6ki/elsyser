@@ -187,6 +187,13 @@ class ExamSerializer(serializers.ModelSerializer):
         return Exam.objects.create(**validated_data)
 
 
+    def update(self, instance, validated_data):
+        instance.__dict__.update(**validated_data)
+        instance.save()
+
+        return instance
+
+
 class AuthorSerializer(serializers.ModelSerializer):
 
     user = serializers.SlugRelatedField(slug_field='username', read_only=True)
@@ -284,3 +291,10 @@ class HomeworkSerializer(serializers.ModelSerializer):
         validated_data['clazz'] = clazz
 
         return Homework.objects.create(**validated_data)
+
+
+    def update(self, instance, validated_data):
+        instance.__dict__.update(**validated_data)
+        instance.save()
+
+        return instance
