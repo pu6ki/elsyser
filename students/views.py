@@ -74,6 +74,8 @@ class ExamsViewSet(viewsets.ModelViewSet):
     serializer_class = ExamSerializer
     permission_classes_by_action = {
         'create': [IsAuthenticated, IsTeacher],
+        'update': [IsAuthenticated, IsTeacher],
+        'destroy': [IsAuthenticated, IsTeacher],
         'list': [IsAuthenticated, IsStudent],
         'retrieve': [IsAuthenticated, IsStudent],
     }
@@ -97,9 +99,7 @@ class ExamsViewSet(viewsets.ModelViewSet):
 
 
     def create(self, request):
-        context = {'request': request}
-
-        serializer = self.serializer_class(context=context, data=request.data)
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
@@ -268,6 +268,8 @@ class HomeworksViewSet(viewsets.ModelViewSet):
     serializer_class = HomeworkSerializer
     permission_classes_by_action = {
         'create': [IsAuthenticated, IsTeacher],
+        'update': [IsAuthenticated, IsTeacher],
+        'destroy': [IsAuthenticated, IsTeacher],
         'list': [IsAuthenticated, IsStudent],
         'retrieve': [IsAuthenticated, IsStudent],
     }
