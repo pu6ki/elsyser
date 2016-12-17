@@ -174,8 +174,8 @@ class SubjectSerializer(serializers.ModelSerializer):
 
 class ExamSerializer(serializers.ModelSerializer):
 
-    subject = SubjectSerializer()
-    clazz = ClassSerializer()
+    subject = SubjectSerializer(read_only=True)
+    clazz = ClassSerializer(read_only=True)
 
 
     class Meta:
@@ -275,8 +275,8 @@ class NewsSerializer(serializers.ModelSerializer):
 
 class HomeworkSerializer(serializers.ModelSerializer):
 
-    subject = SubjectSerializer()
-    clazz = ClassSerializer()
+    subject = SubjectSerializer(read_only=True)
+    clazz = ClassSerializer(read_only=True)
     details = serializers.CharField(allow_blank=True)
     materials = serializers.FileField(use_url=False)
 
