@@ -89,7 +89,7 @@ class Homework(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     deadline = models.DateField(auto_now=False, validators=[validate_date])
-    details = models.TextField(max_length=256, blank=True)
+    details = models.TextField(max_length=256, blank=True, unique=True)
 
 
     class Meta:
