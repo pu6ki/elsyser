@@ -265,9 +265,6 @@ class NewsSerializer(serializers.ModelSerializer):
 
 
 class HomeworkSerializer(serializers.ModelSerializer):
-    details = serializers.CharField(allow_blank=True)
-
-
     class Meta:
         model = Homework
         fields = ('id', 'subject', 'clazz', 'deadline', 'details')
@@ -288,3 +285,4 @@ class HomeworkSerializer(serializers.ModelSerializer):
 class HomeworkReadSerializer(HomeworkSerializer):
     subject = SubjectSerializer(read_only=True)
     clazz = ClassSerializer(read_only=True)
+    details = serializers.CharField(allow_blank=True)
