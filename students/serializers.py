@@ -166,10 +166,6 @@ class SubjectSerializer(serializers.ModelSerializer):
 
 
 class ExamSerializer(serializers.ModelSerializer):
-    subject = SubjectSerializer()
-    clazz = ClassSerializer()
-
-
     class Meta:
         model = Exam
         fields = ('id', 'subject', 'clazz', 'topic', 'date', 'details')
@@ -185,6 +181,11 @@ class ExamSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+
+class ExamReadSerializer(ExamSerializer):
+    subject = SubjectSerializer(read_only=True)
+    clazz = ClassSerializer(read_only=True)
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -264,8 +265,6 @@ class NewsSerializer(serializers.ModelSerializer):
 
 
 class HomeworkSerializer(serializers.ModelSerializer):
-    subject = SubjectSerializer()
-    clazz = ClassSerializer()
     details = serializers.CharField(allow_blank=True)
 
 
@@ -276,9 +275,6 @@ class HomeworkSerializer(serializers.ModelSerializer):
 
 
     def create(self, validated_data):
-        clazz, _ = Class.objects.get_or_create(**validated_data['clazz'])
-        validated_data['clazz'] = clazz
-
         return Homework.objects.create(**validated_data)
 
 
@@ -287,3 +283,8 @@ class HomeworkSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+
+class HomeworkReadSerializer(HomeworkSerializer):
+    subject = SubjectSerializer(read_only=True)
+    clazz = ClassSerializer(read_only=True)

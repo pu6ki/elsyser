@@ -12,12 +12,16 @@ from datetime import datetime
 
 from .serializers import (
     StudentSerializer, UserLoginSerializer, StudentProfileSerializer,
-    ExamSerializer,
+    ExamSerializer, ExamReadSerializer,
     NewsSerializer, CommentSerializer,
-    HomeworkSerializer,
+    HomeworkSerializer, HomeworkReadSerializer
 )
-from .models import Student, Exam, News, Homework, Comment
+from .models import Student, Exam, News, Homework, Comment, Subject, Class
 from .permissions import IsStudent, IsTeacher
+
+
+def extract_clazz_data(clazz_data):
+    return clazz_data[:2], clazz_data[2]
 
 
 class StudentRegistration(generics.CreateAPIView):
@@ -48,9 +52,13 @@ class StudentProfile(generics.RetrieveUpdateAPIView):
 
     def get(self, request, format=None):
         student = Student.objects.get(user=request.user)
+
         serializer = self.serializer_class(student)
 
-        return Response(serializer.data)
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK
+        )
 
 
     def update(self, request, format=None):
@@ -62,12 +70,14 @@ class StudentProfile(generics.RetrieveUpdateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        return Response(
+            serializer.validated_data,
+            status=status.HTTP_200_OK
+        )
 
 
 class ExamsViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
-    serializer_class = ExamSerializer
     permission_classes_by_action = {
         'create': [IsAuthenticated, IsTeacher],
         'update': [IsAuthenticated, IsTeacher],
@@ -77,14 +87,23 @@ class ExamsViewSet(viewsets.ModelViewSet):
     }
 
 
+    def get_serializer_class(self):
+        return ExamReadSerializer if self.request.method in ('GET',) else ExamSerializer
+
+
     def retrieve(self, request, pk=None):
         exam = get_object_or_404(
             Exam.objects.filter(clazz=request.user.student.clazz),
             id=pk
         )
-        serializer = self.serializer_class(exam)
+        serializer = self.get_serializer(exam)
+        headers = self.get_success_headers(serializer.data)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+            headers=headers
+        )
 
 
     def get_queryset(self):
@@ -95,25 +114,38 @@ class ExamsViewSet(viewsets.ModelViewSet):
 
 
     def create(self, request):
-        serializer = self.serializer_class(data=request.data)
+        subject = get_object_or_404(Subject, title=request.data.get('subject'))
+
+        clazz_number, clazz_letter = extract_clazz_data(request.data.get('clazz'))
+        clazz = get_object_or_404(Class, number=clazz_number, letter=clazz_letter)
+
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        serializer.save(clazz=clazz, subject=subject)
+        headers = self.get_success_headers(serializer.data)
 
         return Response(
-            serializer.validated_data, status=status.HTTP_201_CREATED
+            serializer.validated_data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
         )
 
 
     def update(self, request, pk=None):
         exam = get_object_or_404(Exam, id=pk)
 
-        serializer = self.serializer_class(
+        serializer = self.get_serializer(
             exam, data=request.data, partial=True
         )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+        headers = self.get_success_headers(serializer.data)
 
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        return Response(
+            serializer.validated_data,
+            status=status.HTTP_200_OK,
+            headers=headers
+        )
 
 
     def destroy(self, request, pk=None):
@@ -142,8 +174,13 @@ class NewsViewSet(viewsets.ModelViewSet):
             id=pk
         )
         serializer = self.serializer_class(news)
+        headers = self.get_success_headers(serializer.data)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+            headers=headers
+        )
 
 
     def get_queryset(self):
@@ -158,9 +195,12 @@ class NewsViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
 
         return Response(
-            serializer.validated_data, status=status.HTTP_201_CREATED
+            serializer.validated_data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
         )
 
 
@@ -178,8 +218,13 @@ class NewsViewSet(viewsets.ModelViewSet):
         )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+        headers = self.get_success_headers(serializer.data)
 
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        return Response(
+            serializer.validated_data,
+            status=status.HTTP_200_OK,
+            headers=headers
+        )
 
 
     def destroy(self, request, pk=None):
@@ -213,9 +258,12 @@ class CommentsViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
 
         return Response(
-            serializer.validated_data, status=status.HTTP_201_CREATED
+            serializer.validated_data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
         )
 
 
@@ -234,8 +282,13 @@ class CommentsViewSet(viewsets.ModelViewSet):
         )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+        headers = self.get_success_headers(serializer.data)
 
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        return Response(
+            serializer.validated_data,
+            status=status.HTTP_200_OK,
+            headers=headers
+        )
 
 
     def destroy(self, request, news_pk=None, pk=None):
@@ -258,7 +311,6 @@ class CommentsViewSet(viewsets.ModelViewSet):
 
 class HomeworksViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
-    serializer_class = HomeworkSerializer
     permission_classes_by_action = {
         'create': [IsAuthenticated, IsTeacher],
         'update': [IsAuthenticated, IsTeacher],
@@ -268,14 +320,23 @@ class HomeworksViewSet(viewsets.ModelViewSet):
     }
 
 
+    def get_serializer_class(self):
+        return HomeworkReadSerializer if self.request.method in ('GET',) else HomeworkSerializer
+
+
     def retrieve(self, request, pk=None):
         homework = get_object_or_404(
-            Homework.objects.filter(clazz=request.user.student.clazz),
-            id=pk
+            Homework.objects.filter(clazz=request.user.student.clazz), id=pk
         )
-        serializer = self.serializer_class(homework)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = self.get_serializer(homework)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+            headers=headers
+        )
 
 
     def get_queryset(self):
@@ -286,27 +347,39 @@ class HomeworksViewSet(viewsets.ModelViewSet):
 
 
     def create(self, request):
-        context = {'request': request}
+        subject = get_object_or_404(Subject, title=request.data.get('subject'))
 
-        serializer = self.serializer_class(context=context, data=request.data)
+        clazz_data = request.data.get('clazz')
+
+        clazz = get_object_or_404(Class, number=clazz_number, letter=clazz_letter)
+
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        serializer.save(clazz=clazz, subject=subject)
+        headers = self.get_success_headers(serializer.data)
 
         return Response(
-            serializer.validated_data, status=status.HTTP_201_CREATED
+            serializer.validated_data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
         )
 
 
     def update(self, request, pk=None):
         homework = get_object_or_404(Homework, id=pk)
 
-        serializer = self.serializer_class(
+        serializer = self.get_serializer(
             homework, data=request.data, partial=True
         )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+        headers = self.get_success_headers(serializer.data)
 
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        return Response(
+            serializer.validated_data,
+            status=status.HTTP_200_OK,
+            headers=headers
+        )
 
 
     def destroy(self, request, pk=None):
