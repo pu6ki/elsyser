@@ -316,6 +316,7 @@ class ExamsListViewTestCase(APITestCase):
         self.view_name = 'students:exams-list'
 
         self.user = User.objects.create(username='test', password='pass')
+        self.author = User.objects.create(username='author', password='pass123')
         self.clazz = Class.objects.create(number=10, letter='A')
         self.student = Student.objects.create(user=self.user, clazz=self.clazz)
         self.subject = Subject.objects.create(title='Maths')
@@ -324,7 +325,8 @@ class ExamsListViewTestCase(APITestCase):
             date=datetime.now().date(),
             clazz=self.clazz,
             topic='Quadratic inequations',
-            details='This will be the hardest **** ever!!!'
+            details='This will be the hardest **** ever!!!',
+            author=self.author
         )
 
 
@@ -366,6 +368,7 @@ class ExamsDetailViewTestCase(APITestCase):
         self.detail_view_name = 'students:exams-detail'
 
         self.user = User.objects.create(username='test', password='pass')
+        self.author = User.objects.create(username='author', password='pass123')
         self.clazz = Class.objects.create(number=10, letter='A')
         self.student = Student.objects.create(user=self.user, clazz=self.clazz)
         self.subject = Subject.objects.create(title='Maths')
@@ -374,7 +377,8 @@ class ExamsDetailViewTestCase(APITestCase):
             date=datetime.now().date(),
             clazz=self.clazz,
             topic='Quadratic inequations',
-            details='This will be the hardest **** ever!!!'
+            details='This will be the hardest **** ever!!!',
+            author=self.author
         )
 
 
@@ -1056,13 +1060,15 @@ class HomeworksViewSetTestCase(APITestCase):
 
         self.subject = Subject.objects.create(title='test_subject')
         self.user = User.objects.create(username='test', password='pass')
+        self.author = User.objects.create(username='author', password='pass123')
         self.clazz = Class.objects.create(number=10, letter='A')
         self.student = Student.objects.create(user=self.user, clazz=self.clazz)
         self.homework = Homework.objects.create(
             subject=self.subject,
             clazz=self.clazz,
             deadline=datetime.now().date(),
-            details='something interesting'
+            details='something interesting',
+            author=self.author
         )
 
 

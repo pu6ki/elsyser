@@ -110,10 +110,12 @@ class ExamsViewSet(viewsets.ModelViewSet):
 
 
     def create(self, request):
+        context = {'request': request}
+
         subject = get_object_or_404(Subject, title=request.data.get('subject'))
         clazz = get_object_or_404(Class, **request.data.get('clazz'))
 
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(clazz=clazz, subject=subject)
         headers = self.get_success_headers(serializer.data)
@@ -127,6 +129,12 @@ class ExamsViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         exam = get_object_or_404(Exam, id=pk)
+
+        if exam.author != request.user:
+            return Response(
+                {'message': 'You can edit only your own exams.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
 
         serializer = self.get_serializer(
             exam, data=request.data, partial=True
@@ -144,6 +152,13 @@ class ExamsViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, pk=None):
         exam = get_object_or_404(Exam, id=pk)
+
+        if exam.author != request.user:
+            return Response(
+                {'message': 'You can delete only your own posts.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
         exam.delete()
 
         return Response(
@@ -341,10 +356,12 @@ class HomeworksViewSet(viewsets.ModelViewSet):
 
 
     def create(self, request):
+        context = {'request': request}
+
         subject = get_object_or_404(Subject, title=request.data.get('subject'))
         clazz = get_object_or_404(Class, **request.data.get('clazz'))
 
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(clazz=clazz, subject=subject)
         headers = self.get_success_headers(serializer.data)
@@ -358,6 +375,12 @@ class HomeworksViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         homework = get_object_or_404(Homework, id=pk)
+
+        if homework.author != request.user:
+            return Response(
+                {'message': 'You can edit only your own homeworks.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
 
         serializer = self.get_serializer(
             homework, data=request.data, partial=True
@@ -375,6 +398,13 @@ class HomeworksViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, pk=None):
         homework = get_object_or_404(Homework, id=pk)
+
+        if homework.author != request.user:
+            return Response(
+                {'message': 'You can delete only your own homeworks.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
         homework.delete()
 
         return Response(

@@ -8,7 +8,8 @@ class StudentAdmin(admin.ModelAdmin):
 
 
 class ExamAdmin(admin.ModelAdmin):
-    list_display = ['id', 'subject', 'date', 'clazz', 'topic']
+    list_display = ['id', 'subject', 'date', 'clazz', 'topic', 'author']
+    date_hierarchy = 'date'
 
 
 class NewsAdmin(admin.ModelAdmin):
@@ -17,8 +18,8 @@ class NewsAdmin(admin.ModelAdmin):
 
 
 class HomeworkAdmin(admin.ModelAdmin):
-    fields = (('subject', 'clazz'), 'deadline', 'details', 'materials')
-    list_display = ['id', 'subject', 'clazz', 'deadline']
+    fields = (('subject', 'clazz'), 'deadline', 'details', 'materials', 'author')
+    list_display = ['id', 'subject', 'clazz', 'deadline', 'author']
     date_hierarchy = 'deadline'
 
 

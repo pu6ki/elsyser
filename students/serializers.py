@@ -165,15 +165,33 @@ class SubjectSerializer(serializers.ModelSerializer):
         fields = ('title',)
 
 
+class StudentAuthorSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(slug_field='username', read_only=True)
+
+
+    class Meta:
+        model = Student
+        fields = ('user', 'profile_image')
+
+
+class TeacherAuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name')
+
+
 class ExamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Exam
-        fields = ('id', 'subject', 'clazz', 'topic', 'date', 'details')
+        fields = ('id', 'subject', 'clazz', 'topic', 'date', 'details', 'author')
         depth = 1
 
 
     def create(self, validated_data):
-        return Exam.objects.create(**validated_data)
+        request = self.context['request']
+        author = request.user
+
+        return Exam.objects.create(author=author, **validated_data)
 
 
     def update(self, instance, validated_data):
@@ -186,19 +204,11 @@ class ExamSerializer(serializers.ModelSerializer):
 class ExamReadSerializer(ExamSerializer):
     subject = SubjectSerializer(read_only=True)
     clazz = ClassSerializer(read_only=True)
-
-
-class AuthorSerializer(serializers.ModelSerializer):
-    user = serializers.SlugRelatedField(slug_field='username', read_only=True)
-
-
-    class Meta:
-        model = Student
-        fields = ('user', 'profile_image')
+    author = TeacherAuthorSerializer(read_only=True)
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    posted_by = AuthorSerializer(read_only=True)
+    posted_by = StudentAuthorSerializer(read_only=True)
     content = serializers.CharField(max_length=2048)
 
 
@@ -234,7 +244,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class NewsSerializer(serializers.ModelSerializer):
     title = serializers.CharField(min_length=3, max_length=100)
     content = serializers.CharField(min_length=5, max_length=10000)
-    author = AuthorSerializer(read_only=True)
+    author = StudentAuthorSerializer(read_only=True)
     comment_set = CommentSerializer(read_only=True, many=True)
 
 
@@ -252,9 +262,9 @@ class NewsSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = self.context['request']
-        user = request.user.student
+        author = request.user.student
 
-        return News.objects.create(author=user, **validated_data)
+        return News.objects.create(author=author, **validated_data)
 
 
     def update(self, instance, validated_data):
@@ -267,12 +277,15 @@ class NewsSerializer(serializers.ModelSerializer):
 class HomeworkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Homework
-        fields = ('id', 'subject', 'clazz', 'deadline', 'details')
+        fields = ('id', 'subject', 'clazz', 'deadline', 'details', 'author')
         depth = 1
 
 
     def create(self, validated_data):
-        return Homework.objects.create(**validated_data)
+        request = self.context['request']
+        author = request.user
+
+        return Homework.objects.create(author=author, **validated_data)
 
 
     def update(self, instance, validated_data):
@@ -286,3 +299,4 @@ class HomeworkReadSerializer(HomeworkSerializer):
     subject = SubjectSerializer(read_only=True)
     clazz = ClassSerializer(read_only=True)
     details = serializers.CharField(allow_blank=True)
+    author = TeacherAuthorSerializer(read_only=True)
