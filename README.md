@@ -95,6 +95,7 @@ which is developed by my schoolmate [matir8](https://github.com/matir8).
 
 - [x] Implement teachers accounts creation
 - [x] Implement teachers creation/updating/deleting of exams and homeworks
+- [ ] Implement tests for ^
 - [x] Write tests for news deletion
 - [x] Write tests for student info updating
 - [x] Write tests for exams detail info

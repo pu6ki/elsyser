@@ -20,10 +20,6 @@ from .models import Student, Exam, News, Homework, Comment, Subject, Class
 from .permissions import IsStudent, IsTeacher
 
 
-def extract_clazz_data(clazz_data):
-    return clazz_data[:2], clazz_data[2]
-
-
 class StudentRegistration(generics.CreateAPIView):
     serializer_class = StudentSerializer
 
@@ -115,9 +111,7 @@ class ExamsViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         subject = get_object_or_404(Subject, title=request.data.get('subject'))
-
-        clazz_number, clazz_letter = extract_clazz_data(request.data.get('clazz'))
-        clazz = get_object_or_404(Class, number=clazz_number, letter=clazz_letter)
+        clazz = get_object_or_404(Class, **request.data.get('clazz'))
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -348,10 +342,7 @@ class HomeworksViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         subject = get_object_or_404(Subject, title=request.data.get('subject'))
-
-        clazz_data = request.data.get('clazz')
-
-        clazz = get_object_or_404(Class, number=clazz_number, letter=clazz_letter)
+        clazz = get_object_or_404(Class, **request.data.get('clazz'))
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
