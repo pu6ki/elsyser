@@ -6,7 +6,6 @@ from .validators import validate_date
 
 
 class Class(models.Model):
-
     number = models.IntegerField(
         validators=[MinValueValidator(8), MaxValueValidator(12)],
         choices=[(i, i) for i in range(8, 13)],
@@ -27,7 +26,6 @@ class Class(models.Model):
 
 
 class Student(models.Model):
-
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     profile_image = models.ImageField(
@@ -41,7 +39,6 @@ class Student(models.Model):
 
 
 class Subject(models.Model):
-
     title = models.CharField(unique=True, max_length=50)
 
 
@@ -54,7 +51,6 @@ class Subject(models.Model):
 
 
 class Exam(models.Model):
-
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     date = models.DateField(auto_now=False, validators=[validate_date])
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
@@ -71,7 +67,6 @@ class Exam(models.Model):
 
 
 class News(models.Model):
-
     title = models.CharField(max_length=100, blank=False)
     content = models.TextField(max_length=10000, blank=False)
     author = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -91,7 +86,6 @@ class News(models.Model):
 
 
 class Homework(models.Model):
-
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     deadline = models.DateField(auto_now=False, validators=[validate_date])
@@ -107,7 +101,6 @@ class Homework(models.Model):
 
 
 class Comment(models.Model):
-
     news = models.ForeignKey(News, on_delete=models.CASCADE)
     posted_by = models.ForeignKey(Student, on_delete=models.CASCADE)
     content = models.TextField(max_length=2048)

@@ -21,12 +21,10 @@ from .permissions import IsStudent, IsTeacher
 
 
 class StudentRegistration(generics.CreateAPIView):
-
     serializer_class = StudentSerializer
 
 
 class UserLogin(generics.CreateAPIView):
-
     serializer_class = UserLoginSerializer
 
 
@@ -43,7 +41,6 @@ class UserLogin(generics.CreateAPIView):
 
 
 class StudentProfile(generics.RetrieveUpdateAPIView):
-
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated, IsStudent)
     serializer_class = StudentProfileSerializer
@@ -69,7 +66,6 @@ class StudentProfile(generics.RetrieveUpdateAPIView):
 
 
 class ExamsViewSet(viewsets.ModelViewSet):
-
     authentication_classes = (TokenAuthentication,)
     serializer_class = ExamSerializer
     permission_classes_by_action = {
@@ -135,7 +131,6 @@ class ExamsViewSet(viewsets.ModelViewSet):
 
 
 class NewsViewSet(viewsets.ModelViewSet):
-
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated, IsStudent)
     serializer_class = NewsSerializer
@@ -205,7 +200,6 @@ class NewsViewSet(viewsets.ModelViewSet):
 
 
 class CommentsViewSet(viewsets.ModelViewSet):
-
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated, IsStudent)
     serializer_class = CommentSerializer
@@ -263,7 +257,6 @@ class CommentsViewSet(viewsets.ModelViewSet):
 
 
 class HomeworksViewSet(viewsets.ModelViewSet):
-
     authentication_classes = (TokenAuthentication,)
     serializer_class = HomeworkSerializer
     permission_classes_by_action = {

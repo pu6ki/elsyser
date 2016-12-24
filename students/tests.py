@@ -17,7 +17,6 @@ from .serializers import (
 
 
 class RegisterViewTestCase(APITestCase):
-
     def setUp(self):
         self.client = APIClient()
         self.view_name = 'students:register'
@@ -121,7 +120,6 @@ class RegisterViewTestCase(APITestCase):
 
 
 class LoginViewTestCase(APITestCase):
-
     def setUp(self):
         self.client = APIClient()
         self.view_name = 'students:login'
@@ -204,7 +202,6 @@ class LoginViewTestCase(APITestCase):
 
 
 class ProfileViewTestCase(APITestCase):
-
     def setUp(self):
         self.client = APIClient()
         self.view_name = 'students:profile'
@@ -314,7 +311,6 @@ class ProfileViewTestCase(APITestCase):
 
 
 class ExamsListViewTestCase(APITestCase):
-
     def setUp(self):
         self.client = APIClient()
         self.view_name = 'students:exams-list'
@@ -365,7 +361,6 @@ class ExamsListViewTestCase(APITestCase):
 
 
 class ExamsDetailViewTestCase(APITestCase):
-
     def setUp(self):
         self.client = APIClient()
         self.detail_view_name = 'students:exams-detail'
@@ -431,7 +426,6 @@ class ExamsDetailViewTestCase(APITestCase):
 
 
 class NewsListViewTestCase(APITestCase):
-
     def setUp(self):
         self.client = APIClient()
         self.view_name = 'students:news-list'
@@ -601,7 +595,6 @@ class NewsListViewTestCase(APITestCase):
 
 
 class NewsDetailViewTestCase(APITestCase):
-
     def setUp(self):
         self.client = APIClient()
         self.detail_view_name = 'students:news-detail'
@@ -841,7 +834,6 @@ class NewsDetailViewTestCase(APITestCase):
 
 
 class CommentsViewSetTestCase(APITestCase):
-
     def setUp(self):
         self.client = APIClient()
         self.list_view_name = 'students:comments-list'
@@ -1057,7 +1049,6 @@ class CommentsViewSetTestCase(APITestCase):
 
 
 class HomeworksViewSetTestCase(APITestCase):
-
     def setUp(self):
         self.client = APIClient()
         self.list_view_name = 'students:homeworks-list'

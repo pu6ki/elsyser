@@ -4,14 +4,13 @@ from django.shortcuts import get_object_or_404
 from django.core.validators import validate_email, ValidationError
 
 from rest_framework import serializers
-from rest_framework.validators import UniqueValidator, UniqueTogetherValidator
+from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
 
 from .models import Class, Subject, Student, Exam, News, Homework, Comment
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     username = serializers.CharField(
         min_length=3,
         max_length=30,
@@ -53,7 +52,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserLoginSerializer(serializers.Serializer):
-
     email_or_username = serializers.CharField()
     password = serializers.CharField(
         write_only=True,
@@ -93,14 +91,12 @@ class UserLoginSerializer(serializers.Serializer):
 
 
 class ClassSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Class
         fields = ('number', 'letter')
 
 
 class StudentSerializer(serializers.ModelSerializer):
-
     user = UserSerializer()
     clazz = ClassSerializer()
 
@@ -123,7 +119,6 @@ class StudentSerializer(serializers.ModelSerializer):
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
-
     username = serializers.CharField(min_length=3, max_length=30)
     first_name = serializers.CharField(min_length=3, max_length=30)
     last_name = serializers.CharField(min_length=3, max_length=30)
@@ -136,7 +131,6 @@ class UserInfoSerializer(serializers.ModelSerializer):
 
 
 class StudentProfileSerializer(serializers.ModelSerializer):
-
     user = UserInfoSerializer()
     clazz = ClassSerializer()
 
@@ -166,14 +160,12 @@ class StudentProfileSerializer(serializers.ModelSerializer):
 
 
 class SubjectSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Subject
         fields = ('title',)
 
 
 class ExamSerializer(serializers.ModelSerializer):
-
     subject = SubjectSerializer()
     clazz = ClassSerializer()
 
@@ -196,7 +188,6 @@ class ExamSerializer(serializers.ModelSerializer):
 
 
 class AuthorSerializer(serializers.ModelSerializer):
-
     user = serializers.SlugRelatedField(slug_field='username', read_only=True)
 
 
@@ -206,7 +197,6 @@ class AuthorSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-
     posted_by = AuthorSerializer(read_only=True)
     content = serializers.CharField(max_length=2048)
 
@@ -241,7 +231,6 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class NewsSerializer(serializers.ModelSerializer):
-
     title = serializers.CharField(min_length=3, max_length=100)
     content = serializers.CharField(min_length=5, max_length=10000)
     author = AuthorSerializer(read_only=True)
@@ -275,7 +264,6 @@ class NewsSerializer(serializers.ModelSerializer):
 
 
 class HomeworkSerializer(serializers.ModelSerializer):
-
     subject = SubjectSerializer()
     clazz = ClassSerializer()
     details = serializers.CharField(allow_blank=True)
