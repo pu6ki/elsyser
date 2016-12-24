@@ -56,7 +56,7 @@ class Exam(models.Model):
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     topic = models.CharField(unique=True, max_length=60)
     details = models.TextField(max_length=1000, blank=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
     class Meta:
@@ -91,7 +91,7 @@ class Homework(models.Model):
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     deadline = models.DateField(auto_now=False, validators=[validate_date])
     details = models.TextField(max_length=256, blank=True, unique=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
     class Meta:
