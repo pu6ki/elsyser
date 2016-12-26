@@ -102,7 +102,6 @@ which is developed by my schoolmate [matir8](https://github.com/matir8).
 - [x] Write tests for exams detail view
 - [x] Write tests for homeworks detail view
 - [ ] Fix profile image updating in profile.
-- [ ] Write tests for profile image updating.
 
 ### License
 
