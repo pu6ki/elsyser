@@ -11,7 +11,8 @@ from rest_framework.authentication import TokenAuthentication
 from datetime import datetime
 
 from .serializers import (
-    StudentSerializer, UserLoginSerializer, StudentProfileSerializer,
+    UserLoginSerializer, UserInfoSerializer,
+    StudentSerializer, StudentProfileSerializer,
     ExamSerializer, ExamReadSerializer,
     NewsSerializer, CommentSerializer,
     HomeworkSerializer, HomeworkReadSerializer
@@ -40,36 +41,42 @@ class UserLogin(generics.CreateAPIView):
         return Response({'token': token.key, 'is_teacher': is_teacher})
 
 
-class StudentProfile(generics.RetrieveUpdateAPIView):
+class UserProfile(generics.RetrieveUpdateAPIView):
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated, IsStudent)
-    serializer_class = StudentProfileSerializer
+    permission_classes = (IsAuthenticated,)
+
+
+    def get_user_entry(self, request):
+        user = request.user
+
+        try:
+            entry = Student.objects.get(user=user)
+        except:
+            entry = user
+
+        return entry
+
+
+    def get_serializer_class(self):
+        return StudentProfileSerializer if Student.objects.filter(user=self.request.user).exists() else UserInfoSerializer
 
 
     def get(self, request, format=None):
-        student = Student.objects.get(user=request.user)
+        entry = self.get_user_entry(request)
 
-        serializer = self.serializer_class(student)
+        serializer = self.get_serializer(entry)
 
-        return Response(
-            serializer.data,
-            status=status.HTTP_200_OK
-        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
     def update(self, request, format=None):
-        student = Student.objects.get(user=request.user)
+        entry = self.get_user_entry(request)
 
-        serializer = self.serializer_class(
-            student, data=request.data, partial=True
-        )
+        serializer = self.get_serializer(entry, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
-        return Response(
-            serializer.validated_data,
-            status=status.HTTP_200_OK
-        )
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
 class ExamsViewSet(viewsets.ModelViewSet):
@@ -78,8 +85,8 @@ class ExamsViewSet(viewsets.ModelViewSet):
         'create': [IsAuthenticated, IsTeacher],
         'update': [IsAuthenticated, IsTeacher],
         'destroy': [IsAuthenticated, IsTeacher],
-        'list': [IsAuthenticated, IsStudent],
-        'retrieve': [IsAuthenticated, IsStudent],
+        'list': [IsAuthenticated],
+        'retrieve': [IsAuthenticated],
     }
 
 
@@ -87,11 +94,16 @@ class ExamsViewSet(viewsets.ModelViewSet):
         return ExamReadSerializer if self.request.method in ('GET',) else ExamSerializer
 
 
+    def get_queryset(self):
+        exams = Exam.objects.filter(date__gte=datetime.now())
+        student = Student.objects.filter(user=self.request.user).first()
+
+        return exams if not student else exams.filter(clazz=student.clazz)
+
+
     def retrieve(self, request, pk=None):
-        exam = get_object_or_404(
-            Exam.objects.filter(clazz=request.user.student.clazz),
-            id=pk
-        )
+        exam = get_object_or_404(self.get_queryset(), id=pk)
+
         serializer = self.get_serializer(exam)
         headers = self.get_success_headers(serializer.data)
 
@@ -99,13 +111,6 @@ class ExamsViewSet(viewsets.ModelViewSet):
             serializer.data,
             status=status.HTTP_200_OK,
             headers=headers
-        )
-
-
-    def get_queryset(self):
-        return Exam.objects.filter(
-            date__gte=datetime.now().date(),
-            clazz=self.request.user.student.clazz,
         )
 
 
@@ -324,8 +329,8 @@ class HomeworksViewSet(viewsets.ModelViewSet):
         'create': [IsAuthenticated, IsTeacher],
         'update': [IsAuthenticated, IsTeacher],
         'destroy': [IsAuthenticated, IsTeacher],
-        'list': [IsAuthenticated, IsStudent],
-        'retrieve': [IsAuthenticated, IsStudent],
+        'list': [IsAuthenticated],
+        'retrieve': [IsAuthenticated],
     }
 
 
@@ -333,10 +338,15 @@ class HomeworksViewSet(viewsets.ModelViewSet):
         return HomeworkReadSerializer if self.request.method in ('GET',) else HomeworkSerializer
 
 
+    def get_queryset(self):
+        homeworks = Homework.objects.filter(deadline__gte=datetime.now())
+        student = Student.objects.filter(user=self.request.user).first()
+
+        return homeworks if not student else homeworks.filter(clazz=student.clazz)
+
+
     def retrieve(self, request, pk=None):
-        homework = get_object_or_404(
-            Homework.objects.filter(clazz=request.user.student.clazz), id=pk
-        )
+        homework = get_object_or_404(self.get_queryset(), id=pk)
 
         serializer = self.get_serializer(homework)
         headers = self.get_success_headers(serializer.data)
@@ -345,13 +355,6 @@ class HomeworksViewSet(viewsets.ModelViewSet):
             serializer.data,
             status=status.HTTP_200_OK,
             headers=headers
-        )
-
-
-    def get_queryset(self):
-        return Homework.objects.filter(
-            deadline__gte=datetime.now().date(),
-            clazz=self.request.user.student.clazz
         )
 
 

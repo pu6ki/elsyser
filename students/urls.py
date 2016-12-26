@@ -1,11 +1,10 @@
 from django.conf.urls import url, include
-from django.conf.urls.static import static
-from django.conf import settings
 
 from rest_framework_nested import routers
 
 from .views import (
-    StudentRegistration, UserLogin, StudentProfile,
+    UserLogin, UserProfile,
+    StudentRegistration,
     ExamsViewSet,
     NewsViewSet, CommentsViewSet,
     HomeworksViewSet
@@ -24,8 +23,8 @@ app_name = 'students'
 urlpatterns = [
     url(r'^register/$', StudentRegistration.as_view(), name='register'),
     url(r'^login/$', UserLogin.as_view(), name='login'),
-    url(r'^profile/$', StudentProfile.as_view(), name='profile'),
-]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    url(r'^profile/$', UserProfile.as_view(), name='profile'),
+]
 
 urlpatterns += router.urls
 urlpatterns += comments_router.urls

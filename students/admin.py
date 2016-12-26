@@ -18,7 +18,7 @@ class NewsAdmin(admin.ModelAdmin):
 
 
 class HomeworkAdmin(admin.ModelAdmin):
-    fields = (('subject', 'clazz'), 'deadline', 'details', 'materials', 'author')
+    fields = (('subject', 'clazz'), 'deadline', 'details', 'author')
     list_display = ['id', 'subject', 'clazz', 'deadline', 'author']
     date_hierarchy = 'deadline'
 

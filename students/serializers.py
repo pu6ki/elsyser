@@ -130,6 +130,20 @@ class UserInfoSerializer(serializers.ModelSerializer):
         fields = ('username', 'first_name', 'last_name', 'email')
 
 
+    def update(self, instance, validated_data):
+        username = validated_data.get('username', '')
+
+        if User.objects.exclude(pk=instance.pk).filter(username=username):
+            raise serializers.ValidationError(
+                'Teacher with this username already exists.'
+            )
+
+        instance.__dict__.update(**validated_data)
+        instance.save()
+
+        return instance
+
+
 class StudentProfileSerializer(serializers.ModelSerializer):
     user = UserInfoSerializer()
     clazz = ClassSerializer()
