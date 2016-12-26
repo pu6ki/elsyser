@@ -106,4 +106,3 @@ which is developed by my schoolmate [matir8](https://github.com/matir8).
 ### License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
