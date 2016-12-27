@@ -112,4 +112,4 @@ class Comment(models.Model):
 
 
     def __str__(self):
-        return '{} - {}'.format(self.posted_by, self.news.title)
+        return '{} - {}'.format(self.posted_by, self.news)

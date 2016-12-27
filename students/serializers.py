@@ -264,10 +264,11 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
     def create(self, validated_data):
+        news = self.context['news']
+
         request = self.context['request']
         posted_by = request.user.student
 
-        news = self.context['news']
 
         return Comment.objects.create(
             news=news, posted_by=posted_by, **validated_data
@@ -297,7 +298,7 @@ class NewsSerializer(serializers.ModelSerializer):
             'comment_set',
             'edited', 'last_edited_on'
         )
-        depth = 1
+        depth = 2
 
 
     def create(self, validated_data):
