@@ -147,6 +147,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
 class StudentProfileSerializer(serializers.ModelSerializer):
     user = UserInfoSerializer()
     clazz = ClassSerializer()
+    profile_image = serializers.ImageField(use_url=True)
 
 
     class Meta:
@@ -193,6 +194,7 @@ class SubjectSerializer(serializers.ModelSerializer):
 
 class StudentAuthorSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(slug_field='username', read_only=True)
+    profile_image = serializers.ImageField(use_url=True)
 
 
     class Meta:
