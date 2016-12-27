@@ -1,9 +1,10 @@
+from .models import Student
 from rest_framework import permissions
 
 
 class IsStudent(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.student is not None
+        return Student.objects.filter(user=request.user).exists()
 
 
 class IsTeacher(permissions.BasePermission):
