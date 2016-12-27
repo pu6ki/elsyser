@@ -174,6 +174,18 @@ class StudentProfileSerializer(serializers.ModelSerializer):
 
 
 class SubjectSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(
+        max_length=50,
+        allow_blank=False,
+        validators=[
+            UniqueValidator(
+                queryset=Subject.objects.all(),
+                message='Subject with this title already exists.'
+            )
+        ]
+    )
+
+
     class Meta:
         model = Subject
         fields = ('title',)
@@ -195,6 +207,18 @@ class TeacherAuthorSerializer(serializers.ModelSerializer):
 
 
 class ExamSerializer(serializers.ModelSerializer):
+    topic = serializers.CharField(
+        max_length=60,
+        validators=[
+            UniqueValidator(
+                queryset=Exam.objects.all(),
+                message='Exam with this topic already exists.'
+            )
+        ]
+    )
+    details = serializers.CharField(max_length=1000, allow_blank=True)
+
+
     class Meta:
         model = Exam
         fields = ('id', 'subject', 'clazz', 'topic', 'date', 'details', 'author')
@@ -289,6 +313,9 @@ class NewsSerializer(serializers.ModelSerializer):
 
 
 class HomeworkSerializer(serializers.ModelSerializer):
+    details = serializers.CharField(max_length=256, allow_blank=True)
+
+
     class Meta:
         model = Homework
         fields = ('id', 'subject', 'clazz', 'deadline', 'details', 'author')
@@ -312,5 +339,4 @@ class HomeworkSerializer(serializers.ModelSerializer):
 class HomeworkReadSerializer(HomeworkSerializer):
     subject = SubjectSerializer(read_only=True)
     clazz = ClassSerializer(read_only=True)
-    details = serializers.CharField(allow_blank=True)
     author = TeacherAuthorSerializer(read_only=True)
