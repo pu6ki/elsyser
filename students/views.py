@@ -82,11 +82,11 @@ class UserProfile(generics.RetrieveUpdateAPIView):
 class ExamsViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes_by_action = {
+        'list': [IsAuthenticated],
+        'retrieve': [IsAuthenticated],
         'create': [IsAuthenticated, IsTeacher],
         'update': [IsAuthenticated, IsTeacher],
         'destroy': [IsAuthenticated, IsTeacher],
-        'list': [IsAuthenticated],
-        'retrieve': [IsAuthenticated],
     }
 
 
@@ -117,7 +117,7 @@ class ExamsViewSet(viewsets.ModelViewSet):
     def create(self, request):
         context = {'request': request}
 
-        subject = get_object_or_404(Subject, title=request.data.get('subject'))
+        subject = get_object_or_404(Subject, **request.data.get('subject'))
         clazz = get_object_or_404(Class, **request.data.get('clazz'))
 
         serializer = self.get_serializer(context=context, data=request.data)
@@ -160,7 +160,7 @@ class ExamsViewSet(viewsets.ModelViewSet):
 
         if exam.author != request.user:
             return Response(
-                {'message': 'You can delete only your own posts.'},
+                {'message': 'You can delete only your own exams.'},
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
@@ -326,11 +326,11 @@ class CommentsViewSet(viewsets.ModelViewSet):
 class HomeworksViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes_by_action = {
+        'list': [IsAuthenticated],
+        'retrieve': [IsAuthenticated],
         'create': [IsAuthenticated, IsTeacher],
         'update': [IsAuthenticated, IsTeacher],
         'destroy': [IsAuthenticated, IsTeacher],
-        'list': [IsAuthenticated],
-        'retrieve': [IsAuthenticated],
     }
 
 
@@ -361,7 +361,7 @@ class HomeworksViewSet(viewsets.ModelViewSet):
     def create(self, request):
         context = {'request': request}
 
-        subject = get_object_or_404(Subject, title=request.data.get('subject'))
+        subject = get_object_or_404(Subject, **request.data.get('subject'))
         clazz = get_object_or_404(Class, **request.data.get('clazz'))
 
         serializer = self.get_serializer(context=context, data=request.data)
