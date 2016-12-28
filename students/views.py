@@ -47,18 +47,11 @@ class UserProfile(generics.RetrieveUpdateAPIView):
 
 
     def get_user_entry(self, request):
-        user = request.user
-
-        try:
-            entry = Student.objects.get(user=user)
-        except:
-            entry = user
-
-        return entry
+        return request.user if IsTeacher().has_permission(request, self) else request.user.student
 
 
     def get_serializer_class(self):
-        return StudentProfileSerializer if Student.objects.filter(user=self.request.user).exists() else UserInfoSerializer
+        return UserInfoSerializer if IsTeacher().has_permission(self.request, self) else StudentProfileSerializer
 
 
     def get(self, request, format=None):
@@ -95,10 +88,10 @@ class ExamsViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
+        request = self.request
         exams = Exam.objects.filter(date__gte=datetime.now())
-        student = Student.objects.filter(user=self.request.user).first()
 
-        return exams if not student else exams.filter(clazz=student.clazz)
+        return exams if IsTeacher().has_permission(request, self) else exams.filter(clazz=request.user.student.clazz)
 
 
     def retrieve(self, request, pk=None):
@@ -339,10 +332,10 @@ class HomeworksViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
+        request = self.request
         homeworks = Homework.objects.filter(deadline__gte=datetime.now())
-        student = Student.objects.filter(user=self.request.user).first()
 
-        return homeworks if not student else homeworks.filter(clazz=student.clazz)
+        return homeworks if IsTeacher().has_permission(request, self) else homeworks.filter(clazz=request.user.student.clazz)
 
 
     def retrieve(self, request, pk=None):
