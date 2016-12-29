@@ -7,7 +7,9 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
 
-from .models import Class, Subject, Student, Exam, News, Homework, Comment
+from .models import (
+    Class, Subject, Student, Exam, News, Homework, Comment, Material
+)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -189,7 +191,7 @@ class SubjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Subject
-        fields = ('title',)
+        fields = ('id', 'title')
 
 
 class StudentAuthorSerializer(serializers.ModelSerializer):
@@ -343,3 +345,20 @@ class HomeworkReadSerializer(HomeworkSerializer):
     subject = SubjectSerializer(read_only=True)
     clazz = ClassSerializer(read_only=True)
     author = TeacherAuthorSerializer(read_only=True)
+
+
+class MaterialSerializer(serializers.ModelSerializer):
+    subject = SubjectSerializer(read_only=True)
+    url = serializers.URLField()
+
+
+    class Meta:
+        model = Material
+        fields = ('id', 'class_number', 'subject', 'url')
+        depth = 1
+
+
+    def create(self, validated_data):
+        subject = self.context['subject']
+
+        return Material.objects.create(subject=subject, **validated_data)

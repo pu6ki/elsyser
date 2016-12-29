@@ -3,21 +3,27 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework import viewsets
 from rest_framework import status
+from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import detail_route, list_route
 
 from datetime import datetime
 
 from .serializers import (
     UserLoginSerializer, UserInfoSerializer,
     StudentSerializer, StudentProfileSerializer,
+    SubjectSerializer,
     ExamSerializer, ExamReadSerializer,
     NewsSerializer, CommentSerializer,
-    HomeworkSerializer, HomeworkReadSerializer
+    HomeworkSerializer, HomeworkReadSerializer,
+    MaterialSerializer
 )
-from .models import Student, Exam, News, Homework, Comment, Subject, Class
+from .models import (
+    Student, Exam, News, Homework, Comment, Subject, Class, Material
+)
 from .permissions import IsStudent, IsTeacher
 
 
@@ -70,6 +76,18 @@ class UserProfile(generics.RetrieveUpdateAPIView):
         self.perform_update(serializer)
 
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+
+class SubjectsList(generics.ListAPIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated, IsTeacher)
+    serializer_class = SubjectSerializer
+
+
+    def get(self, request):
+        serializer = self.serializer_class(Subject.objects.all(), many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ExamsViewSet(viewsets.ModelViewSet):
@@ -175,11 +193,14 @@ class NewsViewSet(viewsets.ModelViewSet):
     serializer_class = NewsSerializer
 
 
-    def retrieve(self, request, pk=None):
-        news = get_object_or_404(
-            News.objects.filter(author__clazz=self.request.user.student.clazz),
-            id=pk
+    def get_queryset(self):
+        return News.objects.filter(
+            author__clazz=self.request.user.student.clazz
         )
+
+
+    def retrieve(self, request, pk=None):
+        news = get_object_or_404(elf.get_queryset(), id=pk)
         serializer = self.serializer_class(news)
         headers = self.get_success_headers(serializer.data)
 
@@ -189,11 +210,6 @@ class NewsViewSet(viewsets.ModelViewSet):
             headers=headers
         )
 
-
-    def get_queryset(self):
-        return News.objects.filter(
-            author__clazz=self.request.user.student.clazz
-        )
 
 
     def create(self, request):
@@ -411,3 +427,61 @@ class HomeworksViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         return [permission() for permission in self.permission_classes_by_action[self.action]]
+
+
+class MaterialsViewSet(viewsets.GenericViewSet):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes_by_action = {
+        'list': [IsAuthenticated],
+        'retrieve': [IsAuthenticated],
+        'create': [IsAuthenticated, IsTeacher],
+    }
+    serializer_class = MaterialSerializer
+
+
+    def get_permissions(self):
+        return [permission() for permission in self.permission_classes_by_action[self.action]]
+
+
+class MaterialsListViewSet(mixins.ListModelMixin, MaterialsViewSet):
+    def get_queryset(self):
+        request = self.request
+        all_materials = Material.objects.all()
+
+        if IsTeacher().has_permission(request, self):
+            return all_materials
+        else:
+            return all_materials.filter(class_number=request.user.student.clazz.number)
+
+
+class MaterialsNestedViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin, MaterialsListViewSet):
+    def get_queryset(self):
+        subject_id = self.kwargs['subject_pk']
+        subject = get_object_or_404(Subject, id=subject_id)
+
+        return super().get_queryset().filter(subject=subject)
+
+
+    def retrieve(self, request, subject_pk=None, pk=None):
+        subject = get_object_or_404(Subject, id=subject_pk)
+        material = get_object_or_404(subject.material_set, id=pk)
+
+        serializer = self.serializer_class(material)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    def create(self, request, subject_pk=None):
+        subject = get_object_or_404(Subject, id=subject_pk)
+        context = {'subject': subject}
+
+        serializer = self.serializer_class(context=context, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(
+            serializer.validated_data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )

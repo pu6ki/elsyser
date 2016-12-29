@@ -1,10 +1,16 @@
 from django.contrib import admin
 
-from .models import Class, Student, Subject, Exam, News, Homework, Comment
+from .models import (
+    Class, Student, Subject, Exam, News, Homework, Comment, Material
+)
 
 
 class StudentAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'clazz']
+
+
+class SubjectAdmin(admin.ModelAdmin):
+    list_display = ['id', 'title']
 
 
 class ExamAdmin(admin.ModelAdmin):
@@ -29,10 +35,15 @@ class CommentAdmin(admin.ModelAdmin):
     date_hierarchy = 'posted_on'
 
 
+class MaterialAdmin(admin.ModelAdmin):
+    list_display = ['id', 'class_number', 'subject']
+
+
 admin.site.register(Class)
 admin.site.register(Student, StudentAdmin)
-admin.site.register(Subject)
+admin.site.register(Subject, SubjectAdmin)
 admin.site.register(Exam, ExamAdmin)
 admin.site.register(News, NewsAdmin)
 admin.site.register(Homework, HomeworkAdmin)
 admin.site.register(Comment, CommentAdmin)
+admin.site.register(Material, MaterialAdmin)

@@ -113,3 +113,15 @@ class Comment(models.Model):
 
     def __str__(self):
         return '{} - {}'.format(self.posted_by, self.news)
+
+
+class Material(models.Model):
+    class_number = models.IntegerField(choices=[(i, i) for i in range(8, 13)])
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    url = models.URLField()
+
+
+    def __str__(self):
+        return '{} material #{} for {} class'.format(
+            self.subject, self.id, self.class_number
+        )
