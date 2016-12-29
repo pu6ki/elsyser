@@ -450,11 +450,11 @@ class MaterialsListViewSet(mixins.ListModelMixin, MaterialsViewSet):
 
         if IsTeacher().has_permission(request, self):
             return all_materials
-        else:
-            return all_materials.filter(class_number=request.user.student.clazz.number)
+
+        return all_materials.filter(class_number=request.user.student.clazz.number)
 
 
-class MaterialsNestedViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin, MaterialsListViewSet):
+class MaterialsNestedViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, MaterialsListViewSet):
     def get_queryset(self):
         subject_id = self.kwargs['subject_pk']
         subject = get_object_or_404(Subject, id=subject_id)
