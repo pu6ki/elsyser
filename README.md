@@ -76,7 +76,7 @@ How to copy this project to your local machine and run it:
     - */api/news* - News about your class, which you can post and edit too. Each news has it's own comments.
     - */api/homeworks*
     - */api/profile*
-    - ...
+    - */api/materials*
 
 ## The admin site
 
