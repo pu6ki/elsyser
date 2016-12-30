@@ -284,6 +284,10 @@ class CommentSerializer(serializers.ModelSerializer):
         return instance
 
 
+class CommentReadSerializer(CommentSerializer):
+    posted_by = StudentAuthorSerializer(read_only=True)
+
+
 class NewsSerializer(serializers.ModelSerializer):
     title = serializers.CharField(min_length=3, max_length=100)
     content = serializers.CharField(min_length=5, max_length=10000)
@@ -348,17 +352,42 @@ class HomeworkReadSerializer(HomeworkSerializer):
 
 
 class MaterialSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(min_length=3, max_length=150, allow_blank=True)
+    section = serializers.CharField(min_length=3, max_length=150, allow_blank=True)
+    content = serializers.CharField(allow_blank=False)
     subject = SubjectSerializer(read_only=True)
-    url = serializers.URLField()
+    video_url = serializers.URLField(allow_blank=True)
 
 
     class Meta:
         model = Material
-        fields = ('id', 'class_number', 'subject', 'url')
+        fields = (
+            'id',
+            'title', 'section', 'content',
+            'class_number', 'subject',
+            'video_url',
+            'author'
+        )
         depth = 1
 
 
     def create(self, validated_data):
         subject = self.context['subject']
 
-        return Material.objects.create(subject=subject, **validated_data)
+        request = self.context['request']
+        author = request.user
+
+        return Material.objects.create(
+            subject=subject, author=author, **validated_data
+        )
+
+
+    def update(self, instance, validated_data):
+        instance.__dict__.update(**validated_data)
+        instance.save()
+
+        return instance
+
+
+class MaterialReadSerializer(MaterialSerializer):
+    author = TeacherAuthorSerializer(read_only=True)

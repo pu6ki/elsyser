@@ -36,7 +36,19 @@ class CommentAdmin(admin.ModelAdmin):
 
 
 class MaterialAdmin(admin.ModelAdmin):
-    list_display = ['id', 'class_number', 'subject']
+    fields = (
+        ('title', 'section'), 'content',
+        ('class_number', 'subject'),
+        'video_url',
+        'author'
+    )
+    list_display = [
+        'id',
+        'title', 'section', 'content',
+        'class_number', 'subject',
+        'video_url',
+        'author'
+    ]
 
 
 admin.site.register(Class)

@@ -116,12 +116,16 @@ class Comment(models.Model):
 
 
 class Material(models.Model):
+    title = models.CharField(max_length=150, blank=True)
+    section = models.CharField(max_length=150, blank=True)
+    content = models.TextField(blank=False)
     class_number = models.IntegerField(choices=[(i, i) for i in range(8, 13)])
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    url = models.URLField()
+    video_url = models.URLField(blank=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
     def __str__(self):
-        return '{} material #{} for {} class'.format(
-            self.subject, self.id, self.class_number
+        return '{} - {} ({} class) posted by {}'.format(
+            self.title, self.subject, self.class_number, self.author
         )

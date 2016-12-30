@@ -17,9 +17,10 @@ from .serializers import (
     StudentSerializer, StudentProfileSerializer,
     SubjectSerializer,
     ExamSerializer, ExamReadSerializer,
-    NewsSerializer, CommentSerializer,
+    NewsSerializer,
+    CommentSerializer, CommentReadSerializer,
     HomeworkSerializer, HomeworkReadSerializer,
-    MaterialSerializer
+    MaterialSerializer, MaterialReadSerializer,
 )
 from .models import (
     Student, Exam, News, Homework, Comment, Subject, Class, Material
@@ -270,15 +271,18 @@ class NewsViewSet(viewsets.ModelViewSet):
 class CommentsViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated, IsStudent)
-    serializer_class = CommentSerializer
     queryset = Comment.objects.all()
+
+
+    def get_serializer_class(self):
+        return CommentReadSerializer if self.request.method in ('GET',) else CommentSerializer
 
 
     def create(self, request, news_pk=None):
         news = get_object_or_404(News, id=news_pk)
         context = {'request': request, 'news': news}
 
-        serializer = self.serializer_class(context=context, data=request.data)
+        serializer = self.get_serializer(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
@@ -300,7 +304,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
-        serializer = self.serializer_class(
+        serializer = self.get_serializer(
             comment, data=request.data, partial=True
         )
         serializer.is_valid(raise_exception=True)
@@ -435,8 +439,13 @@ class MaterialsViewSet(viewsets.GenericViewSet):
         'list': [IsAuthenticated],
         'retrieve': [IsAuthenticated],
         'create': [IsAuthenticated, IsTeacher],
+        'update': [IsAuthenticated, IsTeacher],
+        'destroy': [IsAuthenticated, IsTeacher]
     }
-    serializer_class = MaterialSerializer
+
+
+    def get_serializer_class(self):
+         return MaterialReadSerializer if self.request.method in ('GET',) else MaterialSerializer
 
 
     def get_permissions(self):
@@ -454,7 +463,12 @@ class MaterialsListViewSet(mixins.ListModelMixin, MaterialsViewSet):
         return all_materials.filter(class_number=request.user.student.clazz.number)
 
 
-class MaterialsNestedViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, MaterialsListViewSet):
+class MaterialsNestedViewSet(mixins.RetrieveModelMixin,
+                             mixins.CreateModelMixin,
+                             mixins.UpdateModelMixin,
+                             mixins.DestroyModelMixin,
+                             MaterialsListViewSet):
+
     def get_queryset(self):
         subject_id = self.kwargs['subject_pk']
         subject = get_object_or_404(Subject, id=subject_id)
@@ -466,16 +480,18 @@ class MaterialsNestedViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin,
         subject = get_object_or_404(Subject, id=subject_pk)
         material = get_object_or_404(subject.material_set, id=pk)
 
-        serializer = self.serializer_class(material)
+        serializer = self.get_serializer(material)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
     def create(self, request, subject_pk=None):
         subject = get_object_or_404(Subject, id=subject_pk)
-        context = {'subject': subject}
+        context = {'subject': subject, 'request': request}
 
-        serializer = self.serializer_class(context=context, data=request.data)
+        serializer = self.get_serializer_class()(
+            context=context, data=request.data
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
@@ -484,4 +500,46 @@ class MaterialsNestedViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin,
             serializer.validated_data,
             status=status.HTTP_201_CREATED,
             headers=headers
+        )
+
+
+    def update(self, request, subject_pk=None, pk=None):
+        subject = get_object_or_404(Subject, id=subject_pk)
+        material = get_object_or_404(subject.material_set, id=pk)
+
+        if material.author != request.user:
+            return Response(
+                {'message': 'You can edit only your own materials.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        serializer = self.get_serializer_class()(
+            material, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(
+            serializer.validated_data,
+            status=status.HTTP_200_OK,
+            headers=headers
+        )
+
+
+    def destroy(self, request, subject_pk=None, pk=None):
+        subject = get_object_or_404(Subject, id=subject_pk)
+        material = get_object_or_404(subject.material_set, id=pk)
+
+        if material.author != request.user:
+            return Response(
+                {'message': 'You can delete only your own materials.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        material.delete()
+
+        return Response(
+            {'message': 'Material successfully deleted.'},
+            status=status.HTTP_200_OK
         )
