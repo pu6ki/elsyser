@@ -16,7 +16,8 @@ from .serializers import (
     NewsSerializer,
     CommentSerializer,
     ExamSerializer,
-    HomeworkSerializer
+    HomeworkSerializer,
+    MaterialSerializer
 )
 
 
@@ -417,7 +418,7 @@ class ExamsViewSetTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
-    def test_exams_addition_with_student_account(self):
+    def test_exams_creation_with_student_account(self):
         self.client.force_authenticate(user=self.student_user)
         self.exam.topic = 'glucimir'
         post_data = self.serializer_class(self.exam).data
@@ -433,7 +434,7 @@ class ExamsViewSetTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
 
-    def test_exams_addition_with_empty_topic(self):
+    def test_exams_creation_with_empty_topic(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.exam.topic = ''
         post_data = self.serializer_class(self.exam).data
@@ -446,7 +447,7 @@ class ExamsViewSetTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-    def test_exams_addition_with_too_long_topic(self):
+    def test_exams_creation_with_too_long_topic(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.exam.topic = 'glucimir' * 20
         post_data = self.serializer_class(self.exam).data
@@ -462,7 +463,7 @@ class ExamsViewSetTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-    def test_exams_addition_with_valid_topic(self):
+    def test_exams_creation_with_valid_topic(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.exam.topic = 'glucimir'
         post_data = self.serializer_class(self.exam).data
@@ -696,7 +697,7 @@ class NewsViewSetTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
-    def test_news_list_addition_with_empty_title(self):
+    def test_news_list_creation_with_empty_title(self):
         self.client.force_authenticate(user=self.user)
         self.news.title = ''
         post_data = NewsSerializer(self.news).data
@@ -711,7 +712,7 @@ class NewsViewSetTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-    def test_news_list_addition_with_too_short_title(self):
+    def test_news_list_creation_with_too_short_title(self):
         self.client.force_authenticate(user=self.user)
         self.news.title = 'yo'
         post_data = NewsSerializer(self.news).data
@@ -727,7 +728,7 @@ class NewsViewSetTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-    def test_news_list_addition_with_too_long_title(self):
+    def test_news_list_creation_with_too_long_title(self):
         self.client.force_authenticate(user=self.user)
         self.news.title = 'yo' * 120
         post_data = NewsSerializer(self.news).data
@@ -743,7 +744,7 @@ class NewsViewSetTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-    def test_news_list_addition_with_empty_content(self):
+    def test_news_list_creation_with_empty_content(self):
         self.client.force_authenticate(user=self.user)
         self.news.content = ''
         post_data = NewsSerializer(self.news).data
@@ -758,7 +759,7 @@ class NewsViewSetTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-    def test_news_list_addition_with_too_short_content(self):
+    def test_news_list_creation_with_too_short_content(self):
         self.client.force_authenticate(user=self.user)
         self.news.content = 'hey'
         post_data = NewsSerializer(self.news).data
@@ -774,7 +775,7 @@ class NewsViewSetTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-    def test_news_list_addition_with_too_long_content(self):
+    def test_news_list_creation_with_too_long_content(self):
         self.client.force_authenticate(user=self.user)
         self.news.content = 'Hey Jude!' * 10000
         post_data = NewsSerializer(self.news).data
@@ -790,7 +791,7 @@ class NewsViewSetTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-    def test_news_list_addition_with_valid_data(self):
+    def test_news_list_creation_with_valid_data(self):
         self.client.force_authenticate(user=self.user)
         self.news.title = 'testNews'
         self.news.content = 'testContent'
@@ -1022,7 +1023,7 @@ class CommentsViewSetTestCase(APITestCase):
         )
 
 
-    def test_comment_addition_with_empty_content(self):
+    def test_comment_creation_with_empty_content(self):
         self.client.force_authenticate(user=self.user)
         self.comment.content = ''
         post_data = CommentSerializer(self.comment).data
@@ -1039,7 +1040,7 @@ class CommentsViewSetTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-    def test_comment_addition_with_too_long_content(self):
+    def test_comment_creation_with_too_long_content(self):
         self.client.force_authenticate(user=self.user)
         self.comment.content = 'Hey Jude!' * 1024
         post_data = CommentSerializer(self.comment).data
@@ -1057,7 +1058,7 @@ class CommentsViewSetTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-    def test_comment_addition_with_valid_content(self):
+    def test_comment_creation_with_valid_content(self):
         self.client.force_authenticate(user=self.user)
         self.comment.content = 'This is a very nice platorm, man!'
         post_data = CommentSerializer(self.comment).data
@@ -1235,7 +1236,7 @@ class HomeworksViewSetTestCase(APITestCase):
         )
 
 
-    def test_homeworks_with_anonymous_user(self):
+    def test_homeworks_list_with_anonymous_user(self):
         request = self.client.get(reverse(self.list_view_name))
 
         self.assertEqual(
@@ -1244,6 +1245,8 @@ class HomeworksViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
+
+    def test_homeworks_detail_with_anonymous_user(self):
         request = self.client.get(
             reverse(self.detail_view_name, kwargs={'pk': self.homework.id})
         )
@@ -1255,13 +1258,17 @@ class HomeworksViewSetTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-    def test_homeworks_with_authenticated_user(self):
+    def test_homeworks_list_with_authenticated_user(self):
         self.client.force_authenticate(user=self.student_user)
 
         request = self.client.get(reverse(self.list_view_name))
 
         self.assertIsNotNone(request.data)
         self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_homeworks_detail_with_authenticated_user(self):
+        self.client.force_authenticate(user=self.student_user)
 
         request = self.client.get(
             reverse(self.detail_view_name, kwargs={'pk': self.homework.id})
@@ -1299,7 +1306,7 @@ class HomeworksViewSetTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
 
 
-    def test_homeworks_addition_with_student_account(self):
+    def test_homeworks_creation_with_student_account(self):
         self.client.force_authenticate(user=self.student_user)
         self.homework.details = 'С0002ГР'
         post_data = self.serializer_class(self.homework).data
@@ -1315,7 +1322,7 @@ class HomeworksViewSetTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
 
-    def test_homeworks_addition_with_too_long_details(self):
+    def test_homeworks_creation_with_too_long_details(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.homework.details = 'C0002ГР' * 256
         post_data = self.serializer_class(self.homework).data
@@ -1331,7 +1338,7 @@ class HomeworksViewSetTestCase(APITestCase):
         )
 
 
-    def test_homeworks_addition_with_valid_details(self):
+    def test_homeworks_creation_with_valid_details(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.homework.details = 'C0002ГР'
         post_data = self.serializer_class(self.homework).data
@@ -1441,5 +1448,565 @@ class HomeworksViewSetTestCase(APITestCase):
 
         self.assertEqual(
             request.data['message'], 'Homework successfully deleted.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+class MaterialsViewSetTestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.list_view_name = 'students:nested-materials-list'
+        self.detail_view_name = 'students:nested-materials-detail'
+        self.serializer_class = MaterialSerializer
+
+        self.subject = Subject.objects.create(title='test_subject')
+        self.student_user = User.objects.create(username='test', password='pass')
+        self.teacher_user = User.objects.create(username='author', password='pass123')
+        self.group = Group.objects.create(name='Teachers')
+        self.group.user_set.add(self.teacher_user)
+        self.clazz = Class.objects.create(number=10, letter='A')
+        self.student = Student.objects.create(user=self.student_user, clazz=self.clazz)
+        self.material = Material.objects.create(
+            title='bla bla bla',
+            section='Quadratic inequations',
+            content='Here I will put some useful links for the current topic.',
+            class_number=self.clazz.number,
+            subject=self.subject,
+            author=self.teacher_user
+        )
+
+
+    def test_materials_list_with_anonymous_user(self):
+        request = self.client.get(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id
+                }
+            )
+        )
+
+        self.assertEqual(
+            request.data['detail'],
+            'Authentication credentials were not provided.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+    def test_materials_detail_with_anonymous_user(self):
+        request = self.client.get(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id,
+                    'pk': self.material.id
+                }
+            )
+        )
+
+        self.assertEqual(
+            request.data['detail'],
+            'Authentication credentials were not provided.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+    def test_materials_list_with_authenticated_user(self):
+        self.client.force_authenticate(user=self.student_user)
+
+        request = self.client.get(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id
+                }
+            )
+        )
+
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_materials_detail_with_authenticated_user(self):
+        self.client.force_authenticate(user=self.student_user)
+
+        request = self.client.get(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id,
+                    'pk': self.material.id
+                }
+            )
+        )
+
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_materials_creation_with_student_account(self):
+        self.client.force_authenticate(user=self.student_user)
+        self.material.title = 'С0002ГР'
+        post_data = self.serializer_class(self.material).data
+
+        request = self.client.post(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['detail'],
+            'You do not have permission to perform this action.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
+
+
+    def test_materials_creation_with_too_short_title(self):
+        self.client.force_authenticate(user=self.teacher_user)
+        self.material.title = '.'
+        post_data = self.serializer_class(self.material).data
+
+        request = self.client.post(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['title'],
+            ['Ensure this field has at least 3 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_materials_creation_with_too_long_title(self):
+        self.client.force_authenticate(user=self.teacher_user)
+        self.material.title = 'Svetlosyanka' * 150
+        post_data = self.serializer_class(self.material).data
+
+        request = self.client.post(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['title'],
+            ['Ensure this field has no more than 150 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_materials_creation_with_too_short_section(self):
+        self.client.force_authenticate(user=self.teacher_user)
+        self.material.section = '.'
+        post_data = self.serializer_class(self.material).data
+
+        request = self.client.post(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['section'],
+            ['Ensure this field has at least 3 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_materials_creation_with_too_long_section(self):
+        self.client.force_authenticate(user=self.teacher_user)
+        self.material.section = 'Svetlosyanka' * 150
+        post_data = self.serializer_class(self.material).data
+
+        request = self.client.post(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['section'],
+            ['Ensure this field has no more than 150 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_materials_creation_with_blank_content(self):
+        self.client.force_authenticate(user=self.teacher_user)
+        self.material.content = ''
+        post_data = self.serializer_class(self.material).data
+
+        request = self.client.post(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['content'],
+            ['This field may not be blank.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_materials_creation_with_valid_data(self):
+        self.client.force_authenticate(user=self.teacher_user)
+        self.material.title = 'Hvala!'
+        self.material.section = 'TBA'
+        self.material.content = 'ELSYSER is damn good!'
+        post_data = self.serializer_class(self.material).data
+
+        request = self.client.post(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(request.status_code, status.HTTP_201_CREATED)
+
+
+    def test_materials_update_with_student_account(self):
+        self.client.force_authenticate(user=self.student_user)
+        self.material.title = 'С0002ГР'
+        put_data = self.serializer_class(self.material).data
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id,
+                    'pk': self.material.id
+                }
+            ),
+            put_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['detail'],
+            'You do not have permission to perform this action.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
+
+
+    def test_materials_update_with_invalid_subject_id(self):
+        self.client.force_authenticate(user=self.teacher_user)
+        self.material.title = 'Hvala!'
+        put_data = self.serializer_class(self.material).data
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id + 1,
+                    'pk': self.material.id
+                }
+            ),
+            put_data,
+            format='json'
+        )
+
+        self.assertEqual(request.data['detail'], 'Not found.')
+        self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
+
+
+    def test_materials_update_with_invalid_id(self):
+        self.client.force_authenticate(user=self.teacher_user)
+        self.material.title = 'Hvala!'
+        put_data = self.serializer_class(self.material).data
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id,
+                    'pk': self.material.id + 1
+                }
+            ),
+            put_data,
+            format='json'
+        )
+
+        self.assertEqual(request.data['detail'], 'Not found.')
+        self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
+
+
+    def test_materials_update_with_too_short_title(self):
+        self.client.force_authenticate(user=self.teacher_user)
+        self.material.title = '.'
+        put_data = self.serializer_class(self.material).data
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id,
+                    'pk': self.material.id
+                }
+            ),
+            put_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['title'],
+            ['Ensure this field has at least 3 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_materials_update_with_too_long_title(self):
+        self.client.force_authenticate(user=self.teacher_user)
+        self.material.title = 'Svetlosyanka' * 150
+        put_data = self.serializer_class(self.material).data
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id,
+                    'pk': self.material.id
+                }
+            ),
+            put_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['title'],
+            ['Ensure this field has no more than 150 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_materials_update_with_too_short_section(self):
+        self.client.force_authenticate(user=self.teacher_user)
+        self.material.section = '.'
+        put_data = self.serializer_class(self.material).data
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id,
+                    'pk': self.material.id
+                }
+            ),
+            put_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['section'],
+            ['Ensure this field has at least 3 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_materials_update_with_too_long_section(self):
+        self.client.force_authenticate(user=self.teacher_user)
+        self.material.section = 'Svetlosyanka' * 150
+        put_data = self.serializer_class(self.material).data
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id,
+                    'pk': self.material.id
+                }
+            ),
+            put_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['section'],
+            ['Ensure this field has no more than 150 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_materials_update_with_blank_content(self):
+        self.client.force_authenticate(user=self.teacher_user)
+        self.material.content = ''
+        put_data = self.serializer_class(self.material).data
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id,
+                    'pk': self.material.id
+                }
+            ),
+            put_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['content'],
+            ['This field may not be blank.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_materials_update_with_valid_data(self):
+        self.client.force_authenticate(user=self.teacher_user)
+        self.material.title = 'Hvala!'
+        self.material.section = 'TBA'
+        self.material.content = 'ELSYSER is damn good!'
+        put_data = self.serializer_class(self.material).data
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id,
+                    'pk': self.material.id
+                }
+            ),
+            put_data,
+            format='json'
+        )
+
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_materials_update_of_another_user(self):
+        self.client.force_authenticate(user=self.teacher_user)
+
+        new_user = User.objects.create(username='test2', password='pass')
+        self.group.user_set.add(new_user)
+        self.material.author = new_user
+        self.material.save()
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id,
+                    'pk': self.material.id
+                }
+            ),
+            {'topic': 'HAHAHA I AM ANONYMOUS!'},
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['message'], 'You can edit only your own materials.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+    def test_materials_deletion_with_invalid_subject_id(self):
+        self.client.force_authenticate(user=self.teacher_user)
+
+        request = self.client.delete(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id + 1,
+                    'pk': self.material.id
+                }
+            )
+        )
+
+        self.assertEqual(request.data['detail'], 'Not found.')
+        self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
+
+
+    def test_materials_deletion_with_invalid_id(self):
+        self.client.force_authenticate(user=self.teacher_user)
+
+        request = self.client.delete(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id,
+                    'pk': self.material.id + 1
+                }
+            )
+        )
+
+        self.assertEqual(request.data['detail'], 'Not found.')
+        self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
+
+
+    def test_materials_deletion_of_another_user(self):
+        self.client.force_authenticate(user=self.teacher_user)
+
+        new_user = User.objects.create(username='test2', password='pass')
+        self.group.user_set.add(new_user)
+        self.material.author = new_user
+        self.material.save()
+
+        request = self.client.delete(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id,
+                    'pk': self.material.id
+                }
+            ),
+        )
+
+        self.assertEqual(
+            request.data['message'], 'You can delete only your own materials.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+    def test_materials_deletion(self):
+        self.client.force_authenticate(user=self.teacher_user)
+
+        request = self.client.delete(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'subject_pk': self.material.subject.id,
+                    'pk': self.material.id
+                }
+            ),
+        )
+
+        self.assertEqual(
+            request.data['message'], 'Material successfully deleted.'
         )
         self.assertEqual(request.status_code, status.HTTP_200_OK)

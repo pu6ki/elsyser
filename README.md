@@ -93,7 +93,7 @@ which is developed by my schoolmate [matir8](https://github.com/matir8).
 
 ### Task list:
 
-- [ ] Write tests for materials.
+- [x] Write tests for materials.
 - [ ] Implement comments section for materials.
 - [ ] Fix profile image updating in profile.
 
