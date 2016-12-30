@@ -201,7 +201,7 @@ class NewsViewSet(viewsets.ModelViewSet):
 
 
     def retrieve(self, request, pk=None):
-        news = get_object_or_404(elf.get_queryset(), id=pk)
+        news = get_object_or_404(self.get_queryset(), id=pk)
         serializer = self.serializer_class(news)
         headers = self.get_success_headers(serializer.data)
 
@@ -282,7 +282,9 @@ class CommentsViewSet(viewsets.ModelViewSet):
         news = get_object_or_404(News, id=news_pk)
         context = {'request': request, 'news': news}
 
-        serializer = self.get_serializer(context=context, data=request.data)
+        serializer = self.get_serializer_class()(
+            context=context, data=request.data
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
@@ -304,7 +306,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
-        serializer = self.get_serializer(
+        serializer = self.get_serializer_class()(
             comment, data=request.data, partial=True
         )
         serializer.is_valid(raise_exception=True)
@@ -463,7 +465,7 @@ class MaterialsListViewSet(mixins.ListModelMixin, MaterialsViewSet):
         return all_materials.filter(class_number=request.user.student.clazz.number)
 
 
-class MaterialsNestedViewSet(mixins.RetrieveModelMixin,
+class NestedMaterialsViewSet(mixins.RetrieveModelMixin,
                              mixins.CreateModelMixin,
                              mixins.UpdateModelMixin,
                              mixins.DestroyModelMixin,

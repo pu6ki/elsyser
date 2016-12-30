@@ -102,18 +102,6 @@ class Homework(models.Model):
         return '{} ({}) - {}'.format(self.subject, self.clazz, self.deadline)
 
 
-class Comment(models.Model):
-    news = models.ForeignKey(News, on_delete=models.CASCADE)
-    posted_by = models.ForeignKey(Student, on_delete=models.CASCADE)
-    content = models.TextField(max_length=2048)
-    posted_on = models.DateTimeField(auto_now_add=True)
-    edited = models.BooleanField(default=False)
-    last_edited_on = models.DateTimeField(auto_now=True)
-
-
-    def __str__(self):
-        return '{} - {}'.format(self.posted_by, self.news)
-
 
 class Material(models.Model):
     title = models.CharField(max_length=150, blank=True)
@@ -129,3 +117,16 @@ class Material(models.Model):
         return '{} - {} ({} class) posted by {}'.format(
             self.title, self.subject, self.class_number, self.author
         )
+
+
+class Comment(models.Model):
+    news = models.ForeignKey(News, on_delete=models.CASCADE)
+    posted_by = models.ForeignKey(Student, on_delete=models.CASCADE)
+    content = models.TextField(max_length=2048)
+    posted_on = models.DateTimeField(auto_now_add=True)
+    edited = models.BooleanField(default=False)
+    last_edited_on = models.DateTimeField(auto_now=True)
+
+
+    def __str__(self):
+        return '{} - {}'.format(self.posted_by, self.news)

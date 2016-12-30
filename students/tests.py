@@ -8,7 +8,9 @@ from rest_framework.authtoken.models import Token
 
 from datetime import datetime, timedelta
 
-from .models import Class, Student, Subject, Exam, News, Homework, Comment
+from .models import (
+    Class, Student, Subject, Exam, News, Homework, Comment, Material
+)
 from .serializers import (
     StudentProfileSerializer,
     NewsSerializer,
@@ -1002,8 +1004,8 @@ class NewsViewSetTestCase(APITestCase):
 class CommentsViewSetTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.list_view_name = 'students:comments-list'
-        self.detail_view_name = 'students:comments-detail'
+        self.list_view_name = 'students:news-comments-list'
+        self.detail_view_name = 'students:news-comments-detail'
 
         self.user = User.objects.create(username='test1', password='pass')
         self.clazz = Class.objects.create(number=10, letter='A')
