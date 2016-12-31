@@ -8,7 +8,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import detail_route, list_route
 
 from datetime import datetime
 
@@ -94,11 +93,11 @@ class SubjectsList(generics.ListAPIView):
 class ExamsViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes_by_action = {
-        'list': [IsAuthenticated],
-        'retrieve': [IsAuthenticated],
-        'create': [IsAuthenticated, IsTeacher],
-        'update': [IsAuthenticated, IsTeacher],
-        'destroy': [IsAuthenticated, IsTeacher],
+        'list': (IsAuthenticated,),
+        'retrieve': (IsAuthenticated,),
+        'create': (IsAuthenticated, IsTeacher),
+        'update': (IsAuthenticated, IsTeacher),
+        'destroy': (IsAuthenticated, IsTeacher)
     }
 
 
@@ -341,11 +340,11 @@ class CommentsViewSet(viewsets.ModelViewSet):
 class HomeworksViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes_by_action = {
-        'list': [IsAuthenticated],
-        'retrieve': [IsAuthenticated],
-        'create': [IsAuthenticated, IsTeacher],
-        'update': [IsAuthenticated, IsTeacher],
-        'destroy': [IsAuthenticated, IsTeacher],
+        'list': (IsAuthenticated,),
+        'retrieve': (IsAuthenticated,),
+        'create': (IsAuthenticated, IsTeacher),
+        'update': (IsAuthenticated, IsTeacher),
+        'destroy': (IsAuthenticated, IsTeacher)
     }
 
 
@@ -438,11 +437,11 @@ class HomeworksViewSet(viewsets.ModelViewSet):
 class MaterialsViewSet(viewsets.GenericViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes_by_action = {
-        'list': [IsAuthenticated],
-        'retrieve': [IsAuthenticated],
-        'create': [IsAuthenticated, IsTeacher],
-        'update': [IsAuthenticated, IsTeacher],
-        'destroy': [IsAuthenticated, IsTeacher]
+        'list': (IsAuthenticated,),
+        'retrieve': (IsAuthenticated,),
+        'create': (IsAuthenticated, IsTeacher),
+        'update': (IsAuthenticated, IsTeacher),
+        'destroy': (IsAuthenticated, IsTeacher)
     }
 
 
