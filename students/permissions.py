@@ -1,5 +1,6 @@
-from .models import Student
 from rest_framework import permissions
+
+from students.models import Student
 
 
 class IsStudent(permissions.BasePermission):

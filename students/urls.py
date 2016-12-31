@@ -2,7 +2,7 @@ from django.conf.urls import url, include
 
 from rest_framework_nested import routers
 
-from .views import (
+from students.views import (
     UserLogin, UserProfile,
     StudentRegistration,
     SubjectsList,

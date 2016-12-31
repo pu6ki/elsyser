@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import (
+from students.models import (
     Class, Student, Subject, Exam, News, Homework, Comment, Material
 )
 

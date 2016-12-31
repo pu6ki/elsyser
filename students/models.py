@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from .validators import validate_date
+from students.validators import validate_date
 
 
 class Class(models.Model):

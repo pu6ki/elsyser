@@ -1,17 +1,16 @@
 from django.contrib.auth.models import User, Group
 
-from rest_framework.test import APITestCase
-from rest_framework.test import APIClient
+from rest_framework.test import APITestCase, APIClient
 from rest_framework.reverse import reverse
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 
 from datetime import datetime, timedelta
 
-from .models import (
+from students.models import (
     Class, Student, Subject, Exam, News, Homework, Comment, Material
 )
-from .serializers import (
+from students.serializers import (
     StudentProfileSerializer,
     NewsSerializer,
     CommentSerializer,

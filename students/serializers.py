@@ -1,5 +1,5 @@
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.core.validators import validate_email, ValidationError
 
@@ -7,7 +7,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
 
-from .models import (
+from students.models import (
     Class, Subject, Student, Exam, News, Homework, Comment, Material
 )
 
