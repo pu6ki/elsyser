@@ -199,7 +199,7 @@ class SubjectSerializer(serializers.ModelSerializer):
 
 
 class StudentAuthorSerializer(serializers.ModelSerializer):
-    user = serializers.SlugRelatedField(slug_field='username', read_only=True)
+    user = UserInfoSerializer(read_only=True)
     profile_image = serializers.ImageField(use_url=True)
 
 

@@ -4,9 +4,14 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 from students.validators import validate_date
 
+import os
+
 
 def get_upload_path(instance, filename):
-    return 'images/{}/{}'.format(instance.user.username, filename)
+    _, file_extension = os.path.splitext(filename)
+    filename = os.path.join(instance.user.username, file_extension)
+
+    return os.path.join('images/', filename)
 
 
 class Class(models.Model):
@@ -104,7 +109,6 @@ class Homework(models.Model):
 
     def __str__(self):
         return '{} ({}) - {}'.format(self.subject, self.clazz, self.deadline)
-
 
 
 class Material(models.Model):
