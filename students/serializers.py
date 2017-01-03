@@ -211,7 +211,7 @@ class StudentAuthorSerializer(serializers.ModelSerializer):
 class TeacherAuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name')
+        fields = ('id', 'username', 'first_name', 'last_name')
 
 
 class ExamSerializer(serializers.ModelSerializer):
