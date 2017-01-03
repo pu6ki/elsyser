@@ -56,11 +56,17 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 
     def get_model(self, request, user):
-        return user if IsTeacher().has_permission(request, self) else user.student
+        if IsTeacher().has_permission(request, self):
+            return user
+        elif IsStudent().has_permission(request, self):
+            return user.student
 
 
     def get_serializer_class(self):
-        return UserInfoSerializer if IsTeacher().has_permission(self.request, self) else StudentProfileSerializer
+        if IsTeacher().has_permission(request, self):
+            return UserInfoSerializer
+        elif IsStudent().has_permission(request, self):
+            return StudentProfileSerializer
 
 
     def retrieve(self, request, pk=None):
