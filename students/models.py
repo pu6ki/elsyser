@@ -9,9 +9,8 @@ import os
 
 def get_upload_path(instance, filename):
     _, file_extension = os.path.splitext(filename)
-    filename = os.path.join(instance.user.username, file_extension)
 
-    return os.path.join('images/', filename)
+    return 'images/{}{}'.format(instance.user.username, file_extension)
 
 
 class Class(models.Model):
