@@ -63,9 +63,9 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 
     def get_serializer_class(self):
-        if IsTeacher().has_permission(request, self):
+        if IsTeacher().has_permission(self.request, self):
             return UserInfoSerializer
-        elif IsStudent().has_permission(request, self):
+        elif IsStudent().has_permission(self.request, self):
             return StudentProfileSerializer
 
 
@@ -86,7 +86,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         user = get_object_or_404(User, id=pk)
-        
+
         print(user)
 
         if user != request.user:
