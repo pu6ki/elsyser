@@ -5,6 +5,10 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from students.validators import validate_date
 
 
+def get_upload_path(instance, filename):
+    return 'images/{}/{}'.format(instance.user.username, filename)
+
+
 class Class(models.Model):
     number = models.IntegerField(
         validators=[MinValueValidator(8), MaxValueValidator(12)],
@@ -29,7 +33,7 @@ class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     profile_image = models.ImageField(
-        upload_to='images/', default='images/default.png'
+        upload_to=get_upload_path, default='images/default.png'
     )
     info = models.TextField(max_length=2048, blank=True)
 
