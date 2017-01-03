@@ -130,7 +130,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email')
+        fields = ('id', 'username', 'first_name', 'last_name', 'email')
 
 
     def update(self, instance, validated_data):
@@ -171,8 +171,7 @@ class StudentProfileSerializer(serializers.ModelSerializer):
         instance.user.__dict__.update(**user_data)
         instance.user.save()
 
-        print(instance.profile_image)
-        if not validated_data['profile_image']:
+        if not validated_data.get('profile_image', ''):
             validated_data['profile_image'] = instance.profile_image
 
         instance.__dict__.update(**validated_data)
