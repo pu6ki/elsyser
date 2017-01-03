@@ -6,6 +6,7 @@ from django.core.validators import validate_email, ValidationError
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
+from drf_extra_fields.fields import Base64ImageField
 
 from students.models import (
     Class, Subject, Student, Exam, News, Homework, Comment, Material
@@ -149,7 +150,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
 class StudentProfileSerializer(serializers.ModelSerializer):
     user = UserInfoSerializer()
     clazz = ClassSerializer()
-    profile_image = serializers.ImageField(use_url=True)
+    profile_image = Base64ImageField(use_url=True)
 
 
     class Meta:
