@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
 
 from rest_framework import generics, viewsets, mixins, status
 from rest_framework.response import Response
@@ -39,34 +40,48 @@ class UserLogin(generics.CreateAPIView):
         user = serializer.validated_data['user']
         token, _ = Token.objects.get_or_create(user=user)
 
-        is_teacher = user.groups.filter(name='Teachers').exists()
+        response_data = UserInfoSerializer(user).data
+        response_data['token'] = token.key
+        response_data['is_teacher'] = user.groups.filter(name='Teachers').exists()
 
-        return Response({'token': token.key, 'is_teacher': is_teacher})
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
-class UserProfile(generics.RetrieveUpdateAPIView):
+class ProfileViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
 
-    def get_user_entry(self, request):
-        return request.user if IsTeacher().has_permission(request, self) else request.user.student
+    def get_model(self, request, user):
+        return user if IsTeacher().has_permission(request, self) else user.student
 
 
     def get_serializer_class(self):
         return UserInfoSerializer if IsTeacher().has_permission(self.request, self) else StudentProfileSerializer
 
 
-    def get(self, request, format=None):
-        entry = self.get_user_entry(request)
+    def retrieve(self, request, pk=None):
+        user = get_object_or_404(User, id=pk)
+        entry = self.get_model(request, user)
 
         serializer = self.get_serializer(entry)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        response_data = serializer.data
+        response_data['can_edit'] = (user == request.user)
+
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
-    def update(self, request, format=None):
-        entry = self.get_user_entry(request)
+    def update(self, request, pk=None):
+        user = get_object_or_404(User, id=pk)
+
+        if user != request.user:
+            return Response(
+                {'message': 'You can only update your own profile.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        entry = self.get_model(request, user)
 
         serializer = self.get_serializer(entry, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)

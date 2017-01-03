@@ -3,7 +3,7 @@ from django.conf.urls import url, include
 from rest_framework_nested import routers
 
 from students.views import (
-    UserLogin, UserProfile,
+    UserLogin, ProfileViewSet,
     StudentRegistration,
     SubjectsList,
     ExamsViewSet,
@@ -14,6 +14,7 @@ from students.views import (
 
 router = routers.SimpleRouter()
 
+router.register(r'profile', ProfileViewSet, base_name='profile')
 router.register(r'news', NewsViewSet, base_name='news')
 router.register(r'exams', ExamsViewSet, base_name='exams')
 router.register(r'homeworks', HomeworksViewSet, base_name='homeworks')
@@ -31,7 +32,6 @@ app_name = 'students'
 urlpatterns = [
     url(r'^register/$', StudentRegistration.as_view(), name='register'),
     url(r'^login/$', UserLogin.as_view(), name='login'),
-    url(r'^profile/$', UserProfile.as_view(), name='profile'),
     url(r'^subjects/$', SubjectsList.as_view(), name='subjects-list'),
 ]
 
