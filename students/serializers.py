@@ -171,8 +171,9 @@ class StudentProfileSerializer(serializers.ModelSerializer):
         instance.user.__dict__.update(**user_data)
         instance.user.save()
 
+        print(instance.profile_image)
         if not validated_data['profile_image']:
-            del validated_data['profile_image']
+            validated_data['profile_image'] = instance.profile_image
 
         instance.__dict__.update(**validated_data)
         instance.save()
