@@ -205,26 +205,38 @@ class LoginViewTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
-class ProfileViewTestCase(APITestCase):
+class ProfileViewSetTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.view_name = 'students:profile'
+        self.view_name = 'students:profile-detail'
 
-        self.user = User.objects.create(
+        self.clazz = Class.objects.create(number=10, letter='A')
+        self.user1 = User.objects.create(
             username='tester',
             first_name='test',
             last_name='user',
             email='tester@gmail.com',
             password='pass'
         )
-        self.clazz = Class.objects.create(number=10, letter='A')
-        self.student = Student.objects.create(
-            user=self.user, clazz=self.clazz, info='I am the lord of the rings.'
+        self.user2 = User.objects.create(
+            username='test',
+            first_name='tester',
+            last_name='user',
+            email='test@gmail.com',
+            password='password123456'
+        )
+        self.student1 = Student.objects.create(
+            user=self.user1, clazz=self.clazz, info='I am the lord of the rings.'
+        )
+        self.student2 = Student.objects.create(
+            user=self.user2, clazz=self.clazz, info='I am a starboy.'
         )
 
 
     def test_profile_with_anonymous_user(self):
-        request = self.client.get(reverse(self.view_name))
+        request = self.client.get(
+            reverse(self.view_name, kwargs={'pk': self.user1.id})
+        )
 
         self.assertEqual(
             request.data['detail'],
@@ -233,32 +245,79 @@ class ProfileViewTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-    def test_profile_with_authenticated_user(self):
-        self.client.force_authenticate(user=self.user)
+    def test_profile_with_own_user(self):
+        self.client.force_authenticate(user=self.user1)
 
-        request = self.client.get(reverse(self.view_name))
+        request = self.client.get(
+            reverse(self.view_name, kwargs={'pk': self.user1.id})
+        )
 
         self.assertEqual(
-            self.student.user.username, request.data['user']['username']
+            self.student1.user.username, request.data['user']['username']
         )
         self.assertEqual(
-            self.student.clazz.number, request.data['clazz']['number']
+            self.student1.clazz.number, request.data['clazz']['number']
         )
         self.assertEqual(
-            self.student.clazz.letter, request.data['clazz']['letter']
+            self.student1.clazz.letter, request.data['clazz']['letter']
         )
-        self.assertEqual(self.student.info, request.data['info'])
+        self.assertEqual(self.student1.info, request.data['info'])
+        self.assertTrue(request.data['can_edit'])
         self.assertNotIn('password', request.data['user'])
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
-    def test_profile_update_with_invalid_username(self):
-        self.client.force_authenticate(user=self.user)
-        self.student.user.username = ''
-        put_data = StudentProfileSerializer(self.student).data
+    def test_profile_with_other_user(self):
+        self.client.force_authenticate(user=self.user2)
+
+        request = self.client.get(
+            reverse(self.view_name, kwargs={'pk': self.user1.id})
+        )
+
+        self.assertEqual(
+            self.student1.user.username, request.data['user']['username']
+        )
+        self.assertEqual(
+            self.student1.clazz.number, request.data['clazz']['number']
+        )
+        self.assertEqual(
+            self.student1.clazz.letter, request.data['clazz']['letter']
+        )
+        self.assertEqual(self.student1.info, request.data['info'])
+        self.assertFalse(request.data['can_edit'])
+        self.assertNotIn('password', request.data['user'])
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_profile_update_of_another_user(self):
+        self.client.force_authenticate(user=self.user2)
+        self.student1.user.username = 'MyNewUsername'
+        self.student1.user.first_name = 'John'
+        self.student1.user.last_name = 'Travolta'
+        put_data = StudentProfileSerializer(self.student1).data
 
         request = self.client.put(
-            reverse(self.view_name), put_data, format='json'
+            reverse(self.view_name, kwargs={'pk': self.user1.id}),
+            put_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['message'],
+            'You can only update your own profile.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+    def test_profile_update_with_invalid_username(self):
+        self.client.force_authenticate(user=self.user1)
+        self.student1.user.username = ''
+        put_data = StudentProfileSerializer(self.student1).data
+
+        request = self.client.put(
+            reverse(self.view_name, kwargs={'pk': self.user1.id}),
+            put_data,
+            format='json'
         )
 
         self.assertEqual(
@@ -268,12 +327,14 @@ class ProfileViewTestCase(APITestCase):
 
 
     def test_profile_update_with_invalid_first_name(self):
-        self.client.force_authenticate(user=self.user)
-        self.student.user.first_name = ''
-        put_data = StudentProfileSerializer(self.student).data
+        self.client.force_authenticate(user=self.user1)
+        self.student1.user.first_name = ''
+        put_data = StudentProfileSerializer(self.student1).data
 
         request = self.client.put(
-            reverse(self.view_name), put_data, format='json'
+            reverse(self.view_name, kwargs={'pk': self.user1.id}),
+            put_data,
+            format='json'
         )
 
         self.assertEqual(
@@ -283,12 +344,14 @@ class ProfileViewTestCase(APITestCase):
 
 
     def test_profile_update_with_invalid_last_name(self):
-        self.client.force_authenticate(user=self.user)
-        self.student.user.last_name = ''
-        put_data = StudentProfileSerializer(self.student).data
+        self.client.force_authenticate(user=self.user1)
+        self.student1.user.last_name = ''
+        put_data = StudentProfileSerializer(self.student1).data
 
         request = self.client.put(
-            reverse(self.view_name), put_data, format='json'
+            reverse(self.view_name, kwargs={'pk': self.user1.id}),
+            put_data,
+            format='json'
         )
 
         self.assertEqual(
@@ -298,17 +361,19 @@ class ProfileViewTestCase(APITestCase):
 
 
     def test_profile_update_with_valid_data(self):
-        self.client.force_authenticate(user=self.user)
-        self.student.user.username = 'MyNewUsername'
-        self.student.user.first_name = 'John'
-        self.student.user.last_name = 'Travolta'
-        put_data = StudentProfileSerializer(self.student).data
+        self.client.force_authenticate(user=self.user1)
+        self.student1.user.username = 'MyNewUsername'
+        self.student1.user.first_name = 'John'
+        self.student1.user.last_name = 'Travolta'
+        put_data = StudentProfileSerializer(self.student1).data
 
-        # TODO: Fix view and try to remove this line.
+        # TODO: Fix it.
         put_data.pop('profile_image')
 
         request = self.client.put(
-            reverse(self.view_name), put_data, format='json'
+            reverse(self.view_name, kwargs={'pk': self.user1.id}),
+            put_data,
+            format='json'
         )
 
         self.assertEqual(request.status_code, status.HTTP_200_OK)
