@@ -60,7 +60,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 
     def get_serializer_class(self):
-        return UserInfoSerializer if user.groups.filter(name='Teachers').exists() else StudentProfileSerializer
+        return UserInfoSerializer if IsTeacher().has_permission(self.request, self) else StudentProfileSerializer
 
 
     def retrieve(self, request, pk=None):
