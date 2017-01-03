@@ -40,11 +40,14 @@ class UserLogin(generics.CreateAPIView):
         user = serializer.validated_data['user']
         token, _ = Token.objects.get_or_create(user=user)
 
-        response_data = UserInfoSerializer(user).data
-        response_data['token'] = token.key
-        response_data['is_teacher'] = user.groups.filter(name='Teachers').exists()
-
-        return Response(response_data, status=status.HTTP_200_OK)
+        return Response(
+            {
+                'id': user.id,
+                'token': token.key,
+                'is_teacher': user.groups.filter(name='Teachers').exists()
+            },
+            status=status.HTTP_200_OK
+        )
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
