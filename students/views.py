@@ -55,19 +55,19 @@ class ProfileViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
 
-    def get_model(self, request, user):
+    def get_entry_model(self, request, user):
         return user if user.groups.filter(name='Teachers').exists() else user.student
 
 
-    def get_serializer_class(self):
-        return UserInfoSerializer if IsTeacher().has_permission(self.request, self) else StudentProfileSerializer
+    def get_serializer_model(self, user):
+        return UserInfoSerializer if user.groups.filter(name='Teachers').exists() else StudentProfileSerializer
 
 
     def retrieve(self, request, pk=None):
         user = get_object_or_404(User, id=pk)
-        entry = self.get_model(request, user)
+        entry = self.get_entry_model(request, user)
 
-        serializer = self.get_serializer(entry)
+        serializer = self.get_serializer_model(user)(entry)
 
         response_data = serializer.data
         response_data['can_edit'] = (user == request.user)
@@ -87,9 +87,9 @@ class ProfileViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
-        entry = self.get_model(request, user)
+        entry = self.get_entry_model(request, user)
 
-        serializer = self.get_serializer(entry, data=request.data, partial=True)
+        serializer = self.get_serializer_model(user)(entry, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 

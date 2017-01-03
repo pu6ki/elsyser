@@ -745,9 +745,6 @@ class NewsViewSetTestCase(APITestCase):
 
         self.assertEqual(request.data[0]['title'], self.news.title)
         self.assertEqual(request.data[0]['content'], self.news.content)
-        self.assertEqual(
-            request.data[0]['author']['user'], self.user.username
-        )
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
@@ -891,14 +888,10 @@ class NewsViewSetTestCase(APITestCase):
         self.assertEqual(request.data['id'], self.news.id)
         self.assertEqual(request.data['title'], self.news.title)
         self.assertEqual(request.data['content'], self.news.content)
-        self.assertEqual(request.data['author']['user'], self.user.username)
 
         comments_data = request.data['comment_set']
         self.assertEqual(comments_data[0]['content'], self.comment.content)
-        self.assertEqual(
-            comments_data[0]['posted_by']['user'], self.user.username
-        )
-
+        
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
