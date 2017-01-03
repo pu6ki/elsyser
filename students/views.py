@@ -56,11 +56,11 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 
     def get_model(self, request, user):
-        return user if IsTeacher().has_permission(request, self) else Student.objects.get(user=user)
+        return user if user.groups.filter(name='Teachers').exists() else user.student
 
 
     def get_serializer_class(self):
-        return UserInfoSerializer if IsTeacher().has_permission(self.request, self) else StudentProfileSerializer
+        return UserInfoSerializer if user.groups.filter(name='Teachers').exists() else StudentProfileSerializer
 
 
     def retrieve(self, request, pk=None):
@@ -80,8 +80,6 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         user = get_object_or_404(User, id=pk)
-
-        print(user)
 
         if user != request.user:
             return Response(
