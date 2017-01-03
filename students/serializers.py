@@ -150,7 +150,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
 class StudentProfileSerializer(serializers.ModelSerializer):
     user = UserInfoSerializer()
     clazz = ClassSerializer()
-    profile_image = Base64ImageField(represent_in_base64=True, use_url=True)
+    profile_image = Base64ImageField(use_url=True)
 
 
     class Meta:
