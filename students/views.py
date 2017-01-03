@@ -86,6 +86,8 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         user = get_object_or_404(User, id=pk)
+        
+        print(user)
 
         if user != request.user:
             return Response(
