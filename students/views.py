@@ -40,12 +40,12 @@ class UserLogin(generics.CreateAPIView):
         user = serializer.validated_data['user']
         token, _ = Token.objects.get_or_create(user=user)
 
+        response_data = UserInfoSerializer(user).data
+        response_data['token'] = token.key
+        response_data['is_teacher'] = user.groups.filter(name='Teachers').exists()
+
         return Response(
-            {
-                'id': user.id,
-                'token': token.key,
-                'is_teacher': user.groups.filter(name='Teachers').exists()
-            },
+            response_data,
             status=status.HTTP_200_OK
         )
 
@@ -72,7 +72,10 @@ class ProfileViewSet(viewsets.ModelViewSet):
         response_data = serializer.data
         response_data['can_edit'] = (user == request.user)
 
-        return Response(response_data, status=status.HTTP_200_OK)
+        return Response(
+            response_data,
+            status=status.HTTP_200_OK
+        )
 
 
     def update(self, request, pk=None):
@@ -90,7 +93,10 @@ class ProfileViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        return Response(
+            serializer.validated_data,
+            status=status.HTTP_200_OK
+        )
 
 
 class SubjectsList(generics.ListAPIView):
