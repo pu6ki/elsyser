@@ -1,16 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.staticfiles.templatetags.staticfiles import static
 
 from students.validators import validate_date
-
-import os
-
-
-def get_upload_path(instance, filename):
-    _, file_extension = os.path.splitext(filename)
-
-    return 'images/{}{}'.format(instance.user.username, file_extension)
 
 
 class Class(models.Model):
@@ -36,9 +29,7 @@ class Class(models.Model):
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
-    profile_image = models.ImageField(
-        upload_to=get_upload_path, default='images/default.png'
-    )
+    profile_image_url = models.URLField(default=static('default.png'))
     info = models.TextField(max_length=2048, blank=True)
 
 
