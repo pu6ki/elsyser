@@ -29,7 +29,7 @@ class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     profile_image_url = models.URLField(
-        default='http://elsyser.herokuapp.com/static/default.png'
+        default='http://elsyser.herokuapp.com/static/default.png', blank=False
     )
     info = models.TextField(max_length=2048, blank=True)
 

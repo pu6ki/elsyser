@@ -151,7 +151,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
 class StudentProfileSerializer(serializers.ModelSerializer):
     user = UserInfoSerializer()
     clazz = ClassSerializer()
-    profile_image_url = serializers.URLField()
+    profile_image_url = serializers.URLField(allow_blank=False)
 
 
     class Meta:
