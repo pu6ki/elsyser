@@ -1,5 +1,3 @@
-import re
-
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
@@ -163,10 +161,10 @@ class StudentProfileSerializer(serializers.ModelSerializer):
 
 
     def validate_profile_image_url(self, value):
-        r_image = re.compile(r'.*(jpg|png|gif)$')
         response = requests.head(value)
+        content_type = response.headers.get('content-type')
 
-        if not r_image.match(response.headers.get('content-type')):
+        if not content_type.startswith('image/'):
             raise serializers.ValidationError('URL is not a picture.')
 
         return value
