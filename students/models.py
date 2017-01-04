@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.contrib.staticfiles.templatetags.staticfiles import static
 
 from students.validators import validate_date
 
@@ -29,7 +28,9 @@ class Class(models.Model):
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
-    profile_image_url = models.URLField(default=static('default.png'))
+    profile_image_url = models.URLField(
+        default='http://elsyser.herokuapp.com/static/default.png'
+    )
     info = models.TextField(max_length=2048, blank=True)
 
 
