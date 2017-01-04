@@ -1,4 +1,3 @@
-import re
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
@@ -11,6 +10,8 @@ from rest_framework.authtoken.models import Token
 from students.models import (
     Class, Subject, Student, Exam, News, Homework, Comment, Material
 )
+
+import requests
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -160,9 +161,10 @@ class StudentProfileSerializer(serializers.ModelSerializer):
 
 
     def validate_profile_image_url(self, value):
-        r_image = re.compile(r'.*\.(jpg|png|gif)$')
+        r_image = re.compile(r'.*(jpg|png|gif)$')
+        response = requests.head(value)
 
-        if not r_image.match(value):
+        if not r_image.match(response.headers.get('content-type')):
             raise serializers.ValidationError('URL is not a picture.')
 
         return value
