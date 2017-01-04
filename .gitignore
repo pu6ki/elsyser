@@ -7,3 +7,6 @@ __pycache__/
 
 # Database files
 *.sqlite3
+
+# Media files
+media/
