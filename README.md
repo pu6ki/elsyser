@@ -6,8 +6,7 @@
 
 # [elsyser](https://elsyser.herokuapp.com/api/register/)
 
-**elsyser** is a *RESTful API*, used for [the ELSYSER web client](https://github.com/pu6ki/elsyser-web-client) - a
-students' platform for [ELSYS, Sofia](http://elsys-bg.org).
+**elsyser** is a *RESTful API*, written in *Django*. This is part of a school platform that makes communication and resource sharing between students themselves and between students and their teachers easier.
 
 ## Prerequisites
 
@@ -75,9 +74,9 @@ How to copy this project to your local machine and run it:
 5. You can view everything about you and your class:
     - */api/exams* - Upcoming exams about your class.
     - */api/news* - News about your class, which you can post and edit too. Each news has it's own comments.
-    - */api/homeworks*
-    - */api/profile*
-    - */api/materials*
+    - */api/homeworks* - Current homeworks about you.
+    - */api/profile/{user_id}* -Personal info about everyone.
+    - */api/materials* - Useful materials for a certain topic.
 
 ## The admin site
 
