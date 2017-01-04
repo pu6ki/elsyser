@@ -1,3 +1,4 @@
+import re
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
@@ -149,12 +150,22 @@ class UserInfoSerializer(serializers.ModelSerializer):
 class StudentProfileSerializer(serializers.ModelSerializer):
     user = UserInfoSerializer()
     clazz = ClassSerializer()
+    profile_image_url = serializers.URLField()
 
 
     class Meta:
         model = Student
         fields = ('user', 'clazz', 'profile_image_url', 'info')
         depth = 1
+
+
+    def validate_profile_image_url(self, value):
+        r_image = re.compile(r'.*\.(jpg|png|gif)$')
+
+        if not r_image.match(value):
+            raise serializers.ValidationError('URL is not a picture.')
+
+        return value
 
 
     def update(self, instance, validated_data):

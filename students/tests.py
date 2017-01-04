@@ -226,7 +226,10 @@ class ProfileViewSetTestCase(APITestCase):
             password='password123456'
         )
         self.student1 = Student.objects.create(
-            user=self.user1, clazz=self.clazz, info='I am the lord of the rings.'
+            user=self.user1,
+            clazz=self.clazz,
+            info='I am the lord of the rings.',
+            profile_image_url='http://www.shockmansion.com/wp-content/myimages/2016/03/rr231.jpg'
         )
         self.student2 = Student.objects.create(
             user=self.user2, clazz=self.clazz, info='I am a starboy.'
@@ -360,15 +363,30 @@ class ProfileViewSetTestCase(APITestCase):
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
 
+    def test_profile_update_with_invalid_profile_picture_url(self):
+        self.client.force_authenticate(user=self.user1)
+        self.student1.profile_image_url = 'https://www.youtube.com/watch?v=vSoUp-SxLrQ'
+        put_data = StudentProfileSerializer(self.student1).data
+
+        request = self.client.put(
+            reverse(self.view_name, kwargs={'pk': self.user1.id}),
+            put_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['profile_image_url'], ['URL is not a picture.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+
     def test_profile_update_with_valid_data(self):
         self.client.force_authenticate(user=self.user1)
         self.student1.user.username = 'MyNewUsername'
         self.student1.user.first_name = 'John'
         self.student1.user.last_name = 'Travolta'
+        self.student1.profile_image_url = 'http://shushi168.com/data/out/193/37281782-random-image.png'
         put_data = StudentProfileSerializer(self.student1).data
-
-        # TODO: Fix it.
-        put_data.pop('profile_image')
 
         request = self.client.put(
             reverse(self.view_name, kwargs={'pk': self.user1.id}),
@@ -891,7 +909,7 @@ class NewsViewSetTestCase(APITestCase):
 
         comments_data = request.data['comment_set']
         self.assertEqual(comments_data[0]['content'], self.comment.content)
-        
+
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
