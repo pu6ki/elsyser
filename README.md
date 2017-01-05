@@ -4,6 +4,8 @@
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/pu6ki/elsyser/master/LICENSE)
 [![Requires.io](https://img.shields.io/requires/github/pu6ki/elsyser.svg?style=flat-square)](https://raw.githubusercontent.com/pu6ki/elsyser/master/requirements.txt)
 
+![Logo](https://raw.githubusercontent.com/pu6ki/elsyser/master/static/logo-black.png)
+
 # [elsyser](https://elsyser.herokuapp.com/api/register/)
 
 **elsyser** is a *RESTful API*, written in *Django*. This is part of a school platform that makes communication and resource sharing between students themselves and between students and their teachers easier.
@@ -90,6 +92,7 @@ How to copy this project to your local machine and run it:
 [wencakisa](https://github.com/wencakisa) - I am a student in 10th grade in ELSYS.
 I am developing this back end service, used by [the ELSYSER web client](https://github.com/pu6ki/elsyser-web-client),
 which is developed by my schoolmate [matir8](https://github.com/matir8).
+Logo is designed by [Vladimir Vladinov](https://github.com/thehughmungus).
 
 ### Task list:
 
