@@ -59,17 +59,13 @@ class ProfileViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
 
-    def get_entry_model(self, request, user):
-        return Teacher.objects.filter(user=user) or Student.objects.filter(user=user)
-
-
     def get_serializer_model(self, user):
         return TeacherProfileSerializer if Teacher.objects.filter(user=user).exists() else StudentProfileSerializer
 
 
     def retrieve(self, request, pk=None):
         user = get_object_or_404(User, id=pk)
-        entry = self.get_entry_model(request, user)
+        entry = Teacher.objects.filter(user=user) or Student.objects.filter(user=user)
 
         serializer = self.get_serializer_model(user)(entry)
 
