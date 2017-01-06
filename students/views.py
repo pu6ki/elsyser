@@ -60,7 +60,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 
     def get_entry_model(self, request, user):
-        return user if Teacher.objects.filter(user=user).exists() else user.student
+        return Teacher.objects.filter(user=user) or Student.objects.filter(user=user)
 
 
     def get_serializer_model(self, user):
