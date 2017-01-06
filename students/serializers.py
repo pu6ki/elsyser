@@ -232,6 +232,7 @@ class TeacherProfileSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         user_data = validated_data.get('user', {})
+        print(user_data)
         username = user_data.get('username', '')
 
         if User.objects.exclude(pk=instance.user.pk).filter(username=username):
