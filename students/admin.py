@@ -44,11 +44,7 @@ class MaterialAdmin(admin.ModelAdmin):
         'author'
     )
     list_display = [
-        'id',
-        'title', 'section', 'content',
-        'class_number', 'subject',
-        'video_url',
-        'author'
+        'id', 'title', 'section', 'class_number', 'subject', 'author'
     ]
 
 

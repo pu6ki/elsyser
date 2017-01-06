@@ -128,7 +128,7 @@ class Material(models.Model):
 
     def __str__(self):
         return '{} - {} ({} class) posted by {}'.format(
-            self.title, self.subject, self.class_number, self.author
+            self.title, self.subject, self.class_number
         )
 
 
