@@ -281,7 +281,7 @@ class CommentSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         news = self.context['news']
         request = self.context['request']
-        
+
         posted_by = request.user.student
 
         return Comment.objects.create(
@@ -331,36 +331,6 @@ class NewsSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
-
-
-class HomeworkSerializer(serializers.ModelSerializer):
-    details = serializers.CharField(max_length=256, allow_blank=True)
-
-
-    class Meta:
-        model = Homework
-        fields = ('id', 'subject', 'clazz', 'deadline', 'details', 'author')
-        depth = 1
-
-
-    def create(self, validated_data):
-        request = self.context['request']
-        author = request.user
-
-        return Homework.objects.create(author=author, **validated_data)
-
-
-    def update(self, instance, validated_data):
-        instance.__dict__.update(**validated_data)
-        instance.save()
-
-        return instance
-
-
-class HomeworkReadSerializer(HomeworkSerializer):
-    subject = SubjectSerializer(read_only=True)
-    clazz = ClassSerializer(read_only=True)
-    author = TeacherAuthorSerializer(read_only=True)
 
 
 class MaterialSerializer(serializers.ModelSerializer):
@@ -442,3 +412,34 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
 class SubmissionReadSerializer(SubmissionSerializer):
     student = StudentAuthorSerializer(read_only=True)
+
+
+class HomeworkSerializer(serializers.ModelSerializer):
+    details = serializers.CharField(max_length=256, allow_blank=True)
+    submission_set = SubmissionSerializer(read_only=True, many=True)
+
+
+    class Meta:
+        model = Homework
+        fields = ('id', 'subject', 'clazz', 'deadline', 'details', 'author', 'submission_set')
+        depth = 1
+
+
+        def create(self, validated_data):
+            request = self.context['request']
+            author = request.user
+
+            return Homework.objects.create(author=author, **validated_data)
+
+
+        def update(self, instance, validated_data):
+            instance.__dict__.update(**validated_data)
+            instance.save()
+
+            return instance
+
+
+class HomeworkReadSerializer(HomeworkSerializer):
+    subject = SubjectSerializer(read_only=True)
+    clazz = ClassSerializer(read_only=True)
+    author = TeacherAuthorSerializer(read_only=True)
