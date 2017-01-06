@@ -59,11 +59,11 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 
     def get_entry_model(self, request, user):
-        return user if user.groups.filter(name='Teachers').exists() else user.student
+        return user if Teacher.objects.filter(user=user).exists() else user.student
 
 
     def get_serializer_model(self, user):
-        return UserInfoSerializer if user.groups.filter(name='Teachers').exists() else StudentProfileSerializer
+        return UserInfoSerializer if Teacher.objects.filter(user=user).exists() else StudentProfileSerializer
 
 
     def retrieve(self, request, pk=None):
