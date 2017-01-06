@@ -50,12 +50,11 @@ class Subject(models.Model):
         return self.title
 
 
-
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     profile_image_url = models.URLField(
-    default='http://elsyser.herokuapp.com/static/default.png', blank=False
+        default='http://elsyser.herokuapp.com/static/default.png', blank=False
     )
     info = models.TextField(max_length=2048, blank=True)
 
@@ -128,7 +127,7 @@ class Material(models.Model):
 
     def __str__(self):
         return '{} - {} ({} class) posted by {}'.format(
-            self.title, self.subject, self.class_number
+            self.title, self.subject, self.class_number, self.author
         )
 
 
