@@ -18,9 +18,12 @@ from students.serializers import (
     CommentSerializer, CommentReadSerializer,
     HomeworkSerializer, HomeworkReadSerializer,
     MaterialSerializer, MaterialReadSerializer,
+    SubmissionSerializer, SubmissionReadSerializer
 )
 from students.models import (
-    Student, Exam, News, Homework, Comment, Subject, Class, Material
+    Student, Exam, News, Homework,
+    Comment, Subject, Class, Material,
+    Submission, Teacher
 )
 from students.permissions import IsStudent, IsTeacher
 
@@ -42,7 +45,7 @@ class UserLogin(generics.CreateAPIView):
 
         response_data = UserInfoSerializer(user).data
         response_data['token'] = token.key
-        response_data['is_teacher'] = user.groups.filter(name='Teachers').exists()
+        response_data['is_teacher'] = Teacher.objects.filter(user=user).exists()
 
         return Response(
             response_data,
@@ -128,9 +131,12 @@ class ExamsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         request = self.request
-        exams = Exam.objects.filter(date__gte=datetime.now())
+        upcoming_exams = Exam.objects.filter(date__gte=datetime.now())
 
-        return exams if IsTeacher().has_permission(request, self) else exams.filter(clazz=request.user.student.clazz)
+        if IsTeacher().has_permission(request, self):
+            return upcoming_exams.filter(subject=request.user.teacher.subject)
+
+        return upcoming_exams.filter(clazz=request.user.student.clazz)
 
 
     def retrieve(self, request, pk=None):
@@ -375,9 +381,12 @@ class HomeworksViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         request = self.request
-        homeworks = Homework.objects.filter(deadline__gte=datetime.now())
+        upcoming_homeworks = Homework.objects.filter(deadline__gte=datetime.now())
 
-        return homeworks if IsTeacher().has_permission(request, self) else homeworks.filter(clazz=request.user.student.clazz)
+        if IsTeacher().has_permission(request, self):
+            return upcoming_homeworks.filter(subject=request.user.teacher.subject)
+
+        return upcoming_homeworks.filter(clazz=request.user.student.clazz)
 
 
     def retrieve(self, request, pk=None):
@@ -480,7 +489,7 @@ class MaterialsListViewSet(mixins.ListModelMixin, MaterialsViewSet):
         all_materials = Material.objects.all()
 
         if IsTeacher().has_permission(request, self):
-            return all_materials
+            return all_materials.filter(subject=request.user.teacher.subject)
 
         return all_materials.filter(class_number=request.user.student.clazz.number)
 
@@ -563,5 +572,108 @@ class NestedMaterialsViewSet(mixins.RetrieveModelMixin,
 
         return Response(
             {'message': 'Material successfully deleted.'},
+            status=status.HTTP_200_OK
+        )
+
+
+class SubmissionsViewSet(viewsets.ModelViewSet):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes_by_action = {
+        'list': (IsAuthenticated,),
+        'retrieve': (IsAuthenticated,),
+        'create': (IsAuthenticated, IsStudent),
+        'update': (IsAuthenticated, IsStudent),
+        'destroy': (IsAuthenticated, IsStudent)
+    }
+
+
+    def get_queryset(self):
+        request = self.request
+        all_submissions = Submission.objects.all()
+
+        if IsTeacher().has_permission(request, self):
+            return all_submissions.filter(homework__subject=request.user.teacher.subject)
+
+        return all_submissions.filter(student=request.user.student)
+
+
+    def get_serializer_class(self):
+         return SubmissionReadSerializer if self.request.method in ('GET',) else SubmissionSerializer
+
+
+    def get_permissions(self):
+        return [permission() for permission in self.permission_classes_by_action[self.action]]
+
+
+    def retrieve(self, request, homeworks_pk=None, pk=None):
+        homework = get_object_or_404(Homework, id=homeworks_pk)
+        submission = get_object_or_404(homework.submission_set, id=pk)
+
+        serializer = self.get_serializer(submission)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+            headers=headers
+        )
+
+
+    def create(self, request, homeworks_pk=None):
+        homework = get_object_or_404(Homework, id=homeworks_pk)
+        context = {'request': request, 'homework': homework}
+
+        serializer = self.get_serializer_class()(
+            context=context, data=request.data
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(
+            serializer.validated_data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )
+
+
+    def update(self, request, homeworks_pk=None, pk=None):
+        homework = get_object_or_404(Homework, id=homeworks_pk)
+        submission = get_object_or_404(homework.submission_set, id=pk)
+
+        if submission.student != request.user.student:
+            return Response(
+                {'message': 'You can edit only your own submissions.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        serializer = self.get_serializer_class()(
+            submission, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(
+            serializer.validated_data,
+            status=status.HTTP_200_OK,
+            headers=headers
+        )
+
+
+    def destroy(self, request, homeworks_pk=None, pk=None):
+        homework = get_object_or_404(Homework, id=homeworks_pk)
+        submission = get_object_or_404(homework.submission_set, id=pk)
+
+        if submission.student != request.user.student:
+            return Response(
+                {'message': 'You can delete only your own submissions.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        submission.delete()
+
+        return Response(
+            {'message': 'Submission successfully deleted.'},
             status=status.HTTP_200_OK
         )

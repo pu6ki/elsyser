@@ -129,3 +129,30 @@ class Comment(models.Model):
 
     def __str__(self):
         return '{} - {}'.format(self.posted_by, self.news)
+
+
+class Submission(models.Model):
+    homework = models.ForeignKey(Homework, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    content = models.TextField(max_length=2048)
+    solution_url = models.URLField(blank=True)
+    posted_on = models.DateTimeField(auto_now_add=True)
+    edited = models.BooleanField(default=False)
+    last_edited_on = models.DateTimeField(auto_now=True)
+
+
+    def __str__(self):
+        return '{} - {}'.format(self.student, self.homework)
+
+
+class Teacher(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    profile_image_url = models.URLField(
+    default='http://elsyser.herokuapp.com/static/default.png', blank=False
+    )
+    info = models.TextField(max_length=2048, blank=True)
+
+
+    def __str__(self):
+        return '{} ({})'.format(self.user.username, self.subject)

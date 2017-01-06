@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-from students.models import Student
+from students.models import Student, Teacher
 
 
 class IsStudent(permissions.BasePermission):
@@ -10,4 +10,4 @@ class IsStudent(permissions.BasePermission):
 
 class IsTeacher(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.groups.filter(name='Teachers').exists()
+        return Teacher.objects.filter(user=request.user).exists()

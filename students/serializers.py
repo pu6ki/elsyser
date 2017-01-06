@@ -8,7 +8,9 @@ from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
 
 from students.models import (
-    Class, Subject, Student, Exam, News, Homework, Comment, Material
+    Class, Subject, Student, Exam,
+    News, Homework, Comment, Material,
+    Submission, Teacher
 )
 
 import requests
@@ -278,10 +280,9 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         news = self.context['news']
-
         request = self.context['request']
+        
         posted_by = request.user.student
-
 
         return Comment.objects.create(
             news=news, posted_by=posted_by, **validated_data
@@ -402,3 +403,42 @@ class MaterialSerializer(serializers.ModelSerializer):
 
 class MaterialReadSerializer(MaterialSerializer):
     author = TeacherAuthorSerializer(read_only=True)
+
+
+class SubmissionSerializer(serializers.ModelSerializer):
+    student = StudentAuthorSerializer(read_only=True)
+    content = serializers.CharField(max_length=2048, allow_blank=False)
+    solution_url = serializers.URLField(required=False, allow_blank=True)
+
+
+    class Meta:
+        model = Submission
+        fields = (
+            'id',
+            'student',
+            'content', 'solution_url',
+            'posted_on', 'edited', 'last_edited_on'
+        )
+        depth = 1
+
+
+    def create(self, validated_data):
+        homework = self.context['homework']
+        request = self.context['request']
+
+        student = request.user.student
+
+        return Submission.objects.create(
+            homework=homework, student=student, **validated_data
+        )
+
+
+    def update(self, instance, validated_data):
+        instance.__dict__.update(**validated_data)
+        instance.save()
+
+        return instance
+
+
+class SubmissionReadSerializer(SubmissionSerializer):
+    student = StudentAuthorSerializer(read_only=True)

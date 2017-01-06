@@ -9,7 +9,8 @@ from students.views import (
     ExamsViewSet,
     NewsViewSet, CommentsViewSet,
     HomeworksViewSet,
-    MaterialsListViewSet, NestedMaterialsViewSet
+    MaterialsListViewSet, NestedMaterialsViewSet,
+    SubmissionsViewSet
 )
 
 router = routers.SimpleRouter()
@@ -28,6 +29,13 @@ news_comments_router.register(
     r'comments', CommentsViewSet, base_name='news-comments'
 )
 
+homework_submissions_router = routers.NestedSimpleRouter(
+    router, r'homeworks', lookup='homeworks'
+)
+homework_submissions_router.register(
+    r'submissions', SubmissionsViewSet, base_name='homework-submissions'
+)
+
 app_name = 'students'
 urlpatterns = [
     url(r'^register/$', StudentRegistration.as_view(), name='register'),
@@ -37,3 +45,4 @@ urlpatterns = [
 
 urlpatterns += router.urls
 urlpatterns += news_comments_router.urls
+urlpatterns += homework_submissions_router.urls

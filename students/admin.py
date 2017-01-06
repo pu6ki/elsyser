@@ -1,7 +1,8 @@
 from django.contrib import admin
 
 from students.models import (
-    Class, Student, Subject, Exam, News, Homework, Comment, Material
+    Class, Student, Subject, Exam, News,
+    Homework, Comment, Material, Submission, Teacher
 )
 
 
@@ -51,6 +52,14 @@ class MaterialAdmin(admin.ModelAdmin):
     ]
 
 
+class SubmissionAdmin(admin.ModelAdmin):
+    list_display = ['id', 'homework', 'student']
+
+
+class TeacherAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'subject']
+
+
 admin.site.register(Class)
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Subject, SubjectAdmin)
@@ -59,3 +68,5 @@ admin.site.register(News, NewsAdmin)
 admin.site.register(Homework, HomeworkAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(Material, MaterialAdmin)
+admin.site.register(Submission, SubmissionAdmin)
+admin.site.register(Teacher, TeacherAdmin)
