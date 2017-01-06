@@ -215,7 +215,7 @@ class TeacherProfileSerializer(serializers.ModelSerializer):
 
 
     class Meta:
-        model = Student
+        model = Teacher
         fields = ('user', 'subject', 'profile_image_url', 'info')
         depth = 1
 
