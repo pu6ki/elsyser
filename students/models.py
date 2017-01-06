@@ -50,13 +50,27 @@ class Subject(models.Model):
         return self.title
 
 
+
+class Teacher(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    profile_image_url = models.URLField(
+    default='http://elsyser.herokuapp.com/static/default.png', blank=False
+    )
+    info = models.TextField(max_length=2048, blank=True)
+
+
+    def __str__(self):
+        return '{} ({})'.format(self.user.username, self.subject)
+
+
 class Exam(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     date = models.DateField(auto_now=False, validators=[validate_date])
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     topic = models.CharField(unique=True, max_length=60)
     details = models.TextField(max_length=1000, blank=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(Teacher, on_delete=models.CASCADE)
 
 
     class Meta:
@@ -91,7 +105,7 @@ class Homework(models.Model):
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     deadline = models.DateField(auto_now=False)
     details = models.TextField(max_length=256, blank=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(Teacher, on_delete=models.CASCADE)
 
 
     class Meta:
@@ -109,7 +123,7 @@ class Material(models.Model):
     class_number = models.IntegerField(choices=[(i, i) for i in range(8, 13)])
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     video_url = models.URLField(blank=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(Teacher, on_delete=models.CASCADE)
 
 
     def __str__(self):
@@ -143,16 +157,3 @@ class Submission(models.Model):
 
     def __str__(self):
         return '{} - {}'.format(self.student, self.homework)
-
-
-class Teacher(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    profile_image_url = models.URLField(
-    default='http://elsyser.herokuapp.com/static/default.png', blank=False
-    )
-    info = models.TextField(max_length=2048, blank=True)
-
-
-    def __str__(self):
-        return '{} ({})'.format(self.user.username, self.subject)

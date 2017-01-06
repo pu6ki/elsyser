@@ -214,13 +214,16 @@ class StudentAuthorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ('user', 'profile_image_url')
+        fields = ('id', 'user', 'profile_image_url')
 
 
 class TeacherAuthorSerializer(serializers.ModelSerializer):
+    user = UserInfoSerializer(read_only=True)
+
+
     class Meta:
-        model = User
-        fields = ('id', 'username', 'first_name', 'last_name')
+        model = Teacher
+        fields = ('id', 'user', 'profile_image_url')
 
 
 class ExamSerializer(serializers.ModelSerializer):
@@ -244,7 +247,7 @@ class ExamSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = self.context['request']
-        author = request.user
+        author = request.user.teacher
 
         return Exam.objects.create(author=author, **validated_data)
 
@@ -357,7 +360,7 @@ class MaterialSerializer(serializers.ModelSerializer):
         subject = self.context['subject']
 
         request = self.context['request']
-        author = request.user
+        author = request.user.teacher
 
         return Material.objects.create(
             subject=subject, author=author, **validated_data
@@ -376,7 +379,6 @@ class MaterialReadSerializer(MaterialSerializer):
 
 
 class SubmissionSerializer(serializers.ModelSerializer):
-    student = StudentAuthorSerializer(read_only=True)
     content = serializers.CharField(max_length=2048, allow_blank=False)
     solution_url = serializers.URLField(required=False, allow_blank=True)
 
@@ -427,7 +429,7 @@ class HomeworkSerializer(serializers.ModelSerializer):
 
         def create(self, validated_data):
             request = self.context['request']
-            author = request.user
+            author = request.user.teacher
 
             return Homework.objects.create(author=author, **validated_data)
 

@@ -423,7 +423,7 @@ class HomeworksViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None):
         homework = get_object_or_404(Homework, id=pk)
 
-        if homework.author != request.user:
+        if homework.author != request.user.teacher:
             return Response(
                 {'message': 'You can edit only your own homeworks.'},
                 status=status.HTTP_401_UNAUTHORIZED
@@ -446,7 +446,7 @@ class HomeworksViewSet(viewsets.ModelViewSet):
     def destroy(self, request, pk=None):
         homework = get_object_or_404(Homework, id=pk)
 
-        if homework.author != request.user:
+        if homework.author != request.user.teacher:
             return Response(
                 {'message': 'You can delete only your own homeworks.'},
                 status=status.HTTP_401_UNAUTHORIZED
