@@ -69,7 +69,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, pk=None):
         user = get_object_or_404(User, id=pk)
-        entry = get_entry_model(user)
+        entry = self.get_entry_model(user)
 
         serializer = self.get_serializer_model(user)(entry)
 
