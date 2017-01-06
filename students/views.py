@@ -60,11 +60,13 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 
     def get_entry_model(self, user):
-        return Teacher.objects.filter(user=user).first() or Student.objects.filter(user=user).first()
+        teacher = Teacher.objects.filter(user=user).first()
+
+        return teacher if teacher else Student.objects.filter(user=user).first()
 
 
     def get_serializer_model(self, user):
-        return TeacherProfileSerializer if Teacher.objects.filter(user=user).exists() else StudentProfileSerializer
+        return TeacherProfileSerializer if Teacher.objects.filter(user=user).first() else StudentProfileSerializer
 
 
     def retrieve(self, request, pk=None):
@@ -92,9 +94,6 @@ class ProfileViewSet(viewsets.ModelViewSet):
             )
 
         entry = self.get_entry_model(user)
-        
-        print(entry)
-        print(self.get_serializer_model(user))
 
         serializer = self.get_serializer_model(user)(
             entry, data=request.data, partial=True
