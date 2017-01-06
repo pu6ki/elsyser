@@ -70,7 +70,7 @@ class Exam(models.Model):
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     topic = models.CharField(unique=True, max_length=60)
     details = models.TextField(max_length=1000, blank=True)
-    author = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    author = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
 
 
     class Meta:
@@ -105,7 +105,7 @@ class Homework(models.Model):
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     deadline = models.DateField(auto_now=False)
     details = models.TextField(max_length=256, blank=True)
-    author = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    author = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
 
 
     class Meta:
@@ -123,7 +123,7 @@ class Material(models.Model):
     class_number = models.IntegerField(choices=[(i, i) for i in range(8, 13)])
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     video_url = models.URLField(blank=True)
-    author = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    author = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
 
 
     def __str__(self):
