@@ -407,12 +407,11 @@ class HomeworksViewSet(viewsets.ModelViewSet):
     def create(self, request):
         context = {'request': request}
 
-        subject = get_object_or_404(Subject, **request.data.get('subject'))
         clazz = get_object_or_404(Class, **request.data.get('clazz'))
 
         serializer = self.get_serializer(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(clazz=clazz, subject=subject)
+        serializer.save(clazz=clazz)
         headers = self.get_success_headers(serializer.data)
 
         return Response(

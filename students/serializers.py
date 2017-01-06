@@ -474,6 +474,8 @@ class HomeworkSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = self.context['request']
+        print(request)
+
         author = request.user.teacher
         subject = author.subject
 
