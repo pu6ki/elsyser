@@ -150,6 +150,24 @@ class UserInfoSerializer(serializers.ModelSerializer):
         return instance
 
 
+class SubjectSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(
+        max_length=50,
+        allow_blank=False,
+        validators=[
+            UniqueValidator(
+                queryset=Subject.objects.all(),
+                message='Subject with this title already exists.'
+            )
+        ]
+    )
+
+
+    class Meta:
+        model = Subject
+        fields = ('id', 'title')
+
+
 class StudentProfileSerializer(serializers.ModelSerializer):
     user = UserInfoSerializer()
     clazz = ClassSerializer()
@@ -190,22 +208,44 @@ class StudentProfileSerializer(serializers.ModelSerializer):
         return instance
 
 
-class SubjectSerializer(serializers.ModelSerializer):
-    title = serializers.CharField(
-        max_length=50,
-        allow_blank=False,
-        validators=[
-            UniqueValidator(
-                queryset=Subject.objects.all(),
-                message='Subject with this title already exists.'
-            )
-        ]
-    )
+class TeacherProfileSerializer(serializers.ModelSerializer):
+    user = UserInfoSerializer()
+    subject = SubjectSerializer()
+    profile_image_url = serializers.URLField(allow_blank=False)
 
 
     class Meta:
-        model = Subject
-        fields = ('id', 'title')
+        model = Student
+        fields = ('user', 'subject', 'profile_image_url', 'info')
+        depth = 1
+
+
+    def validate_profile_image_url(self, value):
+        response = requests.head(value)
+        content_type = response.headers.get('content-type')
+
+        if not content_type.startswith('image/'):
+            raise serializers.ValidationError('URL is not a picture.')
+
+        return value
+
+
+    def update(self, instance, validated_data):
+        user_data = validated_data.get('user', {})
+        username = user_data.get('username', '')
+
+        if User.objects.exclude(pk=instance.user.pk).filter(username=username):
+            raise serializers.ValidationError(
+                'Teacher with this username already exists.'
+            )
+
+        instance.user.__dict__.update(**user_data)
+        instance.user.save()
+
+        instance.__dict__.update(**validated_data)
+        instance.save()
+
+        return instance
 
 
 class StudentAuthorSerializer(serializers.ModelSerializer):

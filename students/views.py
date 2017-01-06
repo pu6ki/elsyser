@@ -11,8 +11,9 @@ from datetime import datetime
 
 from students.serializers import (
     UserLoginSerializer, UserInfoSerializer,
-    StudentSerializer, StudentProfileSerializer,
+    StudentSerializer,
     SubjectSerializer,
+    StudentProfileSerializer, TeacherProfileSerializer,
     ExamSerializer, ExamReadSerializer,
     NewsSerializer,
     CommentSerializer, CommentReadSerializer,
@@ -63,7 +64,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 
     def get_serializer_model(self, user):
-        return UserInfoSerializer if Teacher.objects.filter(user=user).exists() else StudentProfileSerializer
+        return TeacherProfileSerializer if Teacher.objects.filter(user=user).exists() else StudentProfileSerializer
 
 
     def retrieve(self, request, pk=None):
