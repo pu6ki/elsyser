@@ -90,7 +90,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
                 {'message': 'You can only update your own profile.'},
                 status=status.HTTP_401_UNAUTHORIZED
             )
-            
+
         entry = self.get_entry_model(user)
 
         serializer = self.get_serializer_model(user)(
@@ -239,7 +239,6 @@ class NewsViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
             headers=headers
         )
-
 
 
     def create(self, request):

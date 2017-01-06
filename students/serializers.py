@@ -232,7 +232,6 @@ class TeacherProfileSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         user_data = validated_data.get('user', {})
-        print(user_data)
         username = user_data.get('username', '')
 
         if User.objects.exclude(pk=instance.user.pk).filter(username=username):
@@ -282,15 +281,20 @@ class ExamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Exam
-        fields = ('id', 'subject', 'clazz', 'topic', 'date', 'details', 'author')
+        fields = (
+            'id', 'subject', 'clazz', 'topic', 'date', 'details', 'author'
+        )
         depth = 1
 
 
     def create(self, validated_data):
         request = self.context['request']
         author = request.user.teacher
+        subject = author.subject
 
-        return Exam.objects.create(author=author, **validated_data)
+        return Exam.objects.create(
+            subject=subject, author=author, **validated_data
+        )
 
 
     def update(self, instance, validated_data):
@@ -468,18 +472,21 @@ class HomeworkSerializer(serializers.ModelSerializer):
         depth = 1
 
 
-        def create(self, validated_data):
-            request = self.context['request']
-            author = request.user.teacher
+    def create(self, validated_data):
+        request = self.context['request']
+        author = request.user.teacher
+        subject = author.subject
 
-            return Homework.objects.create(author=author, **validated_data)
+        return Homework.objects.create(
+            subject=subject, author=author, **validated_data
+        )
 
 
-        def update(self, instance, validated_data):
-            instance.__dict__.update(**validated_data)
-            instance.save()
+    def update(self, instance, validated_data):
+        instance.__dict__.update(**validated_data)
+        instance.save()
 
-            return instance
+        return instance
 
 
 class HomeworkReadSerializer(HomeworkSerializer):
