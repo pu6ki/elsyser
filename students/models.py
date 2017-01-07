@@ -156,9 +156,9 @@ class Submission(models.Model):
 
 
     class Meta:
-        ordering = ['-posted_on']
+        ordering = ['-posted_on', '-last_edited_on']
 
-    
+
     def __str__(self):
         return '{} - {} ({})'.format(
             self.student, self.homework, self.posted_on
