@@ -158,7 +158,12 @@ class ExamsViewSet(viewsets.ModelViewSet):
     def create(self, request):
         context = {'request': request}
 
-        clazz = get_object_or_404(Class, **request.data.get('clazz'))
+        clazz_data = request.data.get('clazz')
+        clazz = get_object_or_404(
+            Class,
+            number=int(clazz_data['number']),
+            letter=clazz_data['letter']
+        )
 
         serializer = self.get_serializer(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -410,9 +415,12 @@ class HomeworksViewSet(viewsets.ModelViewSet):
     def create(self, request):
         context = {'request': request}
 
-        clazz = get_object_or_404(Class, **request.data.get('clazz'))
-
-        print('I AM IN HERE!')
+        clazz_data = request.data.get('clazz')
+        clazz = get_object_or_404(
+            Class,
+            number=int(clazz_data['number']),
+            letter=clazz_data['letter']
+        )
 
         serializer = self.get_serializer(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
