@@ -614,8 +614,8 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
 
 
     def retrieve(self, request, homeworks_pk=None, pk=None):
-        homework = get_object_or_404(Homework, id=homeworks_pk)
-        submission = get_object_or_404(homework.submission_set, id=pk)
+        # homework = get_object_or_404(Homework, id=homeworks_pk)
+        submission = get_object_or_404(Submission, id=pk)
 
         if IsStudent().has_permission(request, self):
             if submission.student != request.user.student:
