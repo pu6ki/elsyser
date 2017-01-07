@@ -590,8 +590,7 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
         'list': (IsAuthenticated,),
         'retrieve': (IsAuthenticated,),
         'create': (IsAuthenticated, IsStudent),
-        'update': (IsAuthenticated, IsStudent),
-        'destroy': (IsAuthenticated, IsStudent)
+        'update': (IsAuthenticated,),
     }
 
 
@@ -599,12 +598,12 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
         request = self.request
 
         homework = get_object_or_404(Homework, id=self.kwargs['homeworks_pk'])
-        all_submissions = Submission.objects.filter(homework=homework)
+        submissions = Submission.objects.filter(homework=homework, checked=False)
 
         if IsStudent().has_permission(request, self):
-            return all_submissions.filter(student=request.user.student)
+            return submissions.filter(student=request.user.student)
 
-        return all_submissions
+        return submissions
 
 
     def get_serializer_class(self):
@@ -658,11 +657,12 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
         homework = get_object_or_404(Homework, id=homeworks_pk)
         submission = get_object_or_404(homework.submission_set, id=pk)
 
-        if submission.student != request.user.student:
-            return Response(
-                {'message': 'You can edit only your own submissions.'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+        if IsStudent().has_permission(request, self):
+            if submission.student != request.user.student:
+                return Response(
+                    {'message': 'You can edit only your own submissions.'},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
 
         serializer = self.get_serializer_class()(
             submission, data=request.data, partial=True
