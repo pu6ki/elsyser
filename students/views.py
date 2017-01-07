@@ -179,7 +179,7 @@ class ExamsViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None):
         exam = get_object_or_404(Exam, id=pk)
 
-        if exam.author != request.user:
+        if exam.author != request.user.teacher:
             return Response(
                 {'message': 'You can edit only your own exams.'},
                 status=status.HTTP_401_UNAUTHORIZED
@@ -202,7 +202,7 @@ class ExamsViewSet(viewsets.ModelViewSet):
     def destroy(self, request, pk=None):
         exam = get_object_or_404(Exam, id=pk)
 
-        if exam.author != request.user:
+        if exam.author != request.user.teacher:
             return Response(
                 {'message': 'You can delete only your own exams.'},
                 status=status.HTTP_401_UNAUTHORIZED

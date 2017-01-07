@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.reverse import reverse
@@ -8,7 +8,7 @@ from rest_framework.authtoken.models import Token
 from datetime import datetime, timedelta
 
 from students.models import (
-    Class, Student, Subject, Exam, News, Homework, Comment, Material
+    Class, Student, Subject, Exam, News, Homework, Comment, Material, Teacher
 )
 from students.serializers import (
     StudentProfileSerializer,
@@ -211,6 +211,8 @@ class ProfileViewSetTestCase(APITestCase):
         self.view_name = 'students:profile-detail'
 
         self.clazz = Class.objects.create(number=10, letter='A')
+        self.subject = Subject.objects.create(title='Maths')
+
         self.user1 = User.objects.create(
             username='tester',
             first_name='test',
@@ -225,6 +227,14 @@ class ProfileViewSetTestCase(APITestCase):
             email='test@gmail.com',
             password='password123456'
         )
+        self.user3 = User.objects.create(
+            username='teacher',
+            first_name='teacher',
+            last_name='user',
+            email='test_teacher@gmail.com',
+            password='123120382190'
+        )
+
         self.student1 = Student.objects.create(
             user=self.user1,
             clazz=self.clazz,
@@ -233,6 +243,9 @@ class ProfileViewSetTestCase(APITestCase):
         )
         self.student2 = Student.objects.create(
             user=self.user2, clazz=self.clazz, info='I am a starboy.'
+        )
+        self.teacher = Teacher.objects.create(
+            user=self.user3, subject=self.subject, info='Your maths teacher.'
         )
 
 
@@ -385,7 +398,7 @@ class ProfileViewSetTestCase(APITestCase):
         self.student1.user.username = 'MyNewUsername'
         self.student1.user.first_name = 'John'
         self.student1.user.last_name = 'Travolta'
-        self.student1.profile_image_url = 'http://shushi168.com/data/out/193/37281782-random-image.png'
+        self.student1.profile_image_url = 'http://globalgamejam.org/sites/default/files/styles/game_sidebar__normal/public/game/featured_image/promo_5.png'
         put_data = StudentProfileSerializer(self.student1).data
 
         request = self.client.put(
@@ -404,20 +417,22 @@ class ExamsViewSetTestCase(APITestCase):
         self.detail_view_name = 'students:exams-detail'
         self.serializer_class = ExamSerializer
 
-        self.student_user = User.objects.create(username='test', password='pass')
+        self.subject = Subject.objects.create(title='Maths')
+
         self.teacher_user = User.objects.create(username='teacher', password='123456')
-        self.group = Group.objects.create(name='Teachers')
-        self.group.user_set.add(self.teacher_user)
+        self.teacher = Teacher.objects.create(user=self.teacher_user, subject=self.subject)
+
+        self.student_user = User.objects.create(username='test', password='pass')
         self.clazz = Class.objects.create(number=10, letter='A')
         self.student = Student.objects.create(user=self.student_user, clazz=self.clazz)
-        self.subject = Subject.objects.create(title='Maths')
+
         self.exam = Exam.objects.create(
             subject=self.subject,
             date=datetime.now().date(),
             clazz=self.clazz,
             topic='Quadratic inequations',
             details='This will be the hardest **** ever!!!',
-            author=self.teacher_user
+            author=self.teacher
         )
 
 
@@ -618,7 +633,6 @@ class ExamsViewSetTestCase(APITestCase):
             put_data,
             format='json'
         )
-
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
@@ -626,8 +640,8 @@ class ExamsViewSetTestCase(APITestCase):
         self.client.force_authenticate(user=self.teacher_user)
 
         new_user = User.objects.create(username='test2', password='pass')
-        self.group.user_set.add(new_user)
-        self.exam.author = new_user
+        new_teacher = Teacher.objects.create(user=new_user, subject=self.subject)
+        self.exam.author = new_teacher
         self.exam.save()
 
         request = self.client.put(
@@ -646,8 +660,8 @@ class ExamsViewSetTestCase(APITestCase):
         self.client.force_authenticate(user=self.teacher_user)
 
         new_user = User.objects.create(username='test2', password='pass')
-        self.group.user_set.add(new_user)
-        self.exam.author = new_user
+        new_teacher = Teacher.objects.create(user=new_user, subject=self.subject)
+        self.exam.author = new_teacher
         self.exam.save()
 
         request = self.client.delete(
@@ -741,11 +755,11 @@ class NewsViewSetTestCase(APITestCase):
 
 
     def test_news_list_with_teacher_account(self):
-        teacher = User.objects.create(username='teacher', password='123456')
-        group = Group.objects.create(name='Teachers')
-        group.user_set.add(teacher)
+        teacher_user = User.objects.create(username='teacher', password='123456')
+        subject = Subject.objects.create(title='Maths')
+        teacher = Teacher.objects.create(user=teacher_user, subject=subject)
 
-        self.client.force_authenticate(user=teacher)
+        self.client.force_authenticate(user=teacher_user)
 
         request = self.client.get(reverse(self.list_view_name))
 
@@ -1298,8 +1312,7 @@ class HomeworksViewSetTestCase(APITestCase):
         self.subject = Subject.objects.create(title='test_subject')
         self.student_user = User.objects.create(username='test', password='pass')
         self.teacher_user = User.objects.create(username='author', password='pass123')
-        self.group = Group.objects.create(name='Teachers')
-        self.group.user_set.add(self.teacher_user)
+        self.teacher = Teacher.objects.create(user=self.teacher_user, subject=self.subject)
         self.clazz = Class.objects.create(number=10, letter='A')
         self.student = Student.objects.create(user=self.student_user, clazz=self.clazz)
         self.homework = Homework.objects.create(
@@ -1307,7 +1320,7 @@ class HomeworksViewSetTestCase(APITestCase):
             clazz=self.clazz,
             deadline=datetime.now().date(),
             details='something interesting',
-            author=self.teacher_user
+            author=self.teacher
         )
 
 
@@ -1480,8 +1493,8 @@ class HomeworksViewSetTestCase(APITestCase):
         self.client.force_authenticate(user=self.teacher_user)
 
         new_user = User.objects.create(username='test2', password='pass')
-        self.group.user_set.add(new_user)
-        self.homework.author = new_user
+        new_teacher = Teacher.objects.create(user=new_user, subject=self.subject)
+        self.homework.author = new_teacher
         self.homework.save()
 
         request = self.client.put(
@@ -1500,8 +1513,8 @@ class HomeworksViewSetTestCase(APITestCase):
         self.client.force_authenticate(user=self.teacher_user)
 
         new_user = User.objects.create(username='test2', password='pass')
-        self.group.user_set.add(new_user)
-        self.homework.author = new_user
+        new_teacher = Teacher.objects.create(user=new_user, subject=self.subject)
+        self.homework.author = new_teacher
         self.homework.save()
 
         request = self.client.delete(
@@ -1537,8 +1550,7 @@ class MaterialsViewSetTestCase(APITestCase):
         self.subject = Subject.objects.create(title='test_subject')
         self.student_user = User.objects.create(username='test', password='pass')
         self.teacher_user = User.objects.create(username='author', password='pass123')
-        self.group = Group.objects.create(name='Teachers')
-        self.group.user_set.add(self.teacher_user)
+        self.teacher = Teacher.objects.create(user=self.teacher_user, subject=self.subject)
         self.clazz = Class.objects.create(number=10, letter='A')
         self.student = Student.objects.create(user=self.student_user, clazz=self.clazz)
         self.material = Material.objects.create(
@@ -1547,7 +1559,7 @@ class MaterialsViewSetTestCase(APITestCase):
             content='Here I will put some useful links for the current topic.',
             class_number=self.clazz.number,
             subject=self.subject,
-            author=self.teacher_user
+            author=self.teacher
         )
 
 
@@ -1988,8 +2000,8 @@ class MaterialsViewSetTestCase(APITestCase):
         self.client.force_authenticate(user=self.teacher_user)
 
         new_user = User.objects.create(username='test2', password='pass')
-        self.group.user_set.add(new_user)
-        self.material.author = new_user
+        new_teacher = Teacher.objects.create(user=new_user, subject=self.subject)
+        self.material.author = new_teacher
         self.material.save()
 
         request = self.client.put(
@@ -2048,8 +2060,8 @@ class MaterialsViewSetTestCase(APITestCase):
         self.client.force_authenticate(user=self.teacher_user)
 
         new_user = User.objects.create(username='test2', password='pass')
-        self.group.user_set.add(new_user)
-        self.material.author = new_user
+        new_teacher = Teacher.objects.create(user=new_user, subject=self.subject)
+        self.material.author = new_teacher
         self.material.save()
 
         request = self.client.delete(

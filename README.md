@@ -100,6 +100,7 @@ Logo is designed by [Vladimir Vladinov](https://github.com/thehughmungus).
 - [ ] Implement comments section for materials.
 - [x] Fix profile image updating in profile.
 - [ ] Implement tests for submissions module.
+- [ ] Implement more test cases for older tests.
 
 ### License
 
