@@ -159,8 +159,7 @@ class ExamsViewSet(viewsets.ModelViewSet):
         context = {'request': request}
 
         clazz_data = request.data.get('clazz')
-        clazz = get_object_or_404(
-            Class,
+        clazz, _ = Class.objects.get_or_create(
             number=int(clazz_data['number']),
             letter=clazz_data['letter']
         )
@@ -416,8 +415,7 @@ class HomeworksViewSet(viewsets.ModelViewSet):
         context = {'request': request}
 
         clazz_data = request.data.get('clazz')
-        clazz = get_object_or_404(
-            Class,
+        clazz, _ = Class.objects.get_or_create(
             number=int(clazz_data['number']),
             letter=clazz_data['letter']
         )
