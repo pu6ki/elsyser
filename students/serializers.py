@@ -435,7 +435,8 @@ class SubmissionSerializer(serializers.ModelSerializer):
             'id',
             'student',
             'content', 'solution_url',
-            'posted_on', 'edited', 'last_edited_on'
+            'posted_on', 'edited', 'last_edited_on',
+            'checked'
         )
         depth = 1
 

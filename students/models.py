@@ -152,7 +152,10 @@ class Submission(models.Model):
     posted_on = models.DateTimeField(auto_now_add=True)
     edited = models.BooleanField(default=False)
     last_edited_on = models.DateTimeField(auto_now=True)
+    checked = models.BooleanField(default=False)
 
 
     def __str__(self):
-        return '{} - {}'.format(self.student, self.homework)
+        return '{} - {} ({})'.format(
+            self.student, self.homework, self.posted_on
+        )

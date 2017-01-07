@@ -676,21 +676,3 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
             headers=headers
         )
-
-
-    def destroy(self, request, homeworks_pk=None, pk=None):
-        homework = get_object_or_404(Homework, id=homeworks_pk)
-        submission = get_object_or_404(homework.submission_set, id=pk)
-
-        if submission.student != request.user.student:
-            return Response(
-                {'message': 'You can delete only your own submissions.'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-
-        submission.delete()
-
-        return Response(
-            {'message': 'Submission successfully deleted.'},
-            status=status.HTTP_200_OK
-        )
