@@ -412,6 +412,8 @@ class HomeworksViewSet(viewsets.ModelViewSet):
 
         clazz = get_object_or_404(Class, **request.data.get('clazz'))
 
+        print('I AM IN HERE!')
+
         serializer = self.get_serializer(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(clazz=clazz)
