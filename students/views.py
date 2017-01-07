@@ -380,6 +380,10 @@ class HomeworksViewSet(viewsets.ModelViewSet):
         return HomeworkReadSerializer if self.request.method in ('GET',) else HomeworkSerializer
 
 
+    def get_permissions(self):
+        return [permission() for permission in self.permission_classes_by_action[self.action]]
+
+
     def get_queryset(self):
         request = self.request
         upcoming_homeworks = Homework.objects.filter(deadline__gte=datetime.now())
@@ -406,7 +410,6 @@ class HomeworksViewSet(viewsets.ModelViewSet):
     def create(self, request):
         context = {'request': request}
 
-        print(request.data)
         clazz = get_object_or_404(Class, **request.data.get('clazz'))
 
         serializer = self.get_serializer(context=context, data=request.data)
@@ -459,10 +462,6 @@ class HomeworksViewSet(viewsets.ModelViewSet):
             {'message': 'Homework successfully deleted.'},
             status=status.HTTP_200_OK
         )
-
-
-    def get_permissions(self):
-        return [permission() for permission in self.permission_classes_by_action[self.action]]
 
 
 class MaterialsViewSet(viewsets.GenericViewSet):
