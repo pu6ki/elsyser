@@ -597,10 +597,12 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         request = self.request
-        all_submissions = Submission.objects.all()
+
+        homework = get_object_or_404(Homework, id=self.kwargs['homeworks_pk'])
+        all_submissions = Submission.objects.filter(homework=homework)
 
         if IsStudent().has_permission(request, self):
-            all_submissions = all_submissions.filter(student=request.user.student)
+            return all_submissions.filter(student=request.user.student)
 
         return all_submissions
 
@@ -614,8 +616,8 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
 
 
     def retrieve(self, request, homeworks_pk=None, pk=None):
-        # homework = get_object_or_404(Homework, id=homeworks_pk)
-        submission = get_object_or_404(Submission, id=pk)
+        homework = get_object_or_404(Homework, id=homeworks_pk)
+        submission = get_object_or_404(homework.submission_set, id=pk)
 
         if IsStudent().has_permission(request, self):
             if submission.student != request.user.student:
