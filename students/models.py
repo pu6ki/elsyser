@@ -155,6 +155,10 @@ class Submission(models.Model):
     checked = models.BooleanField(default=False)
 
 
+    class Meta:
+        ordering = ['-posted_on']
+
+    
     def __str__(self):
         return '{} - {} ({})'.format(
             self.student, self.homework, self.posted_on
