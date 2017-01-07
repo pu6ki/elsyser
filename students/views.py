@@ -664,6 +664,12 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_401_UNAUTHORIZED
                 )
 
+            if 'checked' in request.data:
+                return Response(
+                    {'message': 'You can not perform this action.'},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+
         serializer = self.get_serializer_class()(
             submission, data=request.data, partial=True
         )
