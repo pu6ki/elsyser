@@ -599,10 +599,10 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
         request = self.request
         all_submissions = Submission.objects.all()
 
-        if IsTeacher().has_permission(request, self):
-            return all_submissions.filter(homework__subject=request.user.teacher.subject)
+        if IsStudent().has_permission(request, self):
+            all_submissions = all_submissions.filter(student=request.user.student)
 
-        return all_submissions.filter(student=request.user.student)
+        return all_submissions
 
 
     def get_serializer_class(self):
