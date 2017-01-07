@@ -406,6 +406,7 @@ class HomeworksViewSet(viewsets.ModelViewSet):
     def create(self, request):
         context = {'request': request}
 
+        print(request.data)
         clazz = get_object_or_404(Class, **request.data.get('clazz'))
 
         serializer = self.get_serializer(context=context, data=request.data)
