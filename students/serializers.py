@@ -250,11 +250,12 @@ class TeacherProfileSerializer(serializers.ModelSerializer):
 
 class StudentAuthorSerializer(serializers.ModelSerializer):
     user = UserInfoSerializer(read_only=True)
+    clazz = ClassSerializer(read_only=True)
 
 
     class Meta:
         model = Student
-        fields = ('id', 'user', 'profile_image_url')
+        fields = ('id', 'user', 'clazz', 'profile_image_url')
 
 
 class TeacherAuthorSerializer(serializers.ModelSerializer):

@@ -592,7 +592,7 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
         all_submissions = Submission.objects.all()
 
         if IsTeacher().has_permission(request, self):
-            return all_submissions
+            return all_submissions.filter(subject=request.user.teacher.subject)
 
         return all_submissions.filter(student=request.user.student)
 
