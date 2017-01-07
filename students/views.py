@@ -598,12 +598,12 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
         request = self.request
 
         homework = get_object_or_404(Homework, id=self.kwargs['homeworks_pk'])
-        submissions = Submission.objects.filter(homework=homework, checked=False)
+        submissions = Submission.objects.filter(homework=homework)
 
         if IsStudent().has_permission(request, self):
             return submissions.filter(student=request.user.student)
 
-        return submissions
+        return submissions.filter(checked=False)
 
 
     def get_serializer_class(self):
