@@ -617,6 +617,13 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
         homework = get_object_or_404(Homework, id=homeworks_pk)
         submission = get_object_or_404(homework.submission_set, id=pk)
 
+        if IsStudent().has_permission(request, self):
+            if submission.student != request.user.student:
+                return Response(
+                    {'message': 'You can view only your own submissions.'},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+
         serializer = self.get_serializer(submission)
         headers = self.get_success_headers(serializer.data)
 
