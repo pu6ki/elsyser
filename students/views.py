@@ -546,7 +546,7 @@ class NestedMaterialsViewSet(mixins.RetrieveModelMixin,
         subject = get_object_or_404(Subject, id=subject_pk)
         material = get_object_or_404(subject.material_set, id=pk)
 
-        if material.author != request.user:
+        if material.author != request.user.teacher:
             return Response(
                 {'message': 'You can edit only your own materials.'},
                 status=status.HTTP_401_UNAUTHORIZED
@@ -570,7 +570,7 @@ class NestedMaterialsViewSet(mixins.RetrieveModelMixin,
         subject = get_object_or_404(Subject, id=subject_pk)
         material = get_object_or_404(subject.material_set, id=pk)
 
-        if material.author != request.user:
+        if material.author != request.user.teacher:
             return Response(
                 {'message': 'You can delete only your own materials.'},
                 status=status.HTTP_401_UNAUTHORIZED
