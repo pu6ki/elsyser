@@ -398,7 +398,7 @@ class ProfileViewSetTestCase(APITestCase):
         self.student1.user.username = 'MyNewUsername'
         self.student1.user.first_name = 'John'
         self.student1.user.last_name = 'Travolta'
-        self.student1.profile_image_url = 'http://globalgamejam.org/sites/default/files/styles/game_sidebar__normal/public/game/featured_image/promo_5.png'
+        self.student1.profile_image_url = 'https://scontent-fra3-1.xx.fbcdn.net/v/l/t1.0-9/14237770_10207844537094902_7208336482223852857_n.jpg?oh=a7ead37183048f79ca1f66e6b7121569&oe=59220B3C'
         put_data = StudentProfileSerializer(self.student1).data
 
         request = self.client.put(
@@ -633,6 +633,7 @@ class ExamsViewSetTestCase(APITestCase):
             put_data,
             format='json'
         )
+
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 

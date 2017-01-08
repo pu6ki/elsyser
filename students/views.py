@@ -164,7 +164,9 @@ class ExamsViewSet(viewsets.ModelViewSet):
             letter=clazz_data['letter']
         )
 
-        serializer = self.get_serializer(context=context, data=request.data)
+        serializer = self.get_serializer(
+            context=context, data=request.data
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save(clazz=clazz)
         headers = self.get_success_headers(serializer.data)
@@ -247,7 +249,9 @@ class NewsViewSet(viewsets.ModelViewSet):
     def create(self, request):
         context = {'request': request}
 
-        serializer = self.serializer_class(context=context, data=request.data)
+        serializer = self.serializer_class(
+            context=context, data=request.data
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
@@ -637,6 +641,13 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
 
     def create(self, request, homeworks_pk=None):
         homework = get_object_or_404(Homework, id=homeworks_pk)
+
+        if homework.submission_set.filter(author=request.user.student).exists():
+            return Response(
+                {'message': 'You can add only one submission.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         context = {'request': request, 'homework': homework}
 
         serializer = self.get_serializer_class()(
@@ -658,13 +669,7 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
         submission = get_object_or_404(homework.submission_set, id=pk)
 
         if IsStudent().has_permission(request, self):
-            if submission.student != request.user.student:
-                return Response(
-                    {'message': 'You can edit only your own submissions.'},
-                    status=status.HTTP_401_UNAUTHORIZED
-                )
-
-            if 'checked' in request.data:
+            if submission.student != request.user.student or 'checked' in request.data:
                 return Response(
                     {'message': 'You can not perform this action.'},
                     status=status.HTTP_401_UNAUTHORIZED
