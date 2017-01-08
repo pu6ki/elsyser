@@ -23,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
         validators=[
             UniqueValidator(
                 queryset=User.objects.all(),
-                message='Student with this username already exists.'
+                message='User with this username already exists.'
             )
         ]
     )
@@ -141,7 +141,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
 
         if User.objects.exclude(pk=instance.pk).filter(username=username):
             raise serializers.ValidationError(
-                'Teacher with this username already exists.'
+                'User with this username already exists.'
             )
 
         instance.__dict__.update(**validated_data)
@@ -196,7 +196,7 @@ class StudentProfileSerializer(serializers.ModelSerializer):
 
         if User.objects.exclude(pk=instance.user.pk).filter(username=username):
             raise serializers.ValidationError(
-                'Student with this username already exists.'
+                'User with this username already exists.'
             )
 
         instance.user.__dict__.update(**user_data)
@@ -236,7 +236,7 @@ class TeacherProfileSerializer(serializers.ModelSerializer):
 
         if User.objects.exclude(pk=instance.user.pk).filter(username=username):
             raise serializers.ValidationError(
-                'Teacher with this username already exists.'
+                'User with this username already exists.'
             )
 
         instance.user.__dict__.update(**user_data)
