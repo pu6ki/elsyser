@@ -6,7 +6,7 @@ from rest_framework import status
 
 from news.models import News, Comment
 from news.serializers import NewsSerializer, CommentSerializer
-from students.models import Class, Student
+from students.models import Class, Subject, Student, Teacher
 
 
 class NewsViewSetTestCase(APITestCase):

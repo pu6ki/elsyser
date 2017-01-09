@@ -3,6 +3,8 @@ from rest_framework_nested import routers
 from news.views import NewsViewSet, CommentsViewSet
 
 
+app_name = 'news'
+
 router = routers.SimpleRouter()
 router.register(r'news', NewsViewSet, base_name='news')
 

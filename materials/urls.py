@@ -1,6 +1,9 @@
-from rest_framework_nested import routers
+from rest_framework import routers
 
 from materials.views import MaterialsListViewSet, NestedMaterialsViewSet
+
+
+app_name = 'materials'
 
 router = routers.SimpleRouter()
 

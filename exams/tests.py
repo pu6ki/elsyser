@@ -6,6 +6,7 @@ from rest_framework.reverse import reverse
 from rest_framework import status
 
 from exams.serializers import ExamSerializer
+from exams.models import Exam
 from students.models import Class, Subject, Teacher, Student
 
 

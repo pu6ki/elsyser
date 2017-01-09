@@ -1,13 +1,15 @@
 from django.conf.urls import url, include
 
-from rest_framework_nested import routers
+from rest_framework import routers
 
 from students.views import (
     UserLogin, ProfileViewSet, StudentRegistration, SubjectsList
 )
 
-router = routers.SimpleRouter()
 
+app_name = 'students'
+
+router = routers.SimpleRouter()
 router.register(r'profile', ProfileViewSet, base_name='profile')
 
 urlpatterns = [

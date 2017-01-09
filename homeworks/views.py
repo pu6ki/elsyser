@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets, status
@@ -9,8 +10,9 @@ from homeworks.serializers import (
     HomeworkSerializer, HomeworkReadSerializer,
     SubmissionSerializer, SubmissionReadSerializer
 )
-from students.permissions import IsStudent, IsTeacher
+from homeworks.models import Homework, Submission
 from students.models import Class
+from students.permissions import IsStudent, IsTeacher
 
 
 class HomeworksViewSet(viewsets.ModelViewSet):

@@ -3,6 +3,8 @@ from rest_framework_nested import routers
 from homeworks.views import HomeworksViewSet, SubmissionsViewSet
 
 
+app_name = 'homeworks'
+
 router = routers.SimpleRouter()
 router.register(r'homeworks', HomeworksViewSet, base_name='homeworks')
 
