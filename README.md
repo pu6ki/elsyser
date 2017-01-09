@@ -23,7 +23,6 @@
 * [Django Rest Framework](https://github.com/tomchristie/django-rest-framework) - Framework for building REST APIs in Django
 * [django-cors-headers](https://github.com/ottoyiu/django-cors-headers) - Django app for handling the server headers required for Cross-Origin Resource Sharing (CORS)
 * [drf-nested-routers](https://github.com/alanjds/drf-nested-routers) - Django Rest Framework nested routers
-* [Django suit](https://github.com/darklow/django-suit) - Modern theme for Django admin panel
 * [Pillow](https://github.com/python-pillow/Pillow) - Python Imaging Library
 * [Atom](https://github.com/atom/atom) - A hackable text editor for the 21st century
 
