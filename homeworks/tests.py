@@ -17,12 +17,15 @@ class HomeworksViewSetTestCase(APITestCase):
         self.detail_view_name = 'homeworks:homeworks-detail'
         self.serializer_class = HomeworkSerializer
 
+        self.clazz = Class.objects.create(number=10, letter='A')
         self.subject = Subject.objects.create(title='test_subject')
+
         self.student_user = User.objects.create(username='test', password='pass')
         self.teacher_user = User.objects.create(username='author', password='pass123')
+
         self.teacher = Teacher.objects.create(user=self.teacher_user, subject=self.subject)
-        self.clazz = Class.objects.create(number=10, letter='A')
         self.student = Student.objects.create(user=self.student_user, clazz=self.clazz)
+
         self.homework = Homework.objects.create(
             subject=self.subject,
             clazz=self.clazz,
@@ -246,3 +249,320 @@ class HomeworksViewSetTestCase(APITestCase):
             request.data['message'], 'Homework successfully deleted.'
         )
         self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+class SubmissionsViewSetTestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.list_view_name = 'homeworks:submissions-list'
+        self.detail_view_name = 'homeworks:submissions-detail'
+        self.serializer_class = SubmissionSerializer
+
+        self.clazz = Class.objects.create(number=10, letter='A')
+        self.subject = Subject.objects.create(title='test_subject')
+
+        self.student_user1 = User.objects.create(username='test', password='pass')
+        self.student_user2 = User.objects.create(username='test1', password='password')
+        self.teacher_user = User.objects.create(username='author', password='pass123')
+
+        self.teacher = Teacher.objects.create(user=self.teacher_user, subject=self.subject)
+        self.student1 = Student.objects.create(user=self.student_user1, clazz=self.clazz)
+        self.student2 = Student.objects.create(user=self.student_user2, clazz=self.clazz)
+
+        self.homework = Homework.objects.create(
+            subject=self.subject,
+            clazz=self.clazz,
+            deadline=datetime.now().date(),
+            details='something interesting',
+            author=self.teacher
+        )
+
+        self.student1_submission = Submission.objects.create(
+            homework=self.homework,
+            student=self.student1,
+            content='this is my solution.'
+        )
+        self.student2_submission = Submission.objects.create(
+            homework=self.homework,
+            student=self.student2,
+            content='noonecansaveyoufromwhatyouwant'
+        )
+
+
+    def test_submissions_list_with_anonymous_user(self):
+        request = self.client.get(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'homeworks_pk': self.homework.id
+                }
+            )
+        )
+
+        self.assertEqual(
+            request.data['detail'],
+            'Authentication credentials were not provided.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+    def test_submissions_detail_with_anonymous_user(self):
+        request = self.client.get(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'homeworks_pk': self.homework.id,
+                    'pk': self.student1_submission.id
+                }
+            )
+        )
+
+        self.assertEqual(
+            request.data['detail'],
+            'Authentication credentials were not provided.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+    def test_submissions_list_with_student_user(self):
+        self.client.force_authenticate(user=self.student_user1)
+
+        request = self.client.get(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'homeworks_pk': self.homework.id
+                }
+            )
+        )
+
+        self.assertNotEqual(
+            request.data[0],
+            SubmissionSerializer(self.student2_submission).data
+        )
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_submissions_detail_with_student_user(self):
+        self.client.force_authenticate(user=self.student_user1)
+
+        request = self.client.get(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'homeworks_pk': self.homework.id,
+                    'pk': self.student1_submission.id
+                }
+            )
+        )
+
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_submissions_detail_of_another_student(self):
+        self.client.force_authenticate(user=self.student_user1)
+
+        request = self.client.get(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'homeworks_pk': self.homework.id,
+                    'pk': self.student2_submission.id
+                }
+            )
+        )
+
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(
+            request.data['message'], 'You can view only your own submissions.'
+        )
+
+
+    def test_submissions_list_with_teacher_user(self):
+        self.client.force_authenticate(user=self.teacher_user)
+
+        request = self.client.get(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'homeworks_pk': self.homework.id
+                }
+            )
+        )
+
+        self.assertEqual(request.data[1]['id'], self.student1_submission.id)
+        self.assertEqual(request.data[0]['id'], self.student2_submission.id)
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_submissions_detail_with_teacher_user(self):
+        self.client.force_authenticate(user=self.teacher_user)
+
+        request = self.client.get(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'homeworks_pk': self.homework.id,
+                    'pk': self.student1_submission.id
+                }
+            )
+        )
+
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_checked_submissions_list(self):
+        self.client.force_authenticate(user=self.teacher_user)
+
+        self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'homeworks_pk': self.homework.id,
+                    'pk': self.student1_submission.id
+                }
+            ),
+            {'checked': True},
+            format='json'
+        )
+        self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'homeworks_pk': self.homework.id,
+                    'pk': self.student2_submission.id
+                }
+            ),
+            {'checked': True},
+            format='json'
+        )
+
+        request = self.client.get(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'homeworks_pk': self.homework.id
+                }
+            )
+        )
+
+        self.assertEqual(request.data, [])
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_submission_creation_with_teacher_user(self):
+        self.client.force_authenticate(user=self.teacher_user)
+
+        request = self.client.post(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'homeworks_pk': self.homework.id
+                }
+            ),
+            {'content': 'test'},
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['detail'],
+            'You do not have permission to perform this action.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
+
+
+    def test_second_submission_creation(self):
+        self.client.force_authenticate(user=self.student_user1)
+
+        request = self.client.post(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'homeworks_pk': self.homework.id
+                }
+            ),
+            {'content': 'test'},
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['message'],
+            'You can add only one submission.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
+
+
+    def test_checked_submission_update(self):
+        self.client.force_authenticate(user=self.teacher_user)
+
+        self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'homeworks_pk': self.homework.id,
+                    'pk': self.student1_submission.id
+                }
+            ),
+            {'checked': True},
+            format='json'
+        )
+
+        self.client.force_authenticate(user=self.student_user1)
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'homeworks_pk': self.homework.id,
+                    'pk': self.student1_submission.id
+                }
+            ),
+            {'content': 'testing'},
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['message'],
+            'You can not perform this action.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
+
+
+    def test_submission_update(self):
+        self.client.force_authenticate(user=self.student_user1)
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'homeworks_pk': self.homework.id,
+                    'pk': self.student1_submission.id
+                }
+            ),
+            {'content': 'testing'},
+            format='json'
+        )
+
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+    def test_submission_update_of_another_student(self):
+        self.client.force_authenticate(user=self.student_user2)
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'homeworks_pk': self.homework.id,
+                    'pk': self.student1_submission.id
+                }
+            ),
+            {'content': 'testing'},
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['message'],
+            'You can not perform this action.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
