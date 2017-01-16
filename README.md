@@ -13,7 +13,7 @@
 ## Prerequisites
 
 - [Python v3.5+](https://www.python.org/downloads/)
-- [pip v9.0.1](https://pypi.python.org/pypi/pip)
+- [pip v9.0.1+](https://pypi.python.org/pypi/pip)
 
 ## Tech
 
@@ -22,8 +22,7 @@
 * [Django](https://github.com/django/django) - A really nice high-level Python web framework
 * [Django Rest Framework](https://github.com/tomchristie/django-rest-framework) - Framework for building REST APIs in Django
 * [django-cors-headers](https://github.com/ottoyiu/django-cors-headers) - Django app for handling the server headers required for Cross-Origin Resource Sharing (CORS)
-* [drf-nested-routers](https://github.com/alanjds/drf-nested-routers) - Django Rest Framework nested routers
-* [Pillow](https://github.com/python-pillow/Pillow) - Python Imaging Library
+* [drf-nested-routers](https://github.com/alanjds/drf-nested-routers) - Nested routing for DRF
 * [Atom](https://github.com/atom/atom) - A hackable text editor for the 21st century
 
 ## Getting started
