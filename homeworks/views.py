@@ -117,6 +117,7 @@ class HomeworksViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
+
 class SubmissionsViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes_by_action = {
@@ -171,7 +172,7 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
     def create(self, request, homeworks_pk=None):
         homework = get_object_or_404(Homework, id=homeworks_pk)
 
-        if homework.submission_set.filter(author=request.user.student).exists():
+        if homework.submission_set.filter(student=request.user.student):
             return Response(
                 {'message': 'You can add only one submission.'},
                 status=status.HTTP_403_FORBIDDEN
@@ -198,10 +199,10 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
         submission = get_object_or_404(homework.submission_set, id=pk)
 
         if IsStudent().has_permission(request, self):
-            if submission.student != request.user.student or 'checked' in request.data:
+            if submission.student != request.user.student or submission.checked:
                 return Response(
                     {'message': 'You can not perform this action.'},
-                    status=status.HTTP_401_UNAUTHORIZED
+                    status=status.HTTP_403_FORBIDDEN
                 )
 
         serializer = self.get_serializer_class()(

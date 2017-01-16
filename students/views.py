@@ -52,7 +52,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 
     def get_serializer_model(self, user):
-        return TeacherProfileSerializer if Teacher.objects.filter(user=user).exists() else StudentProfileSerializer
+        return TeacherProfileSerializer if Teacher.objects.filter(user=user) else StudentProfileSerializer
 
 
     def retrieve(self, request, pk=None):

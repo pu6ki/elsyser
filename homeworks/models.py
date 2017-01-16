@@ -16,7 +16,9 @@ class Homework(models.Model):
 
 
     def __str__(self):
-        return '{} ({}) - {}'.format(self.subject, self.clazz, self.deadline)
+        return '{} ({}) - {}'.format(
+            self.subject, self.clazz, self.deadline
+        )
 
 
 
