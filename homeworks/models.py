@@ -21,7 +21,6 @@ class Homework(models.Model):
         )
 
 
-
 class Submission(models.Model):
     homework = models.ForeignKey(Homework, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
