@@ -170,8 +170,6 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
 
 
     def create(self, request, homeworks_pk=None):
-        print(request.data)
-        
         homework = get_object_or_404(Homework, id=homeworks_pk)
 
         if homework.submission_set.filter(student=request.user.student):
