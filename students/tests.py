@@ -28,7 +28,6 @@ class RegisterViewTestCase(APITestCase):
             }
         }
 
-
     def test_registration_with_empty_email(self):
         self.test_data['user']['email'] = ''
 
@@ -40,7 +39,6 @@ class RegisterViewTestCase(APITestCase):
             request.data['user']['email'], ['This field may not be blank.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_registration_with_invalid_email(self):
         self.test_data['user']['email'] = 'tester'
@@ -54,7 +52,6 @@ class RegisterViewTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_registration_with_empty_password(self):
         self.test_data['user']['password'] = ''
 
@@ -66,7 +63,6 @@ class RegisterViewTestCase(APITestCase):
             request.data['user']['password'], ['Password cannot be empty.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_registration_with_too_short_password(self):
         self.test_data['user']['password'] = 'test'
@@ -80,7 +76,6 @@ class RegisterViewTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_registration_with_invalid_clazz(self):
         self.test_data['clazz']['number'] = 0
 
@@ -92,7 +87,6 @@ class RegisterViewTestCase(APITestCase):
             request.data['clazz']['number'], ['"0" is not a valid choice.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_registration_with_valid_data(self):
         request = self.client.post(
@@ -111,7 +105,6 @@ class RegisterViewTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_201_CREATED)
 
-
 class LoginViewTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
@@ -129,7 +122,6 @@ class LoginViewTestCase(APITestCase):
             'password': self.user_data['password'],
         }
 
-
     def test_login_with_blank_email_or_username(self):
         request = self.client.post(reverse(self.view_name), self.post_data)
 
@@ -137,7 +129,6 @@ class LoginViewTestCase(APITestCase):
             request.data['email_or_username'], ['This field may not be blank.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_login_with_blank_password(self):
         self.post_data['email_or_username'] = self.user.email
@@ -150,7 +141,6 @@ class LoginViewTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_login_with_invalid_email_or_username(self):
         self.post_data['email_or_username'] = 'invalid'
 
@@ -161,7 +151,6 @@ class LoginViewTestCase(APITestCase):
             ['Unable to log in with provided credentials.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_login_with_invalid_password(self):
         self.post_data['email_or_username'] = self.user.email
@@ -175,7 +164,6 @@ class LoginViewTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_login_with_valid_email_and_password(self):
         self.post_data['email_or_username'] = self.user.email
 
@@ -184,7 +172,6 @@ class LoginViewTestCase(APITestCase):
         self.assertEqual(self.token.key, request.data['token'])
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
-
     def test_login_with_valid_username_and_password(self):
         self.post_data['email_or_username'] = self.user.username
 
@@ -192,7 +179,6 @@ class LoginViewTestCase(APITestCase):
 
         self.assertEqual(self.token.key, request.data['token'])
         self.assertEqual(request.status_code, status.HTTP_200_OK)
-
 
 class ProfileViewSetTestCase(APITestCase):
     def setUp(self):
@@ -237,7 +223,6 @@ class ProfileViewSetTestCase(APITestCase):
             user=self.user3, subject=self.subject, info='Your maths teacher.'
         )
 
-
     def test_profile_with_anonymous_user(self):
         request = self.client.get(
             reverse(self.view_name, kwargs={'pk': self.user1.id})
@@ -248,7 +233,6 @@ class ProfileViewSetTestCase(APITestCase):
             'Authentication credentials were not provided.'
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
-
 
     def test_profile_with_own_user(self):
         self.client.force_authenticate(user=self.user1)
@@ -271,7 +255,6 @@ class ProfileViewSetTestCase(APITestCase):
         self.assertNotIn('password', request.data['user'])
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
-
     def test_profile_with_other_user(self):
         self.client.force_authenticate(user=self.user2)
 
@@ -293,7 +276,6 @@ class ProfileViewSetTestCase(APITestCase):
         self.assertNotIn('password', request.data['user'])
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
-
     def test_profile_update_of_another_user(self):
         self.client.force_authenticate(user=self.user2)
         self.student1.user.username = 'MyNewUsername'
@@ -313,7 +295,6 @@ class ProfileViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
-
     def test_profile_update_with_invalid_username(self):
         self.client.force_authenticate(user=self.user1)
         self.student1.user.username = ''
@@ -329,7 +310,6 @@ class ProfileViewSetTestCase(APITestCase):
             request.data['user']['username'], ['This field may not be blank.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_profile_update_with_invalid_first_name(self):
         self.client.force_authenticate(user=self.user1)
@@ -347,7 +327,6 @@ class ProfileViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_profile_update_with_invalid_last_name(self):
         self.client.force_authenticate(user=self.user1)
         self.student1.user.last_name = ''
@@ -364,7 +343,6 @@ class ProfileViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_profile_update_with_invalid_profile_picture_url(self):
         self.client.force_authenticate(user=self.user1)
         self.student1.profile_image_url = 'https://www.youtube.com/watch?v=vSoUp-SxLrQ'
@@ -380,7 +358,6 @@ class ProfileViewSetTestCase(APITestCase):
             request.data['profile_image_url'], ['URL is not a picture.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_profile_update_with_valid_data(self):
         self.client.force_authenticate(user=self.user1)

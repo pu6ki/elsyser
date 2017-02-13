@@ -7,6 +7,7 @@ from rest_framework import status
 
 from homeworks.serializers import HomeworkSerializer, SubmissionSerializer
 from homeworks.models import Homework, Submission
+
 from students.models import Class, Subject, Student, Teacher
 
 
@@ -34,7 +35,6 @@ class HomeworksViewSetTestCase(APITestCase):
             author=self.teacher
         )
 
-
     def test_homeworks_list_with_anonymous_user(self):
         request = self.client.get(reverse(self.list_view_name))
 
@@ -43,7 +43,6 @@ class HomeworksViewSetTestCase(APITestCase):
             'Authentication credentials were not provided.'
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
-
 
     def test_homeworks_detail_with_anonymous_user(self):
         request = self.client.get(
@@ -56,7 +55,6 @@ class HomeworksViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
-
     def test_homeworks_list_with_authenticated_user(self):
         self.client.force_authenticate(user=self.student_user)
 
@@ -64,7 +62,6 @@ class HomeworksViewSetTestCase(APITestCase):
 
         self.assertIsNotNone(request.data)
         self.assertEqual(request.status_code, status.HTTP_200_OK)
-
 
     def test_homeworks_detail_with_authenticated_user(self):
         self.client.force_authenticate(user=self.student_user)
@@ -83,7 +80,6 @@ class HomeworksViewSetTestCase(APITestCase):
         self.assertEqual(request.data['subject']['title'], self.subject.title)
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
-
     def test_homeworks_list_with_expired_date(self):
         self.client.force_authenticate(user=self.student_user)
         self.homework.deadline -= timedelta(days=5)
@@ -94,7 +90,6 @@ class HomeworksViewSetTestCase(APITestCase):
         self.assertEqual(request.data, [])
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
-
     def test_homeworks_detail_with_invalid_id(self):
         self.client.force_authenticate(user=self.student_user)
 
@@ -103,7 +98,6 @@ class HomeworksViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
-
 
     def test_homeworks_creation_with_student_account(self):
         self.client.force_authenticate(user=self.student_user)
@@ -120,7 +114,6 @@ class HomeworksViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
-
     def test_homeworks_creation_with_too_long_details(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.homework.details = 'C0002ГР' * 256
@@ -136,7 +129,6 @@ class HomeworksViewSetTestCase(APITestCase):
             ['Ensure this field has no more than 256 characters.']
         )
 
-
     def test_homeworks_creation_with_valid_details(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.homework.details = 'C0002ГР'
@@ -147,7 +139,6 @@ class HomeworksViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(request.status_code, status.HTTP_201_CREATED)
-
 
     def test_homeworks_update_with_student_account(self):
         self.client.force_authenticate(user=self.student_user)
@@ -166,7 +157,6 @@ class HomeworksViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
-
     def test_homeworks_update_with_too_long_details(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.homework.details = 'C0002ГР' * 256
@@ -184,7 +174,6 @@ class HomeworksViewSetTestCase(APITestCase):
             ['Ensure this field has no more than 256 characters.']
         )
 
-
     def test_homeworks_update_with_valid_details(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.homework.details = 'C0002ГР'
@@ -198,7 +187,6 @@ class HomeworksViewSetTestCase(APITestCase):
 
         self.assertEqual(request.data['details'], self.homework.details)
         self.assertEqual(request.status_code, status.HTTP_200_OK)
-
 
     def test_homeworks_update_of_another_user(self):
         self.client.force_authenticate(user=self.teacher_user)
@@ -219,7 +207,6 @@ class HomeworksViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
-
     def test_homeworks_deletion_of_another_user(self):
         self.client.force_authenticate(user=self.teacher_user)
 
@@ -236,7 +223,6 @@ class HomeworksViewSetTestCase(APITestCase):
             request.data['message'], 'You can delete only your own homeworks.'
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
-
 
     def test_homeworks_deletion(self):
         self.client.force_authenticate(user=self.teacher_user)
@@ -288,7 +274,6 @@ class SubmissionsViewSetTestCase(APITestCase):
             content='noonecansaveyoufromwhatyouwant'
         )
 
-
     def test_submissions_list_with_anonymous_user(self):
         request = self.client.get(
             reverse(
@@ -304,7 +289,6 @@ class SubmissionsViewSetTestCase(APITestCase):
             'Authentication credentials were not provided.'
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
-
 
     def test_submissions_detail_with_anonymous_user(self):
         request = self.client.get(
@@ -322,7 +306,6 @@ class SubmissionsViewSetTestCase(APITestCase):
             'Authentication credentials were not provided.'
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
-
 
     def test_submissions_list_with_student_user(self):
         self.client.force_authenticate(user=self.student_user1)
@@ -342,7 +325,6 @@ class SubmissionsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
-
     def test_submissions_detail_with_student_user(self):
         self.client.force_authenticate(user=self.student_user1)
 
@@ -357,7 +339,6 @@ class SubmissionsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(request.status_code, status.HTTP_200_OK)
-
 
     def test_submissions_detail_of_another_student(self):
         self.client.force_authenticate(user=self.student_user1)
@@ -377,7 +358,6 @@ class SubmissionsViewSetTestCase(APITestCase):
             request.data['message'], 'You can view only your own submissions.'
         )
 
-
     def test_submissions_list_with_teacher_user(self):
         self.client.force_authenticate(user=self.teacher_user)
 
@@ -394,7 +374,6 @@ class SubmissionsViewSetTestCase(APITestCase):
         self.assertEqual(request.data[0]['id'], self.student2_submission.id)
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
-
     def test_submissions_detail_with_teacher_user(self):
         self.client.force_authenticate(user=self.teacher_user)
 
@@ -409,7 +388,6 @@ class SubmissionsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(request.status_code, status.HTTP_200_OK)
-
 
     def test_checked_submissions_list(self):
         self.client.force_authenticate(user=self.teacher_user)
@@ -449,7 +427,6 @@ class SubmissionsViewSetTestCase(APITestCase):
         self.assertEqual(request.data, [])
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
-
     def test_submission_creation_with_teacher_user(self):
         self.client.force_authenticate(user=self.teacher_user)
 
@@ -470,7 +447,6 @@ class SubmissionsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
-
     def test_second_submission_creation(self):
         self.client.force_authenticate(user=self.student_user1)
 
@@ -490,7 +466,6 @@ class SubmissionsViewSetTestCase(APITestCase):
             'You can add only one submission.'
         )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
-
 
     def test_checked_submission_update(self):
         self.client.force_authenticate(user=self.teacher_user)
@@ -527,7 +502,6 @@ class SubmissionsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
-
     def test_submission_update(self):
         self.client.force_authenticate(user=self.student_user1)
 
@@ -544,7 +518,6 @@ class SubmissionsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(request.status_code, status.HTTP_200_OK)
-
 
     def test_submission_update_of_another_student(self):
         self.client.force_authenticate(user=self.student_user2)

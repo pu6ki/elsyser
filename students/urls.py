@@ -6,7 +6,6 @@ from students.views import (
     UserLogin, ProfileViewSet, StudentRegistration, SubjectsList
 )
 
-
 app_name = 'students'
 
 router = routers.SimpleRouter()

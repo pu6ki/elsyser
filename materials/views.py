@@ -7,6 +7,7 @@ from rest_framework.authentication import TokenAuthentication
 
 from materials.serializers import MaterialSerializer, MaterialReadSerializer
 from materials.models import Material
+
 from students.models import Subject
 from students.permissions import IsStudent, IsTeacher
 
@@ -21,10 +22,8 @@ class MaterialsViewSet(viewsets.GenericViewSet):
         'destroy': (IsAuthenticated, IsTeacher)
     }
 
-
     def get_serializer_class(self):
          return MaterialReadSerializer if self.request.method in ('GET',) else MaterialSerializer
-
 
     def get_permissions(self):
         return [permission() for permission in self.permission_classes_by_action[self.action]]
@@ -46,13 +45,11 @@ class NestedMaterialsViewSet(mixins.RetrieveModelMixin,
                              mixins.UpdateModelMixin,
                              mixins.DestroyModelMixin,
                              MaterialsListViewSet):
-
     def get_queryset(self):
         subject_id = self.kwargs['subject_pk']
         subject = get_object_or_404(Subject, id=subject_id)
 
         return super().get_queryset().filter(subject=subject)
-
 
     def retrieve(self, request, subject_pk=None, pk=None):
         subject = get_object_or_404(Subject, id=subject_pk)
@@ -61,7 +58,6 @@ class NestedMaterialsViewSet(mixins.RetrieveModelMixin,
         serializer = self.get_serializer(material)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
     def create(self, request, subject_pk=None):
         subject = get_object_or_404(Subject, id=subject_pk)
@@ -79,7 +75,6 @@ class NestedMaterialsViewSet(mixins.RetrieveModelMixin,
             status=status.HTTP_201_CREATED,
             headers=headers
         )
-
 
     def update(self, request, subject_pk=None, pk=None):
         subject = get_object_or_404(Subject, id=subject_pk)
@@ -103,7 +98,6 @@ class NestedMaterialsViewSet(mixins.RetrieveModelMixin,
             status=status.HTTP_200_OK,
             headers=headers
         )
-
 
     def destroy(self, request, subject_pk=None, pk=None):
         subject = get_object_or_404(Subject, id=subject_pk)

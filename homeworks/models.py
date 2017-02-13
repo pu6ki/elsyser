@@ -10,7 +10,6 @@ class Homework(models.Model):
     details = models.TextField(max_length=256, blank=True)
     author = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
 
-
     class Meta:
         ordering = ['-deadline', 'clazz', 'subject']
 
@@ -30,7 +29,6 @@ class Submission(models.Model):
     edited = models.BooleanField(default=False)
     last_edited_on = models.DateTimeField(auto_now=True)
     checked = models.BooleanField(default=False)
-
 
     class Meta:
         ordering = ['-posted_on', '-last_edited_on']

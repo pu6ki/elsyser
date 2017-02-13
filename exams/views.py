@@ -8,6 +8,7 @@ from rest_framework.authentication import TokenAuthentication
 
 from exams.serializers import ExamSerializer, ExamReadSerializer
 from exams.models import Exam
+
 from students.models import Class
 from students.permissions import IsTeacher
 
@@ -26,10 +27,8 @@ class ExamsViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         return ExamReadSerializer if self.request.method in ('GET',) else ExamSerializer
 
-
     def get_permissions(self):
         return [permission() for permission in self.permission_classes_by_action[self.action]]
-
 
     def get_queryset(self):
         request = self.request
@@ -39,7 +38,6 @@ class ExamsViewSet(viewsets.ModelViewSet):
             return upcoming_exams.filter(subject=request.user.teacher.subject)
 
         return upcoming_exams.filter(clazz=request.user.student.clazz)
-
 
     def retrieve(self, request, pk=None):
         exam = get_object_or_404(self.get_queryset(), id=pk)
@@ -52,7 +50,6 @@ class ExamsViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
             headers=headers
         )
-
 
     def create(self, request):
         context = {'request': request}
@@ -76,7 +73,6 @@ class ExamsViewSet(viewsets.ModelViewSet):
             headers=headers
         )
 
-
     def update(self, request, pk=None):
         exam = get_object_or_404(Exam, id=pk)
 
@@ -98,7 +94,6 @@ class ExamsViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
             headers=headers
         )
-
 
     def destroy(self, request, pk=None):
         exam = get_object_or_404(Exam, id=pk)

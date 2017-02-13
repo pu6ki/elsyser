@@ -24,7 +24,6 @@ class StudentRegistration(generics.CreateAPIView):
 class UserLogin(generics.CreateAPIView):
     serializer_class = UserLoginSerializer
 
-
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -46,14 +45,11 @@ class ProfileViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-
     def get_entry_model(self, user):
         return Teacher.objects.filter(user=user).first() or Student.objects.filter(user=user).first()
 
-
     def get_serializer_model(self, user):
         return TeacherProfileSerializer if Teacher.objects.filter(user=user) else StudentProfileSerializer
-
 
     def retrieve(self, request, pk=None):
         user = get_object_or_404(User, id=pk)
@@ -68,7 +64,6 @@ class ProfileViewSet(viewsets.ModelViewSet):
             response_data,
             status=status.HTTP_200_OK
         )
-
 
     def update(self, request, pk=None):
         user = get_object_or_404(User, id=pk)
@@ -97,7 +92,6 @@ class SubjectsList(generics.ListAPIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated, IsTeacher)
     serializer_class = SubjectSerializer
-
 
     def get(self, request):
         serializer = self.serializer_class(Subject.objects.all(), many=True)

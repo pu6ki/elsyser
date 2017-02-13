@@ -45,7 +45,6 @@ class UserSerializer(serializers.ModelSerializer):
         },
     )
 
-
     class Meta:
         model = User
         fields = (
@@ -60,7 +59,6 @@ class UserLoginSerializer(serializers.Serializer):
         required=True,
         style={'input_type': 'password'}
     )
-
 
     def validate(self, attrs):
         email_or_username = attrs.get('email_or_username')
@@ -102,7 +100,6 @@ class StudentSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     clazz = ClassSerializer()
 
-
     class Meta:
         model = Student
         fields = ('user', 'clazz')
@@ -125,7 +122,6 @@ class UserInfoSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(min_length=3, max_length=30)
     last_name = serializers.CharField(min_length=3, max_length=30)
     email = serializers.EmailField(read_only=True, max_length=100)
-
 
     class Meta:
         model = User
@@ -158,7 +154,6 @@ class SubjectSerializer(serializers.ModelSerializer):
         ]
     )
 
-
     class Meta:
         model = Subject
         fields = ('id', 'title')
@@ -168,7 +163,6 @@ class StudentProfileSerializer(serializers.ModelSerializer):
     user = UserInfoSerializer()
     clazz = ClassSerializer()
     profile_image_url = serializers.URLField(allow_blank=False)
-
 
     class Meta:
         model = Student
@@ -184,7 +178,6 @@ class StudentProfileSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('URL is not a picture.')
 
         return value
-
 
     def update(self, instance, validated_data):
         user_data = validated_data.get('user', {})
@@ -209,7 +202,6 @@ class TeacherProfileSerializer(serializers.ModelSerializer):
     subject = SubjectSerializer()
     profile_image_url = serializers.URLField(allow_blank=False)
 
-
     class Meta:
         model = Teacher
         fields = ('user', 'subject', 'profile_image_url', 'info')
@@ -224,7 +216,6 @@ class TeacherProfileSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('URL is not a picture.')
 
         return value
-
 
     def update(self, instance, validated_data):
         user_data = validated_data.get('user', {})
@@ -248,7 +239,6 @@ class StudentAuthorSerializer(serializers.ModelSerializer):
     user = UserInfoSerializer(read_only=True)
     clazz = ClassSerializer(read_only=True)
 
-
     class Meta:
         model = Student
         fields = ('id', 'user', 'clazz', 'profile_image_url')
@@ -256,7 +246,6 @@ class StudentAuthorSerializer(serializers.ModelSerializer):
 
 class TeacherAuthorSerializer(serializers.ModelSerializer):
     user = UserInfoSerializer(read_only=True)
-
 
     class Meta:
         model = Teacher

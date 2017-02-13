@@ -2,7 +2,6 @@ from rest_framework import routers
 
 from exams.views import ExamsViewSet
 
-
 app_name = 'exams'
 
 router = routers.SimpleRouter()

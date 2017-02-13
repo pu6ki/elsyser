@@ -10,6 +10,7 @@ from news.serializers import (
     NewsSerializer,
     CommentSerializer, CommentReadSerializer
 )
+
 from students.permissions import IsStudent, IsTeacher
 
 
@@ -18,12 +19,10 @@ class NewsViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, IsStudent)
     serializer_class = NewsSerializer
 
-
     def get_queryset(self):
         return News.objects.filter(
             author__clazz=self.request.user.student.clazz
         )
-
 
     def retrieve(self, request, pk=None):
         news = get_object_or_404(self.get_queryset(), id=pk)
@@ -35,7 +34,6 @@ class NewsViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
             headers=headers
         )
-
 
     def create(self, request):
         context = {'request': request}
@@ -52,7 +50,6 @@ class NewsViewSet(viewsets.ModelViewSet):
             status=status.HTTP_201_CREATED,
             headers=headers
         )
-
 
     def update(self, request, pk=None):
         news = get_object_or_404(News, id=pk)
@@ -76,7 +73,6 @@ class NewsViewSet(viewsets.ModelViewSet):
             headers=headers
         )
 
-
     def destroy(self, request, pk=None):
         news = get_object_or_404(News, id=pk)
 
@@ -99,10 +95,8 @@ class CommentsViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, IsStudent)
     queryset = Comment.objects.all()
 
-
     def get_serializer_class(self):
         return CommentReadSerializer if self.request.method in ('GET',) else CommentSerializer
-
 
     def create(self, request, news_pk=None):
         news = get_object_or_404(News, id=news_pk)
@@ -120,7 +114,6 @@ class CommentsViewSet(viewsets.ModelViewSet):
             status=status.HTTP_201_CREATED,
             headers=headers
         )
-
 
     def update(self, request, news_pk=None, pk=None):
         news = get_object_or_404(News, id=news_pk)
@@ -144,7 +137,6 @@ class CommentsViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
             headers=headers
         )
-
 
     def destroy(self, request, news_pk=None, pk=None):
         news = get_object_or_404(News, id=news_pk)

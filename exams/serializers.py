@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
 from exams.models import Exam
+
 from students.serializers import (
     ClassSerializer, SubjectSerializer, TeacherAuthorSerializer
 )
@@ -19,7 +20,6 @@ class ExamSerializer(serializers.ModelSerializer):
     )
     details = serializers.CharField(max_length=1000, allow_blank=True)
 
-
     class Meta:
         model = Exam
         fields = (
@@ -36,7 +36,6 @@ class ExamSerializer(serializers.ModelSerializer):
         return Exam.objects.create(
             subject=subject, author=author, **validated_data
         )
-
 
     def update(self, instance, validated_data):
         instance.__dict__.update(**validated_data)

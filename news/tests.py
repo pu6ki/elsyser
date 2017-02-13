@@ -6,6 +6,7 @@ from rest_framework import status
 
 from news.models import News, Comment
 from news.serializers import NewsSerializer, CommentSerializer
+
 from students.models import Class, Subject, Student, Teacher
 
 
@@ -32,7 +33,6 @@ class NewsViewSetTestCase(APITestCase):
             content='This is a very nice platform!'
         )
 
-
     def test_news_list_with_anonymous_user(self):
         request = self.client.get(reverse(self.list_view_name))
 
@@ -41,7 +41,6 @@ class NewsViewSetTestCase(APITestCase):
             'Authentication credentials were not provided.'
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
-
 
     def test_news_detail_with_anonymous_user(self):
         request = self.client.get(
@@ -54,7 +53,6 @@ class NewsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
-
     def test_news_with_authenticated_user(self):
         self.client.force_authenticate(user=self.user)
 
@@ -62,7 +60,6 @@ class NewsViewSetTestCase(APITestCase):
 
         self.assertIsNotNone(request.data)
         self.assertEqual(request.status_code, status.HTTP_200_OK)
-
 
     def test_news_detail_with_authenticated_user(self):
         self.client.force_authenticate(user=self.user)
@@ -73,7 +70,6 @@ class NewsViewSetTestCase(APITestCase):
 
         self.assertIsNotNone(request.data)
         self.assertEqual(request.status_code, status.HTTP_200_OK)
-
 
 
     def test_news_list_with_teacher_account(self):
@@ -91,7 +87,6 @@ class NewsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
-
     def test_news_list_with_same_class(self):
         self.client.force_authenticate(user=self.user)
 
@@ -101,7 +96,6 @@ class NewsViewSetTestCase(APITestCase):
         self.assertEqual(request.data[0]['content'], self.news.content)
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
-
     def test_news_list_with_different_class(self):
         self.client.force_authenticate(user=self.user)
         self.student.clazz = Class.objects.create(number=11, letter='V')
@@ -110,7 +104,6 @@ class NewsViewSetTestCase(APITestCase):
 
         self.assertEqual(request.data, [])
         self.assertEqual(request.status_code, status.HTTP_200_OK)
-
 
     def test_news_list_creation_with_empty_title(self):
         self.client.force_authenticate(user=self.user)
@@ -125,7 +118,6 @@ class NewsViewSetTestCase(APITestCase):
             request.data['title'], ['This field may not be blank.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_news_list_creation_with_too_short_title(self):
         self.client.force_authenticate(user=self.user)
@@ -142,7 +134,6 @@ class NewsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_news_list_creation_with_too_long_title(self):
         self.client.force_authenticate(user=self.user)
         self.news.title = 'yo' * 120
@@ -158,7 +149,6 @@ class NewsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_news_list_creation_with_empty_content(self):
         self.client.force_authenticate(user=self.user)
         self.news.content = ''
@@ -172,7 +162,6 @@ class NewsViewSetTestCase(APITestCase):
             request.data['content'], ['This field may not be blank.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_news_list_creation_with_too_short_content(self):
         self.client.force_authenticate(user=self.user)
@@ -189,7 +178,6 @@ class NewsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_news_list_creation_with_too_long_content(self):
         self.client.force_authenticate(user=self.user)
         self.news.content = 'Hey Jude!' * 10000
@@ -205,7 +193,6 @@ class NewsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_news_list_creation_with_valid_data(self):
         self.client.force_authenticate(user=self.user)
         self.news.title = 'testNews'
@@ -220,7 +207,6 @@ class NewsViewSetTestCase(APITestCase):
         self.assertEqual(request.data['content'], self.news.content)
         self.assertEqual(request.status_code, status.HTTP_201_CREATED)
 
-
     def test_news_detail_with_invalid_id(self):
         self.client.force_authenticate(user=self.user)
 
@@ -230,7 +216,6 @@ class NewsViewSetTestCase(APITestCase):
 
         self.assertEqual(request.data['detail'], 'Not found.')
         self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
-
 
     def test_news_detail_with_valid_id(self):
         self.client.force_authenticate(user=self.user)
@@ -247,7 +232,6 @@ class NewsViewSetTestCase(APITestCase):
         self.assertEqual(comments_data[0]['content'], self.comment.content)
 
         self.assertEqual(request.status_code, status.HTTP_200_OK)
-
 
     def test_news_update_of_another_user(self):
         self.client.force_authenticate(user=self.user)
@@ -268,7 +252,6 @@ class NewsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
-
     def test_news_update_with_empty_title(self):
         self.client.force_authenticate(user=self.user)
 
@@ -282,7 +265,6 @@ class NewsViewSetTestCase(APITestCase):
             request.data['title'], ['This field may not be blank.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_news_update_with_too_short_title(self):
         self.client.force_authenticate(user=self.user)
@@ -299,7 +281,6 @@ class NewsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_news_update_with_too_long_title(self):
         self.client.force_authenticate(user=self.user)
 
@@ -315,7 +296,6 @@ class NewsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_news_update_with_empty_content(self):
         self.client.force_authenticate(user=self.user)
 
@@ -329,7 +309,6 @@ class NewsViewSetTestCase(APITestCase):
             request.data['content'], ['This field may not be blank.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_news_update_with_too_short_content(self):
         self.client.force_authenticate(user=self.user)
@@ -346,7 +325,6 @@ class NewsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_news_update_with_too_long_content(self):
         self.client.force_authenticate(user=self.user)
 
@@ -362,7 +340,6 @@ class NewsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_news_update_with_valid_data(self):
         self.client.force_authenticate(user=self.user)
 
@@ -373,7 +350,6 @@ class NewsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(request.status_code, status.HTTP_200_OK)
-
 
     def test_news_deletion_of_another_user(self):
         self.client.force_authenticate(user=self.user)
@@ -392,7 +368,6 @@ class NewsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
-
     def test_news_deletion_with_invalid_id(self):
         self.client.force_authenticate(user=self.user)
 
@@ -402,7 +377,6 @@ class NewsViewSetTestCase(APITestCase):
 
         self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
 
-
     def test_news_deletion_with_valid_id(self):
         self.client.force_authenticate(user=self.user)
 
@@ -411,7 +385,6 @@ class NewsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(request.status_code, status.HTTP_200_OK)
-
 
 class CommentsViewSetTestCase(APITestCase):
     def setUp(self):
@@ -433,7 +406,6 @@ class CommentsViewSetTestCase(APITestCase):
             content='This is a very nice platform!'
         )
 
-
     def test_comment_creation_with_empty_content(self):
         self.client.force_authenticate(user=self.user)
         self.comment.content = ''
@@ -449,7 +421,6 @@ class CommentsViewSetTestCase(APITestCase):
             request.data['content'], ['This field may not be blank.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_comment_creation_with_too_long_content(self):
         self.client.force_authenticate(user=self.user)
@@ -468,7 +439,6 @@ class CommentsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_comment_creation_with_valid_content(self):
         self.client.force_authenticate(user=self.user)
         self.comment.content = 'This is a very nice platorm, man!'
@@ -482,7 +452,6 @@ class CommentsViewSetTestCase(APITestCase):
 
         self.assertEqual(request.data['content'], self.comment.content)
         self.assertEqual(request.status_code, status.HTTP_201_CREATED)
-
 
     def test_comment_update_with_empty_content(self):
         self.client.force_authenticate(user=self.user)
@@ -500,7 +469,6 @@ class CommentsViewSetTestCase(APITestCase):
             request.data['content'], ['This field may not be blank.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_comment_update_of_another_user(self):
         self.client.force_authenticate(user=self.user)
@@ -524,7 +492,6 @@ class CommentsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
-
     def test_comment_update_with_too_long_content(self):
         self.client.force_authenticate(user=self.user)
 
@@ -543,7 +510,6 @@ class CommentsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_comment_update_with_valid_content(self):
         self.client.force_authenticate(user=self.user)
 
@@ -558,7 +524,6 @@ class CommentsViewSetTestCase(APITestCase):
 
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
-
     def test_comment_deletion_with_invalid_news_id(self):
         self.client.force_authenticate(user=self.user)
 
@@ -572,7 +537,6 @@ class CommentsViewSetTestCase(APITestCase):
         self.assertEqual(request.data['detail'], 'Not found.')
         self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
 
-
     def test_comment_deletion_with_invalid_comment_id(self):
         self.client.force_authenticate(user=self.user)
 
@@ -585,7 +549,6 @@ class CommentsViewSetTestCase(APITestCase):
 
         self.assertEqual(request.data['detail'], 'Not found.')
         self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
-
 
     def test_comment_deletion_of_another_user(self):
         self.client.force_authenticate(user=self.user)
@@ -606,7 +569,6 @@ class CommentsViewSetTestCase(APITestCase):
             request.data['message'], 'You can delete only your own comments.'
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
-
 
     def test_comment_deletion_with_valid_ids(self):
         self.client.force_authenticate(user=self.user)

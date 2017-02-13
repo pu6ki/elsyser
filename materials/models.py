@@ -12,7 +12,6 @@ class Material(models.Model):
     video_url = models.URLField(blank=True)
     author = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
 
-
     def __str__(self):
         return '{} - {} ({} class) posted by {}'.format(
             self.title, self.subject, self.class_number, self.author

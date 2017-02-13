@@ -34,7 +34,6 @@ class MaterialsViewSetTestCase(APITestCase):
             author=self.teacher
         )
 
-
     def test_materials_list_with_anonymous_user(self):
         request = self.client.get(
             reverse(
@@ -50,7 +49,6 @@ class MaterialsViewSetTestCase(APITestCase):
             'Authentication credentials were not provided.'
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
-
 
     def test_materials_detail_with_anonymous_user(self):
         request = self.client.get(
@@ -69,7 +67,6 @@ class MaterialsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
-
     def test_materials_list_with_authenticated_user(self):
         self.client.force_authenticate(user=self.student_user)
 
@@ -83,7 +80,6 @@ class MaterialsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(request.status_code, status.HTTP_200_OK)
-
 
     def test_materials_detail_with_authenticated_user(self):
         self.client.force_authenticate(user=self.student_user)
@@ -99,7 +95,6 @@ class MaterialsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(request.status_code, status.HTTP_200_OK)
-
 
     def test_materials_creation_with_student_account(self):
         self.client.force_authenticate(user=self.student_user)
@@ -123,7 +118,6 @@ class MaterialsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
-
     def test_materials_creation_with_too_short_title(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.material.title = '.'
@@ -145,7 +139,6 @@ class MaterialsViewSetTestCase(APITestCase):
             ['Ensure this field has at least 3 characters.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_materials_creation_with_too_long_title(self):
         self.client.force_authenticate(user=self.teacher_user)
@@ -169,7 +162,6 @@ class MaterialsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_materials_creation_with_too_short_section(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.material.section = '.'
@@ -191,7 +183,6 @@ class MaterialsViewSetTestCase(APITestCase):
             ['Ensure this field has at least 3 characters.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_materials_creation_with_too_long_section(self):
         self.client.force_authenticate(user=self.teacher_user)
@@ -215,7 +206,6 @@ class MaterialsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_materials_creation_with_blank_content(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.material.content = ''
@@ -238,7 +228,6 @@ class MaterialsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_materials_creation_with_valid_data(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.material.title = 'Hvala!'
@@ -258,7 +247,6 @@ class MaterialsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(request.status_code, status.HTTP_201_CREATED)
-
 
     def test_materials_update_with_student_account(self):
         self.client.force_authenticate(user=self.student_user)
@@ -283,7 +271,6 @@ class MaterialsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
-
     def test_materials_update_with_invalid_subject_id(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.material.title = 'Hvala!'
@@ -304,7 +291,6 @@ class MaterialsViewSetTestCase(APITestCase):
         self.assertEqual(request.data['detail'], 'Not found.')
         self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
 
-
     def test_materials_update_with_invalid_id(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.material.title = 'Hvala!'
@@ -324,7 +310,6 @@ class MaterialsViewSetTestCase(APITestCase):
 
         self.assertEqual(request.data['detail'], 'Not found.')
         self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
-
 
     def test_materials_update_with_too_short_title(self):
         self.client.force_authenticate(user=self.teacher_user)
@@ -349,7 +334,6 @@ class MaterialsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_materials_update_with_too_long_title(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.material.title = 'Svetlosyanka' * 150
@@ -372,7 +356,6 @@ class MaterialsViewSetTestCase(APITestCase):
             ['Ensure this field has no more than 150 characters.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_materials_update_with_too_short_section(self):
         self.client.force_authenticate(user=self.teacher_user)
@@ -397,7 +380,6 @@ class MaterialsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_materials_update_with_too_long_section(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.material.section = 'Svetlosyanka' * 150
@@ -420,7 +402,6 @@ class MaterialsViewSetTestCase(APITestCase):
             ['Ensure this field has no more than 150 characters.']
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_materials_update_with_blank_content(self):
         self.client.force_authenticate(user=self.teacher_user)
@@ -445,7 +426,6 @@ class MaterialsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_materials_update_with_valid_data(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.material.title = 'Hvala!'
@@ -466,7 +446,6 @@ class MaterialsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(request.status_code, status.HTTP_200_OK)
-
 
     def test_materials_update_of_another_user(self):
         self.client.force_authenticate(user=self.teacher_user)
@@ -493,7 +472,6 @@ class MaterialsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
-
     def test_materials_deletion_with_invalid_subject_id(self):
         self.client.force_authenticate(user=self.teacher_user)
 
@@ -510,7 +488,6 @@ class MaterialsViewSetTestCase(APITestCase):
         self.assertEqual(request.data['detail'], 'Not found.')
         self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
 
-
     def test_materials_deletion_with_invalid_id(self):
         self.client.force_authenticate(user=self.teacher_user)
 
@@ -526,7 +503,6 @@ class MaterialsViewSetTestCase(APITestCase):
 
         self.assertEqual(request.data['detail'], 'Not found.')
         self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
-
 
     def test_materials_deletion_of_another_user(self):
         self.client.force_authenticate(user=self.teacher_user)
@@ -550,7 +526,6 @@ class MaterialsViewSetTestCase(APITestCase):
             request.data['message'], 'You can delete only your own materials.'
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
-
 
     def test_materials_deletion(self):
         self.client.force_authenticate(user=self.teacher_user)

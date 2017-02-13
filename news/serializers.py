@@ -1,13 +1,13 @@
 from rest_framework import serializers
 
 from news.models import News, Comment
+
 from students.serializers import StudentAuthorSerializer
 
 
 class CommentSerializer(serializers.ModelSerializer):
     posted_by = StudentAuthorSerializer(read_only=True)
     content = serializers.CharField(max_length=2048)
-
 
     class Meta:
         model = Comment
@@ -30,7 +30,6 @@ class CommentSerializer(serializers.ModelSerializer):
             news=news, posted_by=posted_by, **validated_data
         )
 
-
     def update(self, instance, validated_data):
         instance.__dict__.update(**validated_data)
         instance.save()
@@ -47,7 +46,6 @@ class NewsSerializer(serializers.ModelSerializer):
     content = serializers.CharField(min_length=5, max_length=10000)
     author = StudentAuthorSerializer(read_only=True)
     comment_set = CommentSerializer(read_only=True, many=True)
-
 
     class Meta:
         model = News
@@ -66,7 +64,6 @@ class NewsSerializer(serializers.ModelSerializer):
         author = request.user.student
 
         return News.objects.create(author=author, **validated_data)
-
 
     def update(self, instance, validated_data):
         instance.__dict__.update(**validated_data)

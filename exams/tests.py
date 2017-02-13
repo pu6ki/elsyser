@@ -35,7 +35,6 @@ class ExamsViewSetTestCase(APITestCase):
             author=self.teacher
         )
 
-
     def test_exams_list_with_anonymous_user(self):
         request = self.client.get(reverse(self.list_view_name))
 
@@ -44,7 +43,6 @@ class ExamsViewSetTestCase(APITestCase):
             'Authentication credentials were not provided.'
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
-
 
     def test_exams_detail_with_anonymous_user(self):
         request = self.client.get(
@@ -57,7 +55,6 @@ class ExamsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
-
     def test_exams_with_authenticated_user(self):
         self.client.force_authenticate(user=self.student_user)
 
@@ -67,7 +64,6 @@ class ExamsViewSetTestCase(APITestCase):
             self.subject.title, request.data[0]['subject']['title']
         )
         self.assertEqual(request.status_code, status.HTTP_200_OK)
-
 
     def test_exams_detail_with_authenticated_user(self):
         self.client.force_authenticate(user=self.student_user)
@@ -79,7 +75,6 @@ class ExamsViewSetTestCase(APITestCase):
         self.assertIsNotNone(request.data)
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
-
     def test_exams_list_with_expired_date(self):
         self.client.force_authenticate(user=self.student_user)
         self.exam.date -= timedelta(days=5)
@@ -90,7 +85,6 @@ class ExamsViewSetTestCase(APITestCase):
         self.assertEqual(request.data, [])
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
-
     def test_exams_detail_with_invalid_id(self):
         self.client.force_authenticate(user=self.student_user)
 
@@ -100,7 +94,6 @@ class ExamsViewSetTestCase(APITestCase):
 
         self.assertEqual(request.data['detail'], 'Not found.')
         self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
-
 
     def test_exams_detail_with_valid_id(self):
         self.client.force_authenticate(user=self.student_user)
@@ -113,7 +106,6 @@ class ExamsViewSetTestCase(APITestCase):
         self.assertEqual(request.data['topic'], self.exam.topic)
         self.assertEqual(request.data['subject']['title'], self.subject.title)
         self.assertEqual(request.status_code, status.HTTP_200_OK)
-
 
     def test_exams_creation_with_student_account(self):
         self.client.force_authenticate(user=self.student_user)
@@ -130,7 +122,6 @@ class ExamsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
-
     def test_exams_creation_with_empty_topic(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.exam.topic = ''
@@ -142,7 +133,6 @@ class ExamsViewSetTestCase(APITestCase):
 
         self.assertEqual(request.data['topic'], ['This field may not be blank.'])
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_exams_creation_with_too_long_topic(self):
         self.client.force_authenticate(user=self.teacher_user)
@@ -159,7 +149,6 @@ class ExamsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_exams_creation_with_valid_topic(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.exam.topic = 'glucimir'
@@ -170,7 +159,6 @@ class ExamsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(request.status_code, status.HTTP_201_CREATED)
-
 
     def test_exams_update_with_student_account(self):
         self.client.force_authenticate(user=self.student_user)
@@ -189,7 +177,6 @@ class ExamsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
-
     def test_exams_update_with_empty_topic(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.exam.topic = ''
@@ -203,7 +190,6 @@ class ExamsViewSetTestCase(APITestCase):
 
         self.assertEqual(request.data['topic'], ['This field may not be blank.'])
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_exams_update_with_too_long_topic(self):
         self.client.force_authenticate(user=self.teacher_user)
@@ -222,7 +208,6 @@ class ExamsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_exams_update_with_valid_topic(self):
         self.client.force_authenticate(user=self.teacher_user)
         self.exam.topic = 'glucimir'
@@ -235,7 +220,6 @@ class ExamsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(request.status_code, status.HTTP_200_OK)
-
 
     def test_exams_update_of_another_user(self):
         self.client.force_authenticate(user=self.teacher_user)
@@ -256,7 +240,6 @@ class ExamsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
-
     def test_exams_deletion_of_another_user(self):
         self.client.force_authenticate(user=self.teacher_user)
 
@@ -273,7 +256,6 @@ class ExamsViewSetTestCase(APITestCase):
             request.data['message'], 'You can delete only your own exams.'
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
-
 
     def test_exams_deletion(self):
         self.client.force_authenticate(user=self.teacher_user)

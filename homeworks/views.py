@@ -11,6 +11,7 @@ from homeworks.serializers import (
     SubmissionSerializer, SubmissionReadSerializer
 )
 from homeworks.models import Homework, Submission
+
 from students.models import Class
 from students.permissions import IsStudent, IsTeacher
 
@@ -29,10 +30,8 @@ class HomeworksViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         return HomeworkReadSerializer if self.request.method in ('GET',) else HomeworkSerializer
 
-
     def get_permissions(self):
         return [permission() for permission in self.permission_classes_by_action[self.action]]
-
 
     def get_queryset(self):
         request = self.request
@@ -42,7 +41,6 @@ class HomeworksViewSet(viewsets.ModelViewSet):
             return upcoming_homeworks.filter(subject=request.user.teacher.subject)
 
         return upcoming_homeworks.filter(clazz=request.user.student.clazz)
-
 
     def retrieve(self, request, pk=None):
         homework = get_object_or_404(self.get_queryset(), id=pk)
@@ -55,7 +53,6 @@ class HomeworksViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
             headers=headers
         )
-
 
     def create(self, request):
         context = {'request': request}
@@ -76,7 +73,6 @@ class HomeworksViewSet(viewsets.ModelViewSet):
             status=status.HTTP_201_CREATED,
             headers=headers
         )
-
 
     def update(self, request, pk=None):
         homework = get_object_or_404(Homework, id=pk)
@@ -99,7 +95,6 @@ class HomeworksViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
             headers=headers
         )
-
 
     def destroy(self, request, pk=None):
         homework = get_object_or_404(Homework, id=pk)
@@ -139,14 +134,11 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
 
         return submissions.filter(checked=False)
 
-
     def get_serializer_class(self):
          return SubmissionReadSerializer if self.request.method in ('GET',) else SubmissionSerializer
 
-
     def get_permissions(self):
         return [permission() for permission in self.permission_classes_by_action[self.action]]
-
 
     def retrieve(self, request, homeworks_pk=None, pk=None):
         homework = get_object_or_404(Homework, id=homeworks_pk)
@@ -167,7 +159,6 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
             headers=headers
         )
-
 
     def create(self, request, homeworks_pk=None):
         homework = get_object_or_404(Homework, id=homeworks_pk)
@@ -192,7 +183,6 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
             status=status.HTTP_201_CREATED,
             headers=headers
         )
-
 
     def update(self, request, homeworks_pk=None, pk=None):
         homework = get_object_or_404(Homework, id=homeworks_pk)

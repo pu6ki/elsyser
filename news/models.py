@@ -11,7 +11,6 @@ class News(models.Model):
     edited = models.BooleanField(default=False)
     last_edited_on = models.DateTimeField(auto_now=True)
 
-
     class Meta:
         ordering = ['-last_edited_on']
         verbose_name_plural = 'news'
@@ -29,7 +28,6 @@ class Comment(models.Model):
     posted_on = models.DateTimeField(auto_now_add=True)
     edited = models.BooleanField(default=False)
     last_edited_on = models.DateTimeField(auto_now=True)
-
 
     def __str__(self):
         return '{} - {}'.format(self.posted_by, self.news)

@@ -13,7 +13,6 @@ class SubmissionSerializer(serializers.ModelSerializer):
     content = serializers.CharField(max_length=2048, allow_blank=False)
     solution_url = serializers.URLField(required=False, allow_blank=True)
 
-
     class Meta:
         model = Submission
         fields = (
@@ -36,7 +35,6 @@ class SubmissionSerializer(serializers.ModelSerializer):
             homework=homework, student=student, **validated_data
         )
 
-
     def update(self, instance, validated_data):
         instance.__dict__.update(**validated_data)
         instance.save()
@@ -51,7 +49,6 @@ class SubmissionReadSerializer(SubmissionSerializer):
 class HomeworkSerializer(serializers.ModelSerializer):
     details = serializers.CharField(max_length=256, allow_blank=True)
     submission_set = SubmissionSerializer(read_only=True, many=True)
-
 
     class Meta:
         model = Homework
@@ -68,7 +65,6 @@ class HomeworkSerializer(serializers.ModelSerializer):
         return Homework.objects.create(
             subject=subject, author=author, **validated_data
         )
-
 
     def update(self, instance, validated_data):
         instance.__dict__.update(**validated_data)
