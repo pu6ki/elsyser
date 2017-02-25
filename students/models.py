@@ -59,3 +59,14 @@ class Teacher(models.Model):
 
     def __str__(self):
         return '{} ({})'.format(self.user.username, self.subject)
+
+
+class Grade(models.Model):
+    value = models.FloatField(
+        validators=[MinValueValidator(2), MaxValueValidator(6)]
+    )
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{} - {} ({})'.format(self.student, self.subject, self.value)

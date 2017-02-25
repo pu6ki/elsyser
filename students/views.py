@@ -12,8 +12,9 @@ from students.serializers import (
     StudentSerializer,
     SubjectSerializer,
     StudentProfileSerializer, TeacherProfileSerializer,
+    GradesSerializer
 )
-from students.models import Subject, Class, Student, Teacher
+from students.models import Subject, Class, Student, Teacher, Grade
 from students.permissions import IsStudent, IsTeacher
 
 
@@ -90,10 +91,76 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 class SubjectsList(generics.ListAPIView):
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated, IsTeacher)
+    permission_classes = (IsAuthenticated,)
     serializer_class = SubjectSerializer
 
     def get(self, request):
         serializer = self.serializer_class(Subject.objects.all(), many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class GradesList(generics.ListAPIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = GradesSerializer
+
+    def get(self, request, *args, **kwargs):
+        serializer = self.serializer_class(
+            Grade.objects.filter(subject__id=kwargs['subject_pk']),
+            many=True
+        )
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class GradesDetail(generics.ListCreateAPIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes_by_action = {
+        'get': (IsAuthenticated,),
+        'post': (IsAuthenticated, IsTeacher)
+    }
+    serializer_class = GradesSerializer
+
+    def get_permissions(self):
+        return [
+            permission()
+            for permission in self.permission_classes_by_action[
+                self.request.method.lower()
+            ]
+        ]
+
+    def get(self, request, *args, **kwargs):
+        serializer = self.serializer_class(
+            Grade.objects.filter(
+                subject__id=kwargs['subject_pk']
+            ).filter(
+                student__id=kwargs['student_pk']
+            ),
+            many=True
+        )
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    def post(self, request, *args, **kwargs):
+        subject = Subject.objects.get(id=kwargs['subject_pk'])
+        student = Student.objects.get(id=kwargs['student_pk'])
+
+        context = {
+            'request': request,
+            'subject': subject,
+            'student': student
+        }
+        serializer = self.serializer_class(
+            context=context, data=request.data
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(
+            serializer.validated_data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )

@@ -7,7 +7,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
 
-from students.models import Class, Subject, Student, Teacher
+from students.models import Class, Subject, Student, Teacher, Grade
 
 import requests
 
@@ -250,3 +250,20 @@ class TeacherAuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Teacher
         fields = ('id', 'user', 'profile_image_url')
+
+
+class GradesSerializer(serializers.ModelSerializer):
+    student = StudentSerializer(read_only=True)
+    subject = SubjectSerializer(read_only=True)
+
+    class Meta:
+        model = Grade
+        fields = ('id', 'value', 'student', 'subject')
+
+    def create(self, validated_data):
+        subject = self.context['subject']
+        student = self.context['student']
+
+        return Grade.objects.create(
+            subject=subject, student=student, **validated_data
+        )
