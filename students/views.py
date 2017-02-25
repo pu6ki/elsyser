@@ -131,11 +131,12 @@ class GradesDetail(generics.ListCreateAPIView):
         ]
 
     def get(self, request, *args, **kwargs):
+
         serializer = self.serializer_class(
             Grade.objects.filter(
                 subject__id=kwargs['subject_pk']
             ).filter(
-                student__id=kwargs['student_pk']
+                student__id=User.objects.get(id=kwargs['user_pk']).student.pk
             ),
             many=True
         )
@@ -152,7 +153,7 @@ class GradesDetail(generics.ListCreateAPIView):
             'subject': subject,
             'student': student
         }
-        
+
         serializer = self.serializer_class(
             context=context, data=request.data
         )
