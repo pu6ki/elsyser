@@ -22,7 +22,7 @@ urlpatterns = [
         name='grades-list'
     ),
     url(
-        r'^grades/(?P<subject_pk>[0-9]+)/(?P<student_pk>[0-9]+)/$',
+        r'^grades/(?P<subject_pk>[0-9]+)/(?P<user_pk>[0-9]+)/$',
         GradesDetail.as_view(),
         name='grades-detail'
     )

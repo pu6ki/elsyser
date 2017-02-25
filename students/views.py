@@ -145,13 +145,14 @@ class GradesDetail(generics.ListCreateAPIView):
 
     def post(self, request, *args, **kwargs):
         subject = Subject.objects.get(id=kwargs['subject_pk'])
-        student = Student.objects.get(id=kwargs['student_pk'])
+        student = User.objects.get(id=kwargs['user_pk']).student
 
         context = {
             'request': request,
             'subject': subject,
             'student': student
         }
+        
         serializer = self.serializer_class(
             context=context, data=request.data
         )
