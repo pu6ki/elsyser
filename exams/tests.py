@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from django.contrib.auth.models import User
 
 from rest_framework.test import APITestCase, APIClient
@@ -28,7 +28,7 @@ class ExamsViewSetTestCase(APITestCase):
 
         self.exam = Exam.objects.create(
             subject=self.subject,
-            date=datetime.now().date(),
+            date=datetime.strptime('Jun 2 2020 1:50PM', '%b %d %Y %I:%M%p').date(),
             clazz=self.clazz,
             topic='Quadratic inequations',
             details='This will be the hardest **** ever!!!',
@@ -77,7 +77,7 @@ class ExamsViewSetTestCase(APITestCase):
 
     def test_exams_list_with_expired_date(self):
         self.client.force_authenticate(user=self.student_user)
-        self.exam.date -= timedelta(days=5)
+        self.exam.date = datetime.strptime('Jun 2 2000 1:50PM', '%b %d %Y %I:%M%p').date()
         self.exam.save()
 
         request = self.client.get(reverse(self.list_view_name))
