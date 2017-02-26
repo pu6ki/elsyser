@@ -4,7 +4,7 @@
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/pu6ki/elsyser/master/LICENSE)
 [![Requires.io](https://img.shields.io/requires/github/pu6ki/elsyser.svg?style=flat-square)](https://raw.githubusercontent.com/pu6ki/elsyser/master/requirements.txt)
 
-![Logo](https://raw.githubusercontent.com/pu6ki/elsyser/master/static/tues_bulding_with_logo.png)
+![Logo](https://raw.githubusercontent.com/pu6ki/elsyser/master/static/tues_building_with_logo.png)
 
 # [elsyser](https://elsyser.herokuapp.com/api/register/)
 
