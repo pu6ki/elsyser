@@ -4,7 +4,8 @@ from rest_framework import routers
 
 from students.views import (
     UserLogin, ProfileViewSet, StudentRegistration, SubjectsList,
-    GradesList, GradesDetail
+    GradesList, GradesDetail,
+    StudentsList
 )
 
 app_name = 'students'
@@ -25,6 +26,11 @@ urlpatterns = [
         r'^grades/(?P<subject_pk>[0-9]+)/(?P<user_pk>[0-9]+)/$',
         GradesDetail.as_view(),
         name='grades-detail'
+    ),
+    url(
+        r'^students/(?P<class_number>[8]|[9]|1[0-2])/(?P<class_letter>[A]|[B]|[V]|[G])/$',
+        StudentsList.as_view(),
+        name='students-list'
     )
 ]
 
