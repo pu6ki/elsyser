@@ -4,7 +4,7 @@
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/pu6ki/elsyser/master/LICENSE)
 [![Requires.io](https://img.shields.io/requires/github/pu6ki/elsyser.svg?style=flat-square)](https://raw.githubusercontent.com/pu6ki/elsyser/master/requirements.txt)
 
-![Logo](https://raw.githubusercontent.com/pu6ki/elsyser/master/static/logo-black.png)
+![Logo](https://raw.githubusercontent.com/pu6ki/elsyser/master/static/tues_bulding_with_logo.png)
 
 # [elsyser](https://elsyser.herokuapp.com/api/register/)
 
@@ -76,6 +76,9 @@ How to copy this project to your local machine and run it:
     - */api/homeworks* - Current homeworks about you.
     - */api/profile/{user_id}* -Personal info about everyone.
     - */api/materials* - Useful materials for a certain topic.
+    - */api/grades/{subject_id}* - All grades for a certain subject.
+    - */api/grades/{subject_id}/{user_id}* - Grades for a specific user (student).
+    - */api/students/{class_letter}/{class_number}* - List of all students in a certain class.
 
 ## The admin site
 
