@@ -28,7 +28,10 @@ class ExamsViewSet(viewsets.ModelViewSet):
         return ExamReadSerializer if self.request.method in ('GET',) else ExamSerializer
 
     def get_permissions(self):
-        return [permission() for permission in self.permission_classes_by_action[self.action]]
+        return [
+            permission()
+            for permission in self.permission_classes_by_action[self.action]
+        ]
 
     def get_queryset(self):
         request = self.request

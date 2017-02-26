@@ -31,7 +31,12 @@ class HomeworksViewSet(viewsets.ModelViewSet):
         return HomeworkReadSerializer if self.request.method in ('GET',) else HomeworkSerializer
 
     def get_permissions(self):
-        return [permission() for permission in self.permission_classes_by_action[self.action]]
+        return [
+            permission()
+            for permission in self.permission_classes_by_action[
+                self.action
+            ]
+        ]
 
     def get_queryset(self):
         request = self.request
@@ -138,7 +143,12 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
          return SubmissionReadSerializer if self.request.method in ('GET',) else SubmissionSerializer
 
     def get_permissions(self):
-        return [permission() for permission in self.permission_classes_by_action[self.action]]
+        return [
+            permission()
+            for permission in self.permission_classes_by_action[
+                self.action
+            ]
+        ]
 
     def retrieve(self, request, homeworks_pk=None, pk=None):
         homework = get_object_or_404(Homework, id=homeworks_pk)

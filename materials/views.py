@@ -26,7 +26,10 @@ class MaterialsViewSet(viewsets.GenericViewSet):
          return MaterialReadSerializer if self.request.method in ('GET',) else MaterialSerializer
 
     def get_permissions(self):
-        return [permission() for permission in self.permission_classes_by_action[self.action]]
+        return [
+            permission()
+            for permission in self.permission_classes_by_action[self.action]
+        ]
 
 
 class MaterialsListViewSet(mixins.ListModelMixin, MaterialsViewSet):
@@ -37,7 +40,9 @@ class MaterialsListViewSet(mixins.ListModelMixin, MaterialsViewSet):
         if IsTeacher().has_permission(request, self):
             return all_materials.filter(subject=request.user.teacher.subject)
 
-        return all_materials.filter(class_number=request.user.student.clazz.number)
+        return all_materials.filter(
+            class_number=request.user.student.clazz.number
+        )
 
 
 class NestedMaterialsViewSet(mixins.RetrieveModelMixin,
