@@ -106,10 +106,9 @@ class GradesList(generics.ListAPIView):
     serializer_class = GradesSerializer
 
     def get(self, request, *args, **kwargs):
-        serializer = self.serializer_class(
-            Grade.objects.filter(subject__id=kwargs['subject_pk']),
-            many=True
-        )
+        grades = Grade.objects.filter(subject__id=kwargs['subject_pk'])
+
+        serializer = self.serializer_class(grades, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -131,27 +130,35 @@ class GradesDetail(generics.ListCreateAPIView):
         ]
 
     def get(self, request, *args, **kwargs):
+        user = get_object_or_404(User, id=kwargs['user_pk'])
+        student = user.student
 
-        serializer = self.serializer_class(
-            Grade.objects.filter(
-                subject__id=kwargs['subject_pk']
-            ).filter(
-                student__id=User.objects.get(id=kwargs['user_pk']).student.pk
-            ),
-            many=True
+        if IsStudent().has_permission(request, self):
+            if student != request.user.student:
+                return Response(
+                    {'message': 'You can view only your own grades.'},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+
+        grades = Grade.objects.filter(
+            subject__id=kwargs['subject_pk']
+        ).filter(
+            student__id=user.student.pk
         )
+
+        serializer = self.serializer_class(grades, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
     def post(self, request, *args, **kwargs):
-        subject = Subject.objects.get(id=kwargs['subject_pk'])
-        student = User.objects.get(id=kwargs['user_pk']).student
+        subject = get_object_or_404(Subject, id=kwargs['subject_pk'])
+        user = get_object_or_404(User, id=kwargs['user_pk'])
 
         context = {
             'request': request,
             'subject': subject,
-            'student': student
+            'student': user.student
         }
 
         serializer = self.serializer_class(
@@ -166,3 +173,21 @@ class GradesDetail(generics.ListCreateAPIView):
             status=status.HTTP_201_CREATED,
             headers=headers
         )
+
+
+class StudentsList(generics.ListAPIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = StudentProfileSerializer
+
+    def get(self, request, *args, **kwargs):
+        clazz = get_object_or_404(
+            Class,
+            number=kwargs['class_number'],
+            letter=kwargs['class_letter']
+        )
+        students = Student.objects.filter(clazz=clazz)
+
+        serializer = self.serializer_class(students, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
