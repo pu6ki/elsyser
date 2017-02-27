@@ -28,7 +28,8 @@ class MaterialsViewSet(viewsets.GenericViewSet):
     def get_permissions(self):
         return [
             permission()
-            for permission in self.permission_classes_by_action[self.action]
+            for permission
+            in self.permission_classes_by_action[self.action]
         ]
 
 
