@@ -97,9 +97,9 @@ Logo is designed by [Vladimir Vladinov](https://github.com/thehughmungus).
 ### Task list:
 
 - [x] Write tests for materials.
-- [ ] Implement comments section for materials.
 - [x] Fix profile image updating in profile.
 - [x] Implement tests for submissions module.
+- [ ] Teachers can post grades only for their subject.
 
 ### License
 

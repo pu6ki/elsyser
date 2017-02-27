@@ -106,7 +106,9 @@ class GradesList(generics.ListAPIView):
     serializer_class = GradesSerializer
 
     def get(self, request, *args, **kwargs):
-        grades = Grade.objects.filter(subject__id=kwargs['subject_pk'])
+        grades = Grade.objects.filter(
+            subject__id=kwargs['subject_pk']
+        ).order_by('-pk')
 
         serializer = self.serializer_class(grades, many=True)
 
@@ -124,9 +126,8 @@ class GradesDetail(generics.ListCreateAPIView):
     def get_permissions(self):
         return [
             permission()
-            for permission in self.permission_classes_by_action[
-                self.request.method.lower()
-            ]
+            for permission
+            in self.permission_classes_by_action[self.request.method.lower()]
         ]
 
     def get(self, request, *args, **kwargs):
@@ -154,6 +155,14 @@ class GradesDetail(generics.ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         subject = get_object_or_404(Subject, id=kwargs['subject_pk'])
         user = get_object_or_404(User, id=kwargs['user_pk'])
+
+        teacher_subject = request.user.teacher.subject
+
+        if subject != teacher_subject:
+            return Response(
+                {'message': 'You can only post grades for your subject.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
 
         context = {
             'request': request,
