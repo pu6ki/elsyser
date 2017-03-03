@@ -3,7 +3,9 @@ from django.conf.urls import url, include
 from rest_framework import routers
 
 from students.views import (
-    UserLogin, ProfileViewSet, StudentRegistration, SubjectsList,
+    UserLogin, ProfileViewSet, StudentRegistration,
+    SubjectsList,
+    ClassesList,
     GradesList, GradesDetail,
     StudentsList
 )
@@ -18,6 +20,11 @@ urlpatterns = [
     url(r'^login/$', UserLogin.as_view(), name='login'),
     url(r'^subjects/$', SubjectsList.as_view(), name='subjects-list'),
     url(
+        r'^classes/(?P<class_number>[8]|[9]|1[0-2])/$',
+        ClassesList.as_view(),
+        name='classes-list'
+    ),
+    url(
         r'^grades/(?P<subject_pk>[0-9]+)/$',
         GradesList.as_view(),
         name='grades-list'
@@ -31,7 +38,7 @@ urlpatterns = [
         r'^students/(?P<class_number>[8]|[9]|1[0-2])/(?P<class_letter>[A]|[B]|[V]|[G])/$',
         StudentsList.as_view(),
         name='students-list'
-    )
+    ),
 ]
 
 urlpatterns += router.urls

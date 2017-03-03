@@ -9,6 +9,7 @@ from rest_framework.authentication import TokenAuthentication
 
 from students.serializers import (
     UserLoginSerializer, UserInfoSerializer,
+    ClassSerializer,
     StudentSerializer,
     SubjectSerializer,
     StudentProfileSerializer, TeacherProfileSerializer,
@@ -195,8 +196,24 @@ class StudentsList(generics.ListAPIView):
             number=kwargs['class_number'],
             letter=kwargs['class_letter']
         )
-        students = Student.objects.filter(clazz=clazz)
 
-        serializer = self.serializer_class(students, many=True)
+        serializer = self.serializer_class(
+            Student.objects.filter(clazz=clazz),
+            many=True
+        )
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ClassesList(generics.ListAPIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ClassSerializer
+
+    def get(self, request, *args, **kwargs):
+        serializer = self.serializer_class(
+            Class.objects.filter(number=kwargs['class_number']),
+            many=True
+        )
 
         return Response(serializer.data, status=status.HTTP_200_OK)
