@@ -142,8 +142,9 @@ class NewsTeachersViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def create(self, request):
-        context = {'request': request}
+    def create(self, request, class_number=None, class_letter=None):
+        clazz = Class.objects.get(number=class_number, letter=class_letter)
+        context = {'request': request, 'clazz': clazz}
 
         serializer = self.serializer_class(
             context=context, data=request.data
@@ -158,8 +159,8 @@ class NewsTeachersViewSet(viewsets.ModelViewSet):
             headers=headers
         )
 
-    def update(self, request, pk=None):
-        news = get_object_or_404(News, id=pk)
+    def update(self, request, pk=None, *args, **kwargs):
+        news = get_object_or_404(self.get_queryset(), id=pk)
 
         if news.author != request.user:
             return Response(
@@ -180,8 +181,8 @@ class NewsTeachersViewSet(viewsets.ModelViewSet):
             headers=headers
         )
 
-    def destroy(self, request, pk=None):
-        news = get_object_or_404(News, id=pk)
+    def destroy(self, request, pk=None, *args, **kwargs):
+        news = get_object_or_404(self.get_queryset(), id=pk)
 
         if news.author != request.user:
             return Response(

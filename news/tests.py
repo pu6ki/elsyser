@@ -72,7 +72,6 @@ class NewsStudentsViewSetTestCase(APITestCase):
         self.assertIsNotNone(request.data)
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
-
     def test_news_list_with_teacher_account(self):
         teacher_user = User.objects.create(username='teacher', password='123456')
         subject = Subject.objects.create(title='Maths')
@@ -387,6 +386,7 @@ class NewsStudentsViewSetTestCase(APITestCase):
 
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
+
 class NewsTeachersViewSetTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
@@ -461,6 +461,456 @@ class NewsTeachersViewSetTestCase(APITestCase):
         )
 
         self.assertIsNotNone(request.data)
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+    def test_news_detail_with_authenticated_user(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.get(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'pk': self.news.id
+                }
+            )
+        )
+
+        self.assertIsNotNone(request.data)
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+    def test_news_list_with_student_account(self):
+        student_user = User.objects.create(username='teacher', password='123456')
+        student = Student.objects.create(user=student_user, clazz=self.clazz)
+
+        self.client.force_authenticate(user=student_user)
+
+        request = self.client.get(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                }
+            )
+        )
+
+        self.assertEqual(
+            request.data['detail'],
+            'You do not have permission to perform this action.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_news_list_with_same_class(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.get(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter
+                }
+            )
+        )
+
+        self.assertEqual(request.data[0]['title'], self.news.title)
+        self.assertEqual(request.data[0]['content'], self.news.content)
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+    def test_news_list_with_different_class(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.get(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'class_number': 9,
+                    'class_letter': 'V'
+                }
+            )
+        )
+
+        self.assertEqual(request.data, [])
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+    def test_news_list_creation_with_empty_title(self):
+        self.client.force_authenticate(user=self.user)
+        self.news.title = ''
+        post_data = NewsSerializer(self.news).data
+
+        request = self.client.post(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['title'], ['This field may not be blank.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_news_list_creation_with_too_short_title(self):
+        self.client.force_authenticate(user=self.user)
+        self.news.title = 'yo'
+        post_data = NewsSerializer(self.news).data
+
+        request = self.client.post(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['title'],
+            ['Ensure this field has at least 3 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_news_list_creation_with_too_long_title(self):
+        self.client.force_authenticate(user=self.user)
+        self.news.title = 'yo' * 120
+        post_data = NewsSerializer(self.news).data
+
+        request = self.client.post(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['title'],
+            ['Ensure this field has no more than 100 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_news_list_creation_with_empty_content(self):
+        self.client.force_authenticate(user=self.user)
+        self.news.content = ''
+        post_data = NewsSerializer(self.news).data
+
+        request = self.client.post(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['content'], ['This field may not be blank.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_news_list_creation_with_too_short_content(self):
+        self.client.force_authenticate(user=self.user)
+        self.news.content = 'hey'
+        post_data = NewsSerializer(self.news).data
+
+        request = self.client.post(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['content'],
+            ['Ensure this field has at least 5 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_news_list_creation_with_too_long_content(self):
+        self.client.force_authenticate(user=self.user)
+        self.news.content = 'Hey Jude!' * 10000
+        post_data = NewsSerializer(self.news).data
+
+        request = self.client.post(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['content'],
+            ['Ensure this field has no more than 10000 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_news_list_creation_with_valid_data(self):
+        self.client.force_authenticate(user=self.user)
+        self.news.title = 'testNews'
+        self.news.content = 'testContent'
+        post_data = NewsSerializer(self.news).data
+
+        request = self.client.post(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(request.data['title'], self.news.title)
+        self.assertEqual(request.data['content'], self.news.content)
+        self.assertEqual(request.status_code, status.HTTP_201_CREATED)
+
+    def test_news_detail_with_invalid_id(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.get(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'pk': self.news.id + 1
+                }
+            )
+        )
+
+        self.assertEqual(request.data['detail'], 'Not found.')
+        self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_news_detail_with_valid_id(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.get(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'pk': self.news.id
+                }
+            )
+        )
+
+        self.assertEqual(request.data['id'], self.news.id)
+        self.assertEqual(request.data['title'], self.news.title)
+        self.assertEqual(request.data['content'], self.news.content)
+
+        comments_data = request.data['comment_set']
+        self.assertEqual(comments_data[0]['content'], self.comment.content)
+
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+    def test_news_update_with_empty_title(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'pk': self.news.id
+                }
+            ),
+            {'title': ''},
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['title'], ['This field may not be blank.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_news_update_with_too_short_title(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'pk': self.news.id
+                }
+            ),
+            {'title': 'yo'},
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['title'],
+            ['Ensure this field has at least 3 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_news_update_with_too_long_title(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'pk': self.news.id
+                }
+            ),
+            {'title': 'DAIMO' * 100},
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['title'],
+            ['Ensure this field has no more than 100 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_news_update_with_empty_content(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'pk': self.news.id
+                }
+            ),
+            {'content': ''},
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['content'], ['This field may not be blank.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_news_update_with_too_short_content(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'pk': self.news.id
+                }
+            ),
+            {'content': 'ba'},
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['content'],
+            ['Ensure this field has at least 5 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_news_update_with_too_long_content(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'pk': self.news.id
+                }
+            ),
+            {'content': 'RAZDAIMOWE' * 5000},
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['content'],
+            ['Ensure this field has no more than 10000 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_news_update_with_valid_data(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'pk': self.news.id
+                }
+            ),
+            {'title': 'So far, so good!', 'content': 'SO WHAT?!'},
+            format='json'
+        )
+
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+    def test_news_deletion_with_invalid_id(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.delete(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'pk': self.news.id + 2
+                }
+            )
+        )
+
+        self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_news_deletion_with_valid_id(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.delete(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'pk': self.news.id
+                }
+            )
+        )
+
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
 
