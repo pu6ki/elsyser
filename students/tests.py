@@ -805,3 +805,72 @@ class StudentsListViewTestCase(APITestCase):
 
         self.assertTrue(request.data)
         self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+    def test_students_list_with_invalid_clazz_letter(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.get(
+            reverse(
+                self.view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': 'Z'
+                }
+            )
+        )
+
+        self.assertEqual(request.data['detail'], 'Not found.')
+        self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class ClassesListViewTestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.view_name = 'students:classes-list'
+
+        self.clazz = Class.objects.create(number=10, letter='A')
+
+        self.user = User.objects.create(
+            username='tester',
+            first_name='test',
+            last_name='user',
+            email='tester@gmail.com',
+            password='pass'
+        )
+
+        self.student = Student.objects.create(
+            user=self.user,
+            clazz=self.clazz,
+            info='I am the lord of the rings.'
+        )
+
+    def test_classes_list_with_anonymous_user(self):
+        request = self.client.get(
+            reverse(
+                self.view_name,
+                kwargs={
+                    'class_number': self.clazz.number
+                }
+            )
+        )
+
+        self.assertEqual(
+            request.data['detail'],
+            'Authentication credentials were not provided.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_classes_list_with_authenticated_user(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.get(
+            reverse(
+                self.view_name,
+                kwargs={
+                    'class_number': self.clazz.number
+                }
+            )
+        )
+        
+        self.assertTrue(request.data)
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
