@@ -10,11 +10,11 @@ from news.serializers import NewsSerializer, CommentSerializer
 from students.models import Class, Subject, Student, Teacher
 
 
-class NewsViewSetTestCase(APITestCase):
+class NewsStudentsViewSetTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.list_view_name = 'news:news-list'
-        self.detail_view_name = 'news:news-detail'
+        self.list_view_name = 'news:studentsNews-list'
+        self.detail_view_name = 'news:studentsNews-detail'
 
         self.user = User(username='test', email='sisko@gmail.com')
         self.user.set_password('password123')
@@ -25,11 +25,12 @@ class NewsViewSetTestCase(APITestCase):
         self.news = News.objects.create(
             title='test_news',
             content='blablabla',
-            author=self.student,
+            clazz=self.clazz,
+            author=self.user,
         )
         self.comment = Comment.objects.create(
             news=self.news,
-            posted_by=self.student,
+            posted_by=self.user,
             content='This is a very nice platform!'
         )
 
@@ -238,7 +239,7 @@ class NewsViewSetTestCase(APITestCase):
 
         new_user = User.objects.create(username='test2', password='pass')
         new_student = Student.objects.create(user=new_user, clazz=self.clazz)
-        self.news.author = new_student
+        self.news.author = new_user
         self.news.save()
 
         request = self.client.put(
@@ -356,7 +357,7 @@ class NewsViewSetTestCase(APITestCase):
 
         new_user = User.objects.create(username='test2', password='pass')
         new_student = Student.objects.create(user=new_user, clazz=self.clazz)
-        self.news.author = new_student
+        self.news.author = new_user
         self.news.save()
 
         request = self.client.delete(
@@ -386,11 +387,88 @@ class NewsViewSetTestCase(APITestCase):
 
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
-class CommentsViewSetTestCase(APITestCase):
+class NewsTeachersViewSetTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.list_view_name = 'news:news-comments-list'
-        self.detail_view_name = 'news:news-comments-detail'
+        self.list_view_name = 'news:teachersNews-list'
+        self.detail_view_name = 'news:teachersNews-detail'
+
+        self.user = User(username='test', email='sisko@gmail.com')
+        self.user.set_password('password123')
+        self.user.save()
+
+        self.clazz = Class.objects.create(number=10, letter='A')
+        self.subject = Subject.objects.create(title='Maths')
+        self.student = Teacher.objects.create(user=self.user, subject=self.subject)
+        self.news = News.objects.create(
+            title='test_news',
+            content='blablabla',
+            clazz=self.clazz,
+            author=self.user,
+        )
+        self.comment = Comment.objects.create(
+            news=self.news,
+            posted_by=self.user,
+            content='This is a very nice platform!'
+        )
+
+    def test_news_list_with_anonymous_user(self):
+        request = self.client.get(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter
+                }
+            )
+        )
+
+        self.assertEqual(
+            request.data['detail'],
+            'Authentication credentials were not provided.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_news_detail_with_anonymous_user(self):
+        request = self.client.get(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'pk': self.news.id
+                }
+            )
+        )
+
+        self.assertEqual(
+            request.data['detail'],
+            'Authentication credentials were not provided.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_news_with_authenticated_user(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.get(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter
+                }
+            )
+        )
+
+        self.assertIsNotNone(request.data)
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+class NewsStudentsCommentsViewSetTestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.list_view_name = 'news:studentsNews-comments-list'
+        self.detail_view_name = 'news:studentsNews-comments-detail'
 
         self.user = User.objects.create(username='test1', password='pass')
         self.clazz = Class.objects.create(number=10, letter='A')
@@ -398,11 +476,12 @@ class CommentsViewSetTestCase(APITestCase):
         self.news = News.objects.create(
             title='test_news',
             content='blablabla',
-            author=self.student,
+            clazz=self.clazz,
+            author=self.user,
         )
         self.comment = Comment.objects.create(
             news=self.news,
-            posted_by=self.student,
+            posted_by=self.user,
             content='This is a very nice platform!'
         )
 
@@ -412,7 +491,7 @@ class CommentsViewSetTestCase(APITestCase):
         post_data = CommentSerializer(self.comment).data
 
         request = self.client.post(
-            reverse(self.list_view_name, kwargs={'news_pk': self.news.id}),
+            reverse(self.list_view_name, kwargs={'studentsNews_pk': self.news.id}),
             post_data,
             format='json'
         )
@@ -428,7 +507,7 @@ class CommentsViewSetTestCase(APITestCase):
         post_data = CommentSerializer(self.comment).data
 
         request = self.client.post(
-            reverse(self.list_view_name, kwargs={'news_pk': self.news.id}),
+            reverse(self.list_view_name, kwargs={'studentsNews_pk': self.news.id}),
             post_data,
             format='json'
         )
@@ -445,7 +524,7 @@ class CommentsViewSetTestCase(APITestCase):
         post_data = CommentSerializer(self.comment).data
 
         request = self.client.post(
-            reverse(self.list_view_name, kwargs={'news_pk': self.news.id}),
+            reverse(self.list_view_name, kwargs={'studentsNews_pk': self.news.id}),
             post_data,
             format='json'
         )
@@ -459,7 +538,7 @@ class CommentsViewSetTestCase(APITestCase):
         request = self.client.put(
             reverse(
                 self.detail_view_name,
-                kwargs={'news_pk': self.news.id, 'pk': self.comment.id}
+                kwargs={'studentsNews_pk': self.news.id, 'pk': self.comment.id}
             ),
             {'content': ''},
             format='json'
@@ -475,13 +554,13 @@ class CommentsViewSetTestCase(APITestCase):
 
         new_user = User.objects.create(username='test2', password='pass')
         new_student = Student.objects.create(user=new_user, clazz=self.clazz)
-        self.comment.posted_by = new_student
+        self.comment.posted_by = new_user
         self.comment.save()
 
         request = self.client.put(
             reverse(
                 self.detail_view_name,
-                kwargs={'news_pk': self.news.id, 'pk': self.comment.id}
+                kwargs={'studentsNews_pk': self.news.id, 'pk': self.comment.id}
             ),
             {'content': 'I am stupid!!!'},
             format='json'
@@ -498,7 +577,7 @@ class CommentsViewSetTestCase(APITestCase):
         request = self.client.put(
             reverse(
                 self.detail_view_name,
-                kwargs={'news_pk': self.news.id, 'pk': self.comment.id}
+                kwargs={'studentsNews_pk': self.news.id, 'pk': self.comment.id}
             ),
             {'content': 'Hey Jude!' * 1024},
             format='json'
@@ -516,7 +595,7 @@ class CommentsViewSetTestCase(APITestCase):
         request = self.client.put(
             reverse(
                 self.detail_view_name,
-                kwargs={'news_pk': self.news.id, 'pk': self.comment.id}
+                kwargs={'studentsNews_pk': self.news.id, 'pk': self.comment.id}
             ),
             {'content': 'Hey Jude, don`t be afraid.'},
             format='json'
@@ -530,7 +609,7 @@ class CommentsViewSetTestCase(APITestCase):
         request = self.client.delete(
             reverse(
                 self.detail_view_name,
-                kwargs={'news_pk': self.news.id + 1, 'pk': self.comment.id}
+                kwargs={'studentsNews_pk': self.news.id + 1, 'pk': self.comment.id}
             )
         )
 
@@ -543,7 +622,7 @@ class CommentsViewSetTestCase(APITestCase):
         request = self.client.delete(
             reverse(
                 self.detail_view_name,
-                kwargs={'news_pk': self.news.id, 'pk': self.comment.id + 1}
+                kwargs={'studentsNews_pk': self.news.id, 'pk': self.comment.id + 1}
             )
         )
 
@@ -555,13 +634,13 @@ class CommentsViewSetTestCase(APITestCase):
 
         new_user = User.objects.create(username='test3', password='pass')
         new_student = Student.objects.create(user=new_user, clazz=self.clazz)
-        self.comment.posted_by = new_student
+        self.comment.posted_by = new_user
         self.comment.save()
 
         request = self.client.delete(
             reverse(
                 self.detail_view_name,
-                kwargs={'news_pk': self.news.id, 'pk': self.comment.id}
+                kwargs={'studentsNews_pk': self.news.id, 'pk': self.comment.id}
             )
         )
 
@@ -576,7 +655,7 @@ class CommentsViewSetTestCase(APITestCase):
         request = self.client.delete(
             reverse(
                 self.detail_view_name,
-                kwargs={'news_pk': self.news.id, 'pk': self.comment.id}
+                kwargs={'studentsNews_pk': self.news.id, 'pk': self.comment.id}
             )
         )
 

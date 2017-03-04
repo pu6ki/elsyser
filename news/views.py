@@ -30,7 +30,7 @@ class NewsStudentsViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request):
-        context = {'request': request}
+        context = {'request': request, 'clazz': request.user.student.clazz}
 
         serializer = self.serializer_class(
             context=context, data=request.data
@@ -206,7 +206,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
 
     def get_news_pk(self, kwargs):
         return kwargs.get(
-            'students_news_pk', kwargs.get('teachers_news_pk', None)
+            'studentsNews_pk', kwargs.get('teachersNews_pk', None)
         )
 
     def list(self, *args, **kwargs):
