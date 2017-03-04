@@ -1,12 +1,14 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-from students.models import Student
+from students.models import Class
 
 
 class News(models.Model):
     title = models.CharField(max_length=100, blank=False)
     content = models.TextField(max_length=10000, blank=False)
-    author = models.ForeignKey(Student, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     posted_on = models.DateTimeField(auto_now_add=True)
     edited = models.BooleanField(default=False)
     last_edited_on = models.DateTimeField(auto_now=True)
@@ -14,7 +16,6 @@ class News(models.Model):
     class Meta:
         ordering = ['-last_edited_on']
         verbose_name_plural = 'news'
-        unique_together = ('title', 'content')
 
 
     def __str__(self):
@@ -23,7 +24,7 @@ class News(models.Model):
 
 class Comment(models.Model):
     news = models.ForeignKey(News, on_delete=models.CASCADE)
-    posted_by = models.ForeignKey(Student, on_delete=models.CASCADE)
+    posted_by = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField(max_length=2048)
     posted_on = models.DateTimeField(auto_now_add=True)
     edited = models.BooleanField(default=False)

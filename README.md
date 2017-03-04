@@ -73,7 +73,8 @@ How to copy this project to your local machine and run it:
     ![Postman example](https://raw.githubusercontent.com/pu6ki/elsyser/master/static/authorization-example.png)
 5. You can view everything about you and your class:
     - */api/exams* - Upcoming exams about your class.
-    - */api/news* - News about your class, which you can post and edit too. Each news has it's own comments.
+    - */api/students/news* - News about your class, which you can post and edit too. Each news has it's own comments.
+    - */api/teachers/news*
     - */api/homeworks* - Current homeworks about you.
     - */api/profile/{user_id}* -Personal info about everyone.
     - */api/materials* - Useful materials for a certain topic.
@@ -101,6 +102,7 @@ Logo is designed by [Vladimir Vladinov](https://github.com/thehughmungus).
 - [x] Fix profile image updating in profile.
 - [x] Implement tests for submissions module.
 - [x] Teachers can post grades only for their subject.
+- [ ] Fix tests for news and add new ones for the teachers news.
 
 ### License
 
