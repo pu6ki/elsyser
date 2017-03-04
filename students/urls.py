@@ -35,7 +35,7 @@ urlpatterns = [
         name='grades-detail'
     ),
     url(
-        r'^students/(?P<class_number>[8]|[9]|1[0-2])/(?P<class_letter>[A]|[B]|[V]|[G])/$',
+        r'^students/(?P<class_number>[8]|[9]|1[0-2])/(?P<class_letter>[A-Z])/$',
         StudentsList.as_view(),
         name='students-list'
     ),
