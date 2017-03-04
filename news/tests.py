@@ -1113,3 +1113,267 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
             request.data['message'], 'Comment successfully deleted.'
         )
         self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+class NewsTeachersCommentsViewSetTestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.list_view_name = 'news:teachersNews-comments-list'
+        self.detail_view_name = 'news:teachersNews-comments-detail'
+
+        self.user = User.objects.create(username='test1', password='pass')
+        self.clazz = Class.objects.create(number=10, letter='A')
+        self.subject = Subject.objects.create(title='Literature')
+        self.teacher = Teacher.objects.create(user=self.user, subject=self.subject)
+
+        self.news = News.objects.create(
+            title='test_news',
+            content='blablabla',
+            clazz=self.clazz,
+            author=self.user,
+        )
+        self.comment = Comment.objects.create(
+            news=self.news,
+            posted_by=self.user,
+            content='This is a very nice platform!'
+        )
+
+    def test_comment_creation_with_empty_content(self):
+        self.client.force_authenticate(user=self.user)
+        self.comment.content = ''
+        post_data = CommentSerializer(self.comment).data
+
+        request = self.client.post(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'teachersNews_pk': self.news.id
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['content'], ['This field may not be blank.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_comment_creation_with_too_long_content(self):
+        self.client.force_authenticate(user=self.user)
+        self.comment.content = 'Hey Jude!' * 1024
+        post_data = CommentSerializer(self.comment).data
+
+        request = self.client.post(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'teachersNews_pk': self.news.id
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['content'],
+            ['Ensure this field has no more than 2048 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_comment_creation_with_valid_content(self):
+        self.client.force_authenticate(user=self.user)
+        self.comment.content = 'This is a very nice platorm, man!'
+        post_data = CommentSerializer(self.comment).data
+
+        request = self.client.post(
+            reverse(
+                self.list_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'teachersNews_pk': self.news.id
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(request.data['content'], self.comment.content)
+        self.assertEqual(request.status_code, status.HTTP_201_CREATED)
+
+    def test_comment_update_with_empty_content(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'teachersNews_pk': self.news.id,
+                    'pk': self.comment.id
+                }
+            ),
+            {'content': ''},
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['content'], ['This field may not be blank.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_comment_update_of_another_user(self):
+        self.client.force_authenticate(user=self.user)
+
+        new_user = User.objects.create(username='test2', password='pass')
+        Teacher.objects.create(user=new_user, subject=self.subject)
+        self.comment.posted_by = new_user
+        self.comment.save()
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'teachersNews_pk': self.news.id,
+                    'pk': self.comment.id
+                }
+            ),
+            {'content': 'blqblqbqlbq'},
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['message'], 'You can edit only your own comments.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_comment_update_with_too_long_content(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'teachersNews_pk': self.news.id,
+                    'pk': self.comment.id
+                }
+            ),
+            {'content': 'Barcelona' * 1024},
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['content'],
+            ['Ensure this field has no more than 2048 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_comment_update_with_valid_content(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.put(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'teachersNews_pk': self.news.id,
+                    'pk': self.comment.id
+                }
+            ),
+            {'content': 'Hey Jude, dont let me down!'},
+            format='json'
+        )
+
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+    def test_comment_deletion_with_invalid_news_id(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.delete(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'teachersNews_pk': self.news.id + 1,
+                    'pk': self.comment.id
+                }
+            )
+        )
+
+        self.assertEqual(request.data['detail'], 'Not found.')
+        self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_comment_deletion_with_invalid_comment_id(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.delete(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'teachersNews_pk': self.news.id,
+                    'pk': self.comment.id + 5
+                }
+            )
+        )
+
+        self.assertEqual(request.data['detail'], 'Not found.')
+        self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_comment_deletion_of_another_user(self):
+        self.client.force_authenticate(user=self.user)
+
+        new_user = User.objects.create(username='test3', password='pass')
+        Teacher.objects.create(user=new_user, subject=self.subject)
+        self.comment.posted_by = new_user
+        self.comment.save()
+
+        request = self.client.delete(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'teachersNews_pk': self.news.id,
+                    'pk': self.comment.id
+                }
+            )
+        )
+
+        self.assertEqual(
+            request.data['message'], 'You can delete only your own comments.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_comment_deletion_with_valid_ids(self):
+        self.client.force_authenticate(user=self.user)
+
+        request = self.client.delete(
+            reverse(
+                self.detail_view_name,
+                kwargs={
+                    'class_number': self.clazz.number,
+                    'class_letter': self.clazz.letter,
+                    'teachersNews_pk': self.news.id,
+                    'pk': self.comment.id
+                }
+            )
+        )
+
+        self.assertEqual(
+            request.data['message'], 'Comment successfully deleted.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
