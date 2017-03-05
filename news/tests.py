@@ -105,7 +105,7 @@ class NewsStudentsViewSetTestCase(APITestCase):
         self.assertEqual(request.data, [])
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
-    def test_news_list_creation_with_empty_title(self):
+    def test_news_creation_with_empty_title(self):
         self.client.force_authenticate(user=self.user)
         self.news.title = ''
         post_data = NewsSerializer(self.news).data
@@ -119,7 +119,7 @@ class NewsStudentsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_news_list_creation_with_too_short_title(self):
+    def test_news_creation_with_too_short_title(self):
         self.client.force_authenticate(user=self.user)
         self.news.title = 'yo'
         post_data = NewsSerializer(self.news).data
@@ -134,7 +134,7 @@ class NewsStudentsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_news_list_creation_with_too_long_title(self):
+    def test_news_creation_with_too_long_title(self):
         self.client.force_authenticate(user=self.user)
         self.news.title = 'yo' * 120
         post_data = NewsSerializer(self.news).data
@@ -149,7 +149,7 @@ class NewsStudentsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_news_list_creation_with_empty_content(self):
+    def test_news_creation_with_empty_content(self):
         self.client.force_authenticate(user=self.user)
         self.news.content = ''
         post_data = NewsSerializer(self.news).data
@@ -163,7 +163,7 @@ class NewsStudentsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_news_list_creation_with_too_short_content(self):
+    def test_news_creation_with_too_short_content(self):
         self.client.force_authenticate(user=self.user)
         self.news.content = 'hey'
         post_data = NewsSerializer(self.news).data
@@ -178,7 +178,7 @@ class NewsStudentsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_news_list_creation_with_too_long_content(self):
+    def test_news_creation_with_too_long_content(self):
         self.client.force_authenticate(user=self.user)
         self.news.content = 'Hey Jude!' * 10000
         post_data = NewsSerializer(self.news).data
@@ -193,7 +193,7 @@ class NewsStudentsViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_news_list_creation_with_valid_data(self):
+    def test_news_creation_with_valid_data(self):
         self.client.force_authenticate(user=self.user)
         self.news.title = 'testNews'
         self.news.content = 'testContent'
@@ -447,7 +447,7 @@ class NewsTeachersViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_news_with_authenticated_user(self):
+    def test_news_list_with_authenticated_user(self):
         self.client.force_authenticate(user=self.user)
 
         request = self.client.get(
@@ -535,7 +535,7 @@ class NewsTeachersViewSetTestCase(APITestCase):
         self.assertEqual(request.data, [])
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
-    def test_news_list_creation_with_empty_title(self):
+    def test_news_creation_with_empty_title(self):
         self.client.force_authenticate(user=self.user)
         self.news.title = ''
         post_data = NewsSerializer(self.news).data
@@ -557,7 +557,7 @@ class NewsTeachersViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_news_list_creation_with_too_short_title(self):
+    def test_news_creation_with_too_short_title(self):
         self.client.force_authenticate(user=self.user)
         self.news.title = 'yo'
         post_data = NewsSerializer(self.news).data
@@ -580,7 +580,7 @@ class NewsTeachersViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_news_list_creation_with_too_long_title(self):
+    def test_news_creation_with_too_long_title(self):
         self.client.force_authenticate(user=self.user)
         self.news.title = 'yo' * 120
         post_data = NewsSerializer(self.news).data
@@ -603,7 +603,7 @@ class NewsTeachersViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_news_list_creation_with_empty_content(self):
+    def test_news_creation_with_empty_content(self):
         self.client.force_authenticate(user=self.user)
         self.news.content = ''
         post_data = NewsSerializer(self.news).data
@@ -625,7 +625,7 @@ class NewsTeachersViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_news_list_creation_with_too_short_content(self):
+    def test_news_creation_with_too_short_content(self):
         self.client.force_authenticate(user=self.user)
         self.news.content = 'hey'
         post_data = NewsSerializer(self.news).data
@@ -648,7 +648,7 @@ class NewsTeachersViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_news_list_creation_with_too_long_content(self):
+    def test_news_creation_with_too_long_content(self):
         self.client.force_authenticate(user=self.user)
         self.news.content = 'Hey Jude!' * 10000
         post_data = NewsSerializer(self.news).data
@@ -671,7 +671,7 @@ class NewsTeachersViewSetTestCase(APITestCase):
         )
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_news_list_creation_with_valid_data(self):
+    def test_news_creation_with_valid_data(self):
         self.client.force_authenticate(user=self.user)
         self.news.title = 'testNews'
         self.news.content = 'testContent'
@@ -912,6 +912,247 @@ class NewsTeachersViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+
+class NewsTeachersClassNumberListViewTestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.view_name = 'news:teachers-class-number-list'
+
+        self.user1 = User(username='test', email='sisko@gmail.com')
+        self.user1.set_password('password123')
+        self.user1.save()
+
+        self.user2 = User(username='arigato', email='wen@gmail.com')
+        self.user2.set_password('qwerty')
+        self.user2.save()
+
+        self.user3 = User(username='teacher', email='teach@gmail.com')
+        self.user3.set_password('qwerty')
+        self.user3.save()
+
+        self.subject = Subject.objects.create(title='Maths')
+        self.teacher = Teacher.objects.create(user=self.user3, subject=self.subject)
+
+        self.clazz_number = 10
+        self.clazz1 = Class.objects.create(number=self.clazz_number, letter='A')
+        self.clazz2 = Class.objects.create(number=self.clazz_number, letter='B')
+        self.clazz3 = Class.objects.create(number=self.clazz_number + 1, letter='V')
+
+        self.student1 = Student.objects.create(user=self.user1, clazz=self.clazz1)
+        self.student2 = Student.objects.create(user=self.user2, clazz=self.clazz2)
+
+        self.news1 = News.objects.create(
+            title='test_news',
+            content='blablabla',
+            clazz=self.clazz1,
+            author=self.user1,
+        )
+        self.news2 = News.objects.create(
+            title='test_news',
+            content='blablabla',
+            clazz=self.clazz2,
+            author=self.user2,
+        )
+
+    def test_news_list_with_anonymous_user(self):
+        request = self.client.get(
+            reverse(
+                self.view_name,
+                kwargs={
+                    'class_number': self.clazz_number
+                }
+            )
+        )
+
+        self.assertEqual(
+            request.data['detail'],
+            'Authentication credentials were not provided.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_news_list_with_authenticated_user(self):
+        self.client.force_authenticate(user=self.user3)
+
+        request = self.client.get(
+            reverse(
+                self.view_name,
+                kwargs={
+                    'class_number': self.clazz_number,
+                }
+            )
+        )
+
+        self.assertIsNotNone(request.data)
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+    def test_news_list_with_student_account(self):
+        self.client.force_authenticate(user=self.user1)
+
+        request = self.client.get(
+            reverse(
+                self.view_name,
+                kwargs={
+                    'class_number': self.clazz_number
+                }
+            )
+        )
+
+        self.assertEqual(
+            request.data['detail'],
+            'You do not have permission to perform this action.'
+        )
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_news_creation_with_empty_title(self):
+        self.client.force_authenticate(user=self.user3)
+        self.news1.title = ''
+        post_data = NewsSerializer(self.news1).data
+
+        request = self.client.post(
+            reverse(
+                self.view_name,
+                kwargs={
+                    'class_number': self.clazz_number
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['title'], ['This field may not be blank.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_news_creation_with_too_short_title(self):
+        self.client.force_authenticate(user=self.user3)
+        self.news1.title = 'oz'
+        post_data = NewsSerializer(self.news1).data
+
+        request = self.client.post(
+            reverse(
+                self.view_name,
+                kwargs={
+                    'class_number': self.clazz_number
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['title'],
+            ['Ensure this field has at least 3 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_news_creation_with_too_long_title(self):
+        self.client.force_authenticate(user=self.user3)
+        self.news1.title = 'daimo!' * 1024
+        post_data = NewsSerializer(self.news1).data
+
+        request = self.client.post(
+            reverse(
+                self.view_name,
+                kwargs={
+                    'class_number': self.clazz_number
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['title'],
+            ['Ensure this field has no more than 100 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_news_creation_with_empty_content(self):
+        self.client.force_authenticate(user=self.user3)
+        self.news1.content = ''
+        post_data = NewsSerializer(self.news1).data
+
+        request = self.client.post(
+            reverse(
+                self.view_name,
+                kwargs={
+                    'class_number': self.clazz_number
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['content'], ['This field may not be blank.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_news_creation_with_too_short_content(self):
+        self.client.force_authenticate(user=self.user3)
+        self.news1.content = 'oba'
+        post_data = NewsSerializer(self.news1).data
+
+        request = self.client.post(
+            reverse(
+                self.view_name,
+                kwargs={
+                    'class_number': self.clazz_number
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['content'],
+            ['Ensure this field has at least 5 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_news_creation_with_too_long_content(self):
+        self.client.force_authenticate(user=self.user3)
+        self.news1.content = 'obalq' * 4242
+        post_data = NewsSerializer(self.news1).data
+
+        request = self.client.post(
+            reverse(
+                self.view_name,
+                kwargs={
+                    'class_number': self.clazz_number
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(
+            request.data['content'],
+            ['Ensure this field has no more than 10000 characters.']
+        )
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_news_creation_with_valid_data(self):
+        self.client.force_authenticate(user=self.user3)
+        self.news1.title = 'new retro wave'
+        self.news1.content = 'daimooooo'
+        post_data = NewsSerializer(self.news1).data
+
+        request = self.client.post(
+            reverse(
+                self.view_name,
+                kwargs={
+                    'class_number': self.clazz_number
+                }
+            ),
+            post_data,
+            format='json'
+        )
+
+        self.assertEqual(request.data['message'], '2 news were posted.')
+        self.assertEqual(request.status_code, status.HTTP_201_CREATED)
 
 
 class NewsStudentsCommentsViewSetTestCase(APITestCase):

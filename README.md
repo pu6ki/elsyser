@@ -72,15 +72,15 @@ How to copy this project to your local machine and run it:
     - Here you will receive your authentication token, which you should pass as authentication header for further requests.
     ![Postman example](https://raw.githubusercontent.com/pu6ki/elsyser/master/static/authorization-example.png)
 5. You can view everything about you and your class:
-    - */api/exams* - Upcoming exams about your class.
-    - */api/students/news* - News about your class, which you can post and edit too. Each news has it's own comments.
-    - */api/teachers/news*
-    - */api/homeworks* - Current homeworks about you.
-    - */api/profile/{user_id}* -Personal info about everyone.
-    - */api/materials* - Useful materials for a certain topic.
-    - */api/grades/{subject_id}* - All grades for a certain subject.
-    - */api/grades/{subject_id}/{user_id}* - Grades for a specific user (student).
-    - */api/students/{class_letter}/{class_number}* - List of all students in a certain class.
+    - */api/exams/* - Upcoming exams about your class.
+    - */api/students/news/* - News about your class, which you can post and edit too. Each news has it's own comments.
+    - */api/teachers/news/* - Teachers news.
+    - */api/homeworks/* - Current homeworks about you.
+    - */api/profile/{user_id}/* -Personal info about everyone.
+    - */api/materials/* - Useful materials for a certain topic.
+    - */api/grades/{subject_id}/* - All grades for a certain subject.
+    - */api/grades/{subject_id}/{user_id}/* - Grades for a specific user (student).
+    - */api/students/{class_letter}/{class_number}/* - List of all students in a certain class.
 
 ## The admin site
 
@@ -102,7 +102,7 @@ Logo is designed by [Vladimir Vladinov](https://github.com/thehughmungus).
 - [x] Fix profile image updating in profile.
 - [x] Implement tests for submissions module.
 - [x] Teachers can post grades only for their subject.
-- [ ] Fix tests for news and add new ones for the teachers news.
+- [x] Fix tests for news and add new ones for the teachers news.
 
 ### License
 

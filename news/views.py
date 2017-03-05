@@ -105,6 +105,7 @@ class NewsTeachersClassNumberList(generics.ListCreateAPIView):
     def post(self, request, class_number=None):
         classes = Class.objects.filter(number=class_number)
 
+        posted_news = 0
         for clazz in classes:
             context = {'clazz': clazz, 'request': request}
 
@@ -114,8 +115,11 @@ class NewsTeachersClassNumberList(generics.ListCreateAPIView):
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
 
+            posted_news += 1
+
         return Response(
-            {'message': 'News were posted.'}, status=status.HTTP_201_CREATED
+            {'message': '{} news were posted.'.format(posted_news)},
+            status=status.HTTP_201_CREATED
         )
 
 
