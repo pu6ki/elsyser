@@ -2,11 +2,11 @@ from rest_framework import serializers
 
 from news.models import News, Comment
 
-from students.serializers import StudentAuthorSerializer, ClassSerializer
+from students.serializers import UserInfoSerializer, ClassSerializer
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    posted_by = StudentAuthorSerializer(read_only=True)
+    posted_by = UserInfoSerializer(read_only=True)
     content = serializers.CharField(max_length=2048)
 
     class Meta:
@@ -38,13 +38,13 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class CommentReadSerializer(CommentSerializer):
-    posted_by = StudentAuthorSerializer(read_only=True)
+    posted_by = UserInfoSerializer(read_only=True)
 
 
 class NewsSerializer(serializers.ModelSerializer):
     title = serializers.CharField(min_length=3, max_length=100)
     content = serializers.CharField(min_length=5, max_length=10000)
-    author = StudentAuthorSerializer(read_only=True)
+    author = UserInfoSerializer(read_only=True)
     clazz = ClassSerializer(read_only=True)
     comment_set = CommentSerializer(read_only=True, many=True)
 
