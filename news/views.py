@@ -84,6 +84,19 @@ class NewsStudentsViewSet(viewsets.ModelViewSet):
         )
 
 
+class NewsTeachersList(generics.ListAPIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated, IsTeacher)
+    serializer_class = NewsSerializer
+
+    def get(self, request, *args, **kwargs):
+        news = News.objects.filter(author=request.user)
+
+        serializer = self.serializer_class(news, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class NewsTeachersClassNumberList(generics.ListCreateAPIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated, IsTeacher)

@@ -4,7 +4,7 @@ from rest_framework_nested import routers
 
 from news.views import (
     NewsStudentsViewSet,
-    NewsTeachersClassNumberList, NewsTeachersViewSet,
+    NewsTeachersList, NewsTeachersClassNumberList, NewsTeachersViewSet,
     CommentsViewSet
 )
 
@@ -41,6 +41,9 @@ teachers_comments_router.register(
 )
 
 urlpatterns = [
+    url(
+        r'^news/teachers/$', NewsTeachersList.as_view(), name='teachers-news-list'
+    ),
     url(
         r'^news/teachers/(?P<class_number>[8]|[9]|1[0-2])/$',
         NewsTeachersClassNumberList.as_view(),
