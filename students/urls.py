@@ -5,7 +5,7 @@ from rest_framework import routers
 from students.views import (
     UserLogin, ProfileViewSet, StudentRegistration,
     SubjectsList,
-    ClassesList,
+    ClassesList, ClassesNumberList,
     GradesList, GradesDetail,
     StudentsList
 )
@@ -19,10 +19,11 @@ urlpatterns = [
     url(r'^register/$', StudentRegistration.as_view(), name='register'),
     url(r'^login/$', UserLogin.as_view(), name='login'),
     url(r'^subjects/$', SubjectsList.as_view(), name='subjects-list'),
+    url(r'^classes/$', ClassesList.as_view(), name='classes-list'),
     url(
         r'^classes/(?P<class_number>[8]|[9]|1[0-2])/$',
-        ClassesList.as_view(),
-        name='classes-list'
+        ClassesNumberList.as_view(),
+        name='classes-number-list'
     ),
     url(
         r'^grades/(?P<subject_pk>[0-9]+)/$',
