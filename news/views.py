@@ -227,12 +227,19 @@ class CommentsViewSet(viewsets.ModelViewSet):
             'studentsNews_pk', kwargs.get('teachersNews_pk', None)
         )
 
-    def list(self, *args, **kwargs):
+    def list(self, request, *args, **kwargs):
         comments = Comment.objects.filter(news__pk=self.get_news_pk(kwargs))
 
         serializer = self.get_serializer_class()(comments, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, *args, **kwargs):
+        comment = get_object_or_404(Comment, id=kwargs['pk'])
+        serializer = self.get_serializer_class()(comment)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
     def create(self, request, *args, **kwargs):
         news = get_object_or_404(News, id=self.get_news_pk(kwargs))
