@@ -10,3 +10,6 @@ __pycache__/
 
 # Media files
 media/
+
+# VSCode settings
+.vscode/

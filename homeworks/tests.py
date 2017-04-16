@@ -5,9 +5,8 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework.reverse import reverse
 from rest_framework import status
 
-from homeworks.serializers import HomeworkSerializer, SubmissionSerializer
-from homeworks.models import Homework, Submission
-
+from .serializers import HomeworkSerializer, SubmissionSerializer
+from .models import Homework, Submission
 from students.models import Class, Subject, Student, Teacher
 
 

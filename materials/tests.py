@@ -4,8 +4,8 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework.reverse import reverse
 from rest_framework import status
 
-from materials.serializers import MaterialSerializer
-from materials.models import Material
+from .serializers import MaterialSerializer
+from .models import Material
 from students.models import Class, Subject, Student, Teacher
 
 

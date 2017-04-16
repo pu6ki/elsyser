@@ -6,9 +6,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
-from exams.serializers import ExamSerializer, ExamReadSerializer
-from exams.models import Exam
-
+from .serializers import ExamSerializer, ExamReadSerializer
+from .models import Exam
 from students.models import Class
 from students.permissions import IsTeacher
 
@@ -49,11 +48,7 @@ class ExamsViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(exam)
         headers = self.get_success_headers(serializer.data)
 
-        return Response(
-            serializer.data,
-            status=status.HTTP_200_OK,
-            headers=headers
-        )
+        return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)
 
     def create(self, request):
         context = {'request': request}
@@ -64,9 +59,7 @@ class ExamsViewSet(viewsets.ModelViewSet):
             letter=clazz_data['letter']
         )
 
-        serializer = self.get_serializer(
-            context=context, data=request.data
-        )
+        serializer = self.get_serializer(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(clazz=clazz)
         headers = self.get_success_headers(serializer.data)
@@ -86,11 +79,10 @@ class ExamsViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
-        serializer = self.get_serializer(
-            exam, data=request.data, partial=True
-        )
+        serializer = self.get_serializer(exam, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+
         headers = self.get_success_headers(serializer.data)
 
         return Response(

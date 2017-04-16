@@ -2,13 +2,14 @@ from django.conf.urls import url, include
 
 from rest_framework import routers
 
-from students.views import (
+from .views import (
     UserLogin, ProfileViewSet, StudentRegistration,
     SubjectsList,
     ClassesList, ClassesNumberList,
     GradesList, GradesDetail,
     StudentsList
 )
+
 
 app_name = 'students'
 

@@ -13,10 +13,10 @@ class News(models.Model):
     edited = models.BooleanField(default=False)
     last_edited_on = models.DateTimeField(auto_now=True)
 
+
     class Meta:
         ordering = ['-last_edited_on']
         verbose_name_plural = 'news'
-
 
     def __str__(self):
         return '{} ({})'.format(self.title, self.posted_on.date())

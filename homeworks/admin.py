@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from homeworks.models import Homework, Submission
+from .models import Homework, Submission
 
 
 class HomeworkAdmin(admin.ModelAdmin):
@@ -11,7 +11,6 @@ class HomeworkAdmin(admin.ModelAdmin):
 
 class SubmissionAdmin(admin.ModelAdmin):
     list_display = ['id', 'homework', 'student']
-
 
 admin.site.register(Homework, HomeworkAdmin)
 admin.site.register(Submission, SubmissionAdmin)

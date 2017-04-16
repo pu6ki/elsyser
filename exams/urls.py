@@ -1,6 +1,7 @@
 from rest_framework import routers
 
-from exams.views import ExamsViewSet
+from .views import ExamsViewSet
+
 
 app_name = 'exams'
 

@@ -18,7 +18,6 @@ class Class(models.Model):
         ordering = ['number', 'letter']
         verbose_name_plural = 'classes'
 
-
     def __str__(self):
         return '{}{}'.format(self.number, self.letter)
 
@@ -29,7 +28,6 @@ class Subject(models.Model):
 
     class Meta:
         ordering = ['title']
-
 
     def __str__(self):
         return self.title
@@ -43,7 +41,6 @@ class Student(models.Model):
     )
     info = models.TextField(max_length=2048, blank=True)
 
-
     def __str__(self):
         return '{} ({})'.format(self.user.username, self.clazz)
 
@@ -56,15 +53,12 @@ class Teacher(models.Model):
     )
     info = models.TextField(max_length=2048, blank=True)
 
-
     def __str__(self):
         return '{} ({})'.format(self.user.username, self.subject)
 
 
 class Grade(models.Model):
-    value = models.FloatField(
-        validators=[MinValueValidator(2), MaxValueValidator(6)]
-    )
+    value = models.FloatField(validators=[MinValueValidator(2), MaxValueValidator(6)])
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
 

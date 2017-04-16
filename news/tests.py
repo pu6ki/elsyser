@@ -4,9 +4,8 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework.reverse import reverse
 from rest_framework import status
 
-from news.models import News, Comment
-from news.serializers import NewsSerializer, CommentSerializer
-
+from .models import News, Comment
+from .serializers import NewsSerializer, CommentSerializer
 from students.models import Class, Subject, Student, Teacher
 
 

@@ -5,8 +5,8 @@ from rest_framework.reverse import reverse
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 
-from students.models import Class, Subject, Student, Teacher, Grade
-from students.serializers import StudentProfileSerializer
+from .models import Class, Subject, Student, Teacher, Grade
+from .serializers import StudentProfileSerializer
 
 
 class RegisterViewTestCase(APITestCase):

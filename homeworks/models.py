@@ -10,9 +10,9 @@ class Homework(models.Model):
     details = models.TextField(max_length=256, blank=True)
     author = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
 
+
     class Meta:
         ordering = ['-deadline', 'clazz', 'subject']
-
 
     def __str__(self):
         return '{} ({}) - {}'.format(
@@ -30,9 +30,9 @@ class Submission(models.Model):
     last_edited_on = models.DateTimeField(auto_now=True)
     checked = models.BooleanField(default=False)
 
+
     class Meta:
         ordering = ['-posted_on', '-last_edited_on']
-
 
     def __str__(self):
         return '{} - {} ({})'.format(

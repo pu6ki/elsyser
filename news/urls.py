@@ -2,20 +2,17 @@ from django.conf.urls import url, include
 
 from rest_framework_nested import routers
 
-from news.views import (
+from .views import (
     NewsStudentsViewSet,
     NewsTeachersList, NewsTeachersClassNumberList, NewsTeachersViewSet,
     CommentsViewSet
 )
 
+
 app_name = 'news'
 
 students_router = routers.SimpleRouter()
-students_router.register(
-    r'news/students',
-    NewsStudentsViewSet,
-    base_name='studentsNews'
-)
+students_router.register(r'news/students', NewsStudentsViewSet, base_name='studentsNews')
 
 teachers_router = routers.SimpleRouter()
 teachers_router.register(
@@ -25,7 +22,7 @@ teachers_router.register(
 )
 
 students_comments_router = routers.NestedSimpleRouter(
-    students_router, r'news/students', lookup='studentsNews'
+students_router, r'news/students', lookup='studentsNews'
 )
 students_comments_router.register(
     r'comments', CommentsViewSet, base_name='studentsNews-comments'
@@ -36,14 +33,10 @@ teachers_comments_router = routers.NestedSimpleRouter(
     r'news/teachers/(?P<class_number>[8]|[9]|1[0-2])/(?P<class_letter>[A-Z])',
     lookup='teachersNews'
 )
-teachers_comments_router.register(
-    r'comments', CommentsViewSet, base_name='teachersNews-comments'
-)
+teachers_comments_router.register(r'comments', CommentsViewSet, base_name='teachersNews-comments')
 
 urlpatterns = [
-    url(
-        r'^news/teachers/$', NewsTeachersList.as_view(), name='teachers-news-list'
-    ),
+    url(r'^news/teachers/$', NewsTeachersList.as_view(), name='teachers-news-list'),
     url(
         r'^news/teachers/(?P<class_number>[8]|[9]|1[0-2])/$',
         NewsTeachersClassNumberList.as_view(),

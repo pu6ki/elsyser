@@ -1,8 +1,7 @@
 from django.db import models
 
+from .validators import validate_date
 from students.models import Class, Subject, Teacher
-
-from exams.validators import validate_date
 
 
 class Exam(models.Model):
@@ -15,7 +14,6 @@ class Exam(models.Model):
 
     class Meta:
         ordering = ['date', 'subject', 'clazz']
-
 
     def __str__(self):
         return '{} - {} ({})'.format(self.subject, self.clazz, self.date)

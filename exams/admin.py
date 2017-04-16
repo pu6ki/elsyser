@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from exams.models import Exam
+from .models import Exam
 
 
 class ExamAdmin(admin.ModelAdmin):

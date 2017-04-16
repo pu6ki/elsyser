@@ -5,9 +5,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
-from materials.serializers import MaterialSerializer, MaterialReadSerializer
-from materials.models import Material
-
+from .serializers import MaterialSerializer, MaterialReadSerializer
+from .models import Material
 from students.models import Subject
 from students.permissions import IsStudent, IsTeacher
 
@@ -41,9 +40,7 @@ class MaterialsListViewSet(mixins.ListModelMixin, MaterialsViewSet):
         if IsTeacher().has_permission(request, self):
             return all_materials.filter(subject=request.user.teacher.subject)
 
-        return all_materials.filter(
-            class_number=request.user.student.clazz.number
-        )
+        return all_materials.filter(class_number=request.user.student.clazz.number)
 
 
 class NestedMaterialsViewSet(mixins.RetrieveModelMixin,
@@ -69,18 +66,13 @@ class NestedMaterialsViewSet(mixins.RetrieveModelMixin,
         subject = get_object_or_404(Subject, id=subject_pk)
         context = {'subject': subject, 'request': request}
 
-        serializer = self.get_serializer_class()(
-            context=context, data=request.data
-        )
+        serializer = self.get_serializer_class()(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+
         headers = self.get_success_headers(serializer.data)
 
-        return Response(
-            serializer.validated_data,
-            status=status.HTTP_201_CREATED,
-            headers=headers
-        )
+        return Response(serializer.validated_data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, subject_pk=None, pk=None):
         subject = get_object_or_404(Subject, id=subject_pk)
@@ -92,11 +84,10 @@ class NestedMaterialsViewSet(mixins.RetrieveModelMixin,
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
-        serializer = self.get_serializer_class()(
-            material, data=request.data, partial=True
-        )
+        serializer = self.get_serializer_class()(material, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+        
         headers = self.get_success_headers(serializer.data)
 
         return Response(

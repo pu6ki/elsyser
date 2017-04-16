@@ -6,12 +6,10 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
-from homeworks.serializers import (
-    HomeworkSerializer, HomeworkReadSerializer,
-    SubmissionSerializer, SubmissionReadSerializer
+from .serializers import (
+    HomeworkSerializer, HomeworkReadSerializer, SubmissionSerializer, SubmissionReadSerializer
 )
-from homeworks.models import Homework, Submission
-
+from .models import Homework, Submission
 from students.models import Class
 from students.permissions import IsStudent, IsTeacher
 
@@ -25,7 +23,6 @@ class HomeworksViewSet(viewsets.ModelViewSet):
         'update': (IsAuthenticated, IsTeacher),
         'destroy': (IsAuthenticated, IsTeacher)
     }
-
 
     def get_serializer_class(self):
         return HomeworkReadSerializer if self.request.method in ('GET',) else HomeworkSerializer
@@ -52,11 +49,7 @@ class HomeworksViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(homework)
         headers = self.get_success_headers(serializer.data)
 
-        return Response(
-            serializer.data,
-            status=status.HTTP_200_OK,
-            headers=headers
-        )
+        return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)
 
     def create(self, request):
         context = {'request': request}
@@ -72,11 +65,7 @@ class HomeworksViewSet(viewsets.ModelViewSet):
         serializer.save(clazz=clazz)
         headers = self.get_success_headers(serializer.data)
 
-        return Response(
-            serializer.validated_data,
-            status=status.HTTP_201_CREATED,
-            headers=headers
-        )
+        return Response(serializer.validated_data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, pk=None):
         homework = get_object_or_404(Homework, id=pk)
@@ -87,11 +76,10 @@ class HomeworksViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
-        serializer = self.get_serializer(
-            homework, data=request.data, partial=True
-        )
+        serializer = self.get_serializer(homework, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+
         headers = self.get_success_headers(serializer.data)
 
         return Response(
@@ -144,9 +132,8 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         return [
             permission()
-            for permission in self.permission_classes_by_action[
-                self.action
-            ]
+            for permission
+            in self.permission_classes_by_action[self.action]
         ]
 
     def retrieve(self, request, homeworks_pk=None, pk=None):

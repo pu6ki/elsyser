@@ -6,10 +6,9 @@ from django.core.validators import validate_email, ValidationError
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
-
-from students.models import Class, Subject, Student, Teacher, Grade
-
 import requests
+
+from .models import Class, Subject, Student, Teacher, Grade
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -47,9 +46,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = (
-            'username', 'first_name', 'last_name', 'email', 'password',
-        )
+        fields = ('username', 'first_name', 'last_name', 'email', 'password')
 
 
 class UserLoginSerializer(serializers.Serializer):
@@ -100,11 +97,11 @@ class StudentSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     clazz = ClassSerializer()
 
+
     class Meta:
         model = Student
         fields = ('user', 'clazz')
         depth = 1
-
 
     def save(self):
         user = User.objects.create_user(**self.validated_data['user'])
@@ -123,18 +120,16 @@ class UserInfoSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(min_length=3, max_length=30)
     email = serializers.EmailField(read_only=True, max_length=100)
 
+
     class Meta:
         model = User
         fields = ('id', 'username', 'first_name', 'last_name', 'email')
-
 
     def update(self, instance, validated_data):
         username = validated_data.get('username', '')
 
         if User.objects.exclude(pk=instance.pk).filter(username=username):
-            raise serializers.ValidationError(
-                'User with this username already exists.'
-            )
+            raise serializers.ValidationError('User with this username already exists.')
 
         instance.__dict__.update(**validated_data)
         instance.save()
@@ -154,6 +149,7 @@ class SubjectSerializer(serializers.ModelSerializer):
         ]
     )
 
+
     class Meta:
         model = Subject
         fields = ('id', 'title')
@@ -164,11 +160,11 @@ class StudentProfileSerializer(serializers.ModelSerializer):
     clazz = ClassSerializer()
     profile_image_url = serializers.URLField(allow_blank=False)
 
+
     class Meta:
         model = Student
         fields = ('user', 'clazz', 'profile_image_url', 'info')
         depth = 1
-
 
     def validate_profile_image_url(self, value):
         response = requests.head(value)
@@ -184,9 +180,7 @@ class StudentProfileSerializer(serializers.ModelSerializer):
         username = user_data.get('username', '')
 
         if User.objects.exclude(pk=instance.user.pk).filter(username=username):
-            raise serializers.ValidationError(
-                'User with this username already exists.'
-            )
+            raise serializers.ValidationError('User with this username already exists.')
 
         instance.user.__dict__.update(**user_data)
         instance.user.save()
@@ -202,11 +196,11 @@ class TeacherProfileSerializer(serializers.ModelSerializer):
     subject = SubjectSerializer()
     profile_image_url = serializers.URLField(allow_blank=False)
 
+
     class Meta:
         model = Teacher
         fields = ('user', 'subject', 'profile_image_url', 'info')
         depth = 1
-
 
     def validate_profile_image_url(self, value):
         response = requests.head(value)
@@ -222,9 +216,7 @@ class TeacherProfileSerializer(serializers.ModelSerializer):
         username = user_data.get('username', '')
 
         if User.objects.exclude(pk=instance.user.pk).filter(username=username):
-            raise serializers.ValidationError(
-                'User with this username already exists.'
-            )
+            raise serializers.ValidationError('User with this username already exists.')
 
         instance.user.__dict__.update(**user_data)
         instance.user.save()
@@ -239,6 +231,7 @@ class StudentAuthorSerializer(serializers.ModelSerializer):
     user = UserInfoSerializer(read_only=True)
     clazz = ClassSerializer(read_only=True)
 
+
     class Meta:
         model = Student
         fields = ('id', 'user', 'clazz', 'profile_image_url')
@@ -246,6 +239,7 @@ class StudentAuthorSerializer(serializers.ModelSerializer):
 
 class TeacherAuthorSerializer(serializers.ModelSerializer):
     user = UserInfoSerializer(read_only=True)
+
 
     class Meta:
         model = Teacher
@@ -256,6 +250,7 @@ class GradesSerializer(serializers.ModelSerializer):
     student = StudentSerializer(read_only=True)
     subject = SubjectSerializer(read_only=True)
 
+
     class Meta:
         model = Grade
         fields = ('id', 'value', 'student', 'subject')
@@ -264,6 +259,4 @@ class GradesSerializer(serializers.ModelSerializer):
         subject = self.context['subject']
         student = self.context['student']
 
-        return Grade.objects.create(
-            subject=subject, student=student, **validated_data
-        )
+        return Grade.objects.create(subject=subject, student=student, **validated_data)

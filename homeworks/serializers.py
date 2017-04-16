@@ -1,11 +1,8 @@
 from rest_framework import serializers
 
-from homeworks.models import Homework, Submission
+from .models import Homework, Submission
 from students.serializers import (
-    ClassSerializer,
-    SubjectSerializer,
-    TeacherAuthorSerializer,
-    StudentAuthorSerializer
+    ClassSerializer, SubjectSerializer, TeacherAuthorSerializer, StudentAuthorSerializer
 )
 
 
@@ -13,17 +10,14 @@ class SubmissionSerializer(serializers.ModelSerializer):
     content = serializers.CharField(max_length=2048, allow_blank=False)
     solution_url = serializers.URLField(required=False, allow_blank=True)
 
+
     class Meta:
         model = Submission
         fields = (
-            'id',
-            'student',
-            'content', 'solution_url',
-            'posted_on', 'edited', 'last_edited_on',
-            'checked'
+            'id', 'student', 'content', 'solution_url',
+            'posted_on', 'edited', 'last_edited_on', 'checked'
         )
         depth = 1
-
 
     def create(self, validated_data):
         homework = self.context['homework']
@@ -31,9 +25,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
         student = request.user.student
 
-        return Submission.objects.create(
-            homework=homework, student=student, **validated_data
-        )
+        return Submission.objects.create(homework=homework, student=student, **validated_data)
 
     def update(self, instance, validated_data):
         instance.__dict__.update(**validated_data)
@@ -50,11 +42,11 @@ class HomeworkSerializer(serializers.ModelSerializer):
     details = serializers.CharField(max_length=256, allow_blank=True)
     submission_set = SubmissionSerializer(read_only=True, many=True)
 
+
     class Meta:
         model = Homework
         fields = ('id', 'subject', 'clazz', 'deadline', 'details', 'author', 'submission_set')
         depth = 1
-
 
     def create(self, validated_data):
         request = self.context['request']
@@ -62,9 +54,7 @@ class HomeworkSerializer(serializers.ModelSerializer):
         author = request.user.teacher
         subject = author.subject
 
-        return Homework.objects.create(
-            subject=subject, author=author, **validated_data
-        )
+        return Homework.objects.create(subject=subject, author=author, **validated_data)
 
     def update(self, instance, validated_data):
         instance.__dict__.update(**validated_data)

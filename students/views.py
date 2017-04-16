@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 
-from students.serializers import (
+from .serializers import (
     UserLoginSerializer, UserInfoSerializer,
     ClassSerializer,
     StudentSerializer,
@@ -17,8 +17,8 @@ from students.serializers import (
     StudentProfileSerializer, TeacherProfileSerializer,
     GradesSerializer
 )
-from students.models import Subject, Class, Student, Teacher, Grade
-from students.permissions import IsStudent, IsTeacher
+from .models import Subject, Class, Student, Teacher, Grade
+from .permissions import IsStudent, IsTeacher
 
 
 class StudentRegistration(generics.CreateAPIView):
@@ -64,10 +64,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
         response_data = serializer.data
         response_data['can_edit'] = (user == request.user)
 
-        return Response(
-            response_data,
-            status=status.HTTP_200_OK
-        )
+        return Response(response_data, status=status.HTTP_200_OK)
 
     def update(self, request, pk=None, *args, **kwargs):
         user = get_object_or_404(User, id=pk)
@@ -86,10 +83,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
-        return Response(
-            serializer.validated_data,
-            status=status.HTTP_200_OK
-        )
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
 class SubjectsList(generics.ListAPIView):
@@ -109,9 +103,7 @@ class GradesList(generics.ListAPIView):
     serializer_class = GradesSerializer
 
     def get(self, request, subject_pk=None, *args, **kwargs):
-        grades = Grade.objects.filter(
-            subject__id=subject_pk
-        ).order_by('-pk')
+        grades = Grade.objects.filter(subject__id=subject_pk).order_by('-pk')
 
         serializer = self.serializer_class(grades, many=True)
 
@@ -144,11 +136,7 @@ class GradesDetail(generics.ListCreateAPIView):
                     status=status.HTTP_401_UNAUTHORIZED
                 )
 
-        grades = Grade.objects.filter(
-            subject__id=subject_pk
-        ).filter(
-            student__id=user.student.pk
-        )
+        grades = Grade.objects.filter(subject__id=subject_pk).filter(student__id=user.student.pk)
 
         serializer = self.serializer_class(grades, many=True)
 
@@ -167,24 +155,15 @@ class GradesDetail(generics.ListCreateAPIView):
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
-        context = {
-            'request': request,
-            'subject': subject,
-            'student': user.student
-        }
+        context = {'request': request, 'subject': subject, 'student': user.student}
 
-        serializer = self.serializer_class(
-            context=context, data=request.data
-        )
+        serializer = self.serializer_class(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+
         headers = self.get_success_headers(serializer.data)
 
-        return Response(
-            serializer.validated_data,
-            status=status.HTTP_201_CREATED,
-            headers=headers
-        )
+        return Response(serializer.validated_data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class StudentsList(generics.ListAPIView):
@@ -195,10 +174,7 @@ class StudentsList(generics.ListAPIView):
     def get(self, request, class_number=None, class_letter=None, *args, **kwargs):
         clazz = get_object_or_404(Class, number=class_number, letter=class_letter)
 
-        serializer = self.serializer_class(
-            Student.objects.filter(clazz=clazz),
-            many=True
-        )
+        serializer = self.serializer_class(Student.objects.filter(clazz=clazz), many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -224,9 +200,6 @@ class ClassesNumberList(generics.ListAPIView):
     serializer_class = ClassSerializer
 
     def get(self, request, class_number=None, *args, **kwargs):
-        serializer = self.serializer_class(
-            Class.objects.filter(number=class_number),
-            many=True
-        )
+        serializer = self.serializer_class(Class.objects.filter(number=class_number), many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)

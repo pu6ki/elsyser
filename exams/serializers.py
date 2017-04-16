@@ -1,11 +1,8 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from exams.models import Exam
-
-from students.serializers import (
-    ClassSerializer, SubjectSerializer, TeacherAuthorSerializer
-)
+from .models import Exam
+from students.serializers import ClassSerializer, SubjectSerializer, TeacherAuthorSerializer
 
 
 class ExamSerializer(serializers.ModelSerializer):
@@ -26,7 +23,6 @@ class ExamSerializer(serializers.ModelSerializer):
             'id', 'subject', 'clazz', 'topic', 'date', 'details', 'author'
         )
         depth = 1
-
 
     def create(self, validated_data):
         request = self.context['request']
