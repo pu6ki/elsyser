@@ -9,7 +9,7 @@ from rest_framework.authentication import TokenAuthentication
 from .serializers import ExamSerializer, ExamReadSerializer
 from .models import Exam
 from students.models import Class
-from students.permissions import IsTeacher
+from students.permissions import IsTeacher, IsTeacherAuthor
 
 
 class ExamsViewSet(viewsets.ModelViewSet):
@@ -18,10 +18,9 @@ class ExamsViewSet(viewsets.ModelViewSet):
         'list': (IsAuthenticated,),
         'retrieve': (IsAuthenticated,),
         'create': (IsAuthenticated, IsTeacher),
-        'update': (IsAuthenticated, IsTeacher),
-        'destroy': (IsAuthenticated, IsTeacher)
+        'update': (IsAuthenticated, IsTeacher, IsTeacherAuthor),
+        'destroy': (IsAuthenticated, IsTeacher, IsTeacherAuthor)
     }
-
 
     def get_serializer_class(self):
         return ExamReadSerializer if self.request.method in ('GET',) else ExamSerializer
@@ -62,6 +61,7 @@ class ExamsViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(clazz=clazz)
+
         headers = self.get_success_headers(serializer.data)
 
         return Response(
@@ -72,12 +72,7 @@ class ExamsViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         exam = get_object_or_404(Exam, id=pk)
-
-        if exam.author != request.user.teacher:
-            return Response(
-                {'message': 'You can edit only your own exams.'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+        self.check_object_permissions(request, exam)
 
         serializer = self.get_serializer(exam, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
@@ -93,12 +88,7 @@ class ExamsViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, pk=None):
         exam = get_object_or_404(Exam, id=pk)
-
-        if exam.author != request.user.teacher:
-            return Response(
-                {'message': 'You can delete only your own exams.'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+        self.check_object_permissions(request, exam)
 
         exam.delete()
 

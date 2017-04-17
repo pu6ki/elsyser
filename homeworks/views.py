@@ -11,7 +11,7 @@ from .serializers import (
 )
 from .models import Homework, Submission
 from students.models import Class
-from students.permissions import IsStudent, IsTeacher
+from students.permissions import IsStudent, IsTeacher, IsTeacherAuthor
 
 
 class HomeworksViewSet(viewsets.ModelViewSet):
@@ -20,8 +20,8 @@ class HomeworksViewSet(viewsets.ModelViewSet):
         'list': (IsAuthenticated,),
         'retrieve': (IsAuthenticated,),
         'create': (IsAuthenticated, IsTeacher),
-        'update': (IsAuthenticated, IsTeacher),
-        'destroy': (IsAuthenticated, IsTeacher)
+        'update': (IsAuthenticated, IsTeacher, IsTeacherAuthor),
+        'destroy': (IsAuthenticated, IsTeacher, IsTeacherAuthor)
     }
 
     def get_serializer_class(self):
@@ -69,12 +69,7 @@ class HomeworksViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         homework = get_object_or_404(Homework, id=pk)
-
-        if homework.author != request.user.teacher:
-            return Response(
-                {'message': 'You can edit only your own homeworks.'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+        self.check_object_permissions(request, homework)
 
         serializer = self.get_serializer(homework, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
@@ -90,12 +85,7 @@ class HomeworksViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, pk=None):
         homework = get_object_or_404(Homework, id=pk)
-
-        if homework.author != request.user.teacher:
-            return Response(
-                {'message': 'You can delete only your own homeworks.'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+        self.check_object_permissions(request, homework)
 
         homework.delete()
 
@@ -167,11 +157,10 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
 
         context = {'request': request, 'homework': homework}
 
-        serializer = self.get_serializer_class()(
-            context=context, data=request.data
-        )
+        serializer = self.get_serializer_class()(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+        
         headers = self.get_success_headers(serializer.data)
 
         return Response(
@@ -191,11 +180,10 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_403_FORBIDDEN
                 )
 
-        serializer = self.get_serializer_class()(
-            submission, data=request.data, partial=True
-        )
+        serializer = self.get_serializer_class()(submission, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+
         headers = self.get_success_headers(serializer.data)
 
         return Response(

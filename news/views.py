@@ -7,20 +7,35 @@ from rest_framework.authentication import TokenAuthentication
 
 from .models import News, Comment
 from .serializers import NewsSerializer, CommentSerializer, CommentReadSerializer
+from .permissions import IsCommentAuthor
 from students.models import Class
-from students.permissions import IsStudent, IsTeacher
+from students.permissions import IsStudent, IsTeacher, IsUserAuthor
 
 
 class NewsStudentsViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated, IsStudent)
+    permission_classes_by_action = {
+        'list': (IsAuthenticated, IsStudent),
+        'retrieve': (IsAuthenticated, IsStudent),
+        'create': (IsAuthenticated, IsStudent),
+        'update': (IsAuthenticated, IsStudent, IsUserAuthor),
+        'destroy': (IsAuthenticated, IsStudent, IsUserAuthor)
+    }
     serializer_class = NewsSerializer
+
+    def get_permissions(self):
+        return [
+            permission()
+            for permission
+            in self.permission_classes_by_action[self.action]
+        ]
 
     def get_queryset(self):
         return News.objects.filter(clazz=self.request.user.student.clazz)
 
     def retrieve(self, request, pk=None):
         news = get_object_or_404(self.get_queryset(), id=pk)
+        
         serializer = self.serializer_class(news)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -31,6 +46,7 @@ class NewsStudentsViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+        
         headers = self.get_success_headers(serializer.data)
 
         return Response(
@@ -41,18 +57,12 @@ class NewsStudentsViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         news = get_object_or_404(News, id=pk)
+        self.check_object_permissions(request, news)
 
-        if news.author != request.user:
-            return Response(
-                {'message': 'You can edit only your own posts.'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-
-        serializer = self.serializer_class(
-            news, data=request.data, partial=True
-        )
+        serializer = self.serializer_class(news, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+        
         headers = self.get_success_headers(serializer.data)
 
         return Response(
@@ -63,12 +73,7 @@ class NewsStudentsViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, pk=None):
         news = get_object_or_404(News, id=pk)
-
-        if news.author != request.user:
-            return Response(
-                {'message': 'You can delete only your own posts.'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+        self.check_object_permissions(request, news)
 
         news.delete()
 
@@ -127,20 +132,35 @@ class NewsTeachersClassNumberList(generics.ListCreateAPIView):
 
 class NewsTeachersViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated, IsTeacher)
+    permission_classes_by_action = {
+        'list': (IsAuthenticated, IsTeacher),
+        'retrieve': (IsAuthenticated, IsTeacher),
+        'create': (IsAuthenticated, IsTeacher),
+        'update': (IsAuthenticated, IsTeacher, IsUserAuthor),
+        'destroy': (IsAuthenticated, IsTeacher, IsUserAuthor)
+    }
     serializer_class = NewsSerializer
+
+    def get_permissions(self):
+        return [
+            permission()
+            for permission
+            in self.permission_classes_by_action[self.action]
+        ]
 
     def get_queryset(self):
         return News.objects.filter(author=self.request.user)
 
     def list(self, request, class_number=None, class_letter=None):
         news = self.get_queryset().filter(clazz__number=class_number, clazz__letter=class_letter)
+        
         serializer = self.serializer_class(news, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, class_number=None, class_letter=None, pk=None):
         news = get_object_or_404(self.get_queryset(), id=pk)
+        
         serializer = self.serializer_class(news)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -159,16 +179,9 @@ class NewsTeachersViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None, *args, **kwargs):
         news = get_object_or_404(self.get_queryset(), id=pk)
+        self.check_object_permissions(request, news)
 
-        if news.author != request.user:
-            return Response(
-                {'message': 'You can edit only your own posts.'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-
-        serializer = self.serializer_class(
-            news, data=request.data, partial=True
-        )
+        serializer = self.serializer_class(news, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
@@ -178,12 +191,7 @@ class NewsTeachersViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, pk=None, *args, **kwargs):
         news = get_object_or_404(self.get_queryset(), id=pk)
-
-        if news.author != request.user:
-            return Response(
-                {'message': 'You can delete only your own posts.'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+        self.check_object_permissions(request, news)
 
         news.delete()
 
@@ -195,7 +203,20 @@ class NewsTeachersViewSet(viewsets.ModelViewSet):
 
 class CommentsViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    permission_classes_by_action = {
+        'list': (IsAuthenticated,),
+        'retrieve': (IsAuthenticated,),
+        'create': (IsAuthenticated,),
+        'update': (IsAuthenticated, IsCommentAuthor),
+        'destroy': (IsAuthenticated, IsCommentAuthor)
+    }
+
+    def get_permissions(self):
+        return [
+            permission()
+            for permission
+            in self.permission_classes_by_action[self.action]
+        ]
 
     def get_serializer_class(self):
         return CommentReadSerializer if self.request.method in ('GET',) else CommentSerializer
@@ -232,12 +253,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         news = get_object_or_404(News, id=self.get_news_pk(kwargs))
         comment = get_object_or_404(news.comment_set, id=kwargs['pk'])
-
-        if comment.posted_by != request.user:
-            return Response(
-                {'message': 'You can edit only your own comments.'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+        self.check_object_permissions(request, comment)
 
         serializer = self.get_serializer_class()(comment, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
@@ -250,12 +266,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         news = get_object_or_404(News, id=self.get_news_pk(kwargs))
         comment = get_object_or_404(news.comment_set, id=kwargs['pk'])
-
-        if comment.posted_by != request.user:
-            return Response(
-                {'message': 'You can delete only your own comments.'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+        self.check_object_permissions(request, comment)
 
         comment.delete()
 

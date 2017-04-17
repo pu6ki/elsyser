@@ -8,7 +8,7 @@ from rest_framework.authentication import TokenAuthentication
 from .serializers import MaterialSerializer, MaterialReadSerializer
 from .models import Material
 from students.models import Subject
-from students.permissions import IsStudent, IsTeacher
+from students.permissions import IsStudent, IsTeacher, IsTeacherAuthor
 
 
 class MaterialsViewSet(viewsets.GenericViewSet):
@@ -17,8 +17,8 @@ class MaterialsViewSet(viewsets.GenericViewSet):
         'list': (IsAuthenticated,),
         'retrieve': (IsAuthenticated,),
         'create': (IsAuthenticated, IsTeacher),
-        'update': (IsAuthenticated, IsTeacher),
-        'destroy': (IsAuthenticated, IsTeacher)
+        'update': (IsAuthenticated, IsTeacher, IsTeacherAuthor),
+        'destroy': (IsAuthenticated, IsTeacher, IsTeacherAuthor)
     }
 
     def get_serializer_class(self):
@@ -77,12 +77,7 @@ class NestedMaterialsViewSet(mixins.RetrieveModelMixin,
     def update(self, request, subject_pk=None, pk=None):
         subject = get_object_or_404(Subject, id=subject_pk)
         material = get_object_or_404(subject.material_set, id=pk)
-
-        if material.author != request.user.teacher:
-            return Response(
-                {'message': 'You can edit only your own materials.'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+        self.check_object_permissions(request, material)
 
         serializer = self.get_serializer_class()(material, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
@@ -99,12 +94,7 @@ class NestedMaterialsViewSet(mixins.RetrieveModelMixin,
     def destroy(self, request, subject_pk=None, pk=None):
         subject = get_object_or_404(Subject, id=subject_pk)
         material = get_object_or_404(subject.material_set, id=pk)
-
-        if material.author != request.user.teacher:
-            return Response(
-                {'message': 'You can delete only your own materials.'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+        self.check_object_permissions(request, material)
 
         material.delete()
 
