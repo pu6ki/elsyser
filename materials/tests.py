@@ -468,9 +468,9 @@ class MaterialsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'], 'You can edit only your own materials.'
+            request.data['detail'], 'You do not have permission to perform this action.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_materials_deletion_with_invalid_subject_id(self):
         self.client.force_authenticate(user=self.teacher_user)
@@ -523,9 +523,9 @@ class MaterialsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'], 'You can delete only your own materials.'
+            request.data['detail'], 'You do not have permission to perform this action.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_materials_deletion(self):
         self.client.force_authenticate(user=self.teacher_user)

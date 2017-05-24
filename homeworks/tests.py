@@ -202,9 +202,9 @@ class HomeworksViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'], 'You can edit only your own homeworks.'
+            request.data['detail'], 'You do not have permission to perform this action.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_homeworks_deletion_of_another_user(self):
         self.client.force_authenticate(user=self.teacher_user)
@@ -219,9 +219,9 @@ class HomeworksViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'], 'You can delete only your own homeworks.'
+            request.data['detail'], 'You do not have permission to perform this action.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_homeworks_deletion(self):
         self.client.force_authenticate(user=self.teacher_user)
@@ -352,10 +352,10 @@ class SubmissionsViewSetTestCase(APITestCase):
             )
         )
 
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(
             request.data['message'], 'You can view only your own submissions.'
         )
+        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_submissions_list_with_teacher_user(self):
         self.client.force_authenticate(user=self.teacher_user)

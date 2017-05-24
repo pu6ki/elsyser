@@ -364,7 +364,7 @@ class ProfileViewSetTestCase(APITestCase):
         self.student1.user.username = 'MyNewUsername'
         self.student1.user.first_name = 'John'
         self.student1.user.last_name = 'Travolta'
-        self.student1.profile_image_url = 'https://scontent-fra3-1.xx.fbcdn.net/v/l/t1.0-9/14237770_10207844537094902_7208336482223852857_n.jpg?oh=a7ead37183048f79ca1f66e6b7121569&oe=59220B3C'
+        self.student1.profile_image_url = 'http://books.sulla.bg/wp-content/uploads/2011/11/kurt_vonnegut.jpg'
         put_data = StudentProfileSerializer(self.student1).data
 
         request = self.client.put(
@@ -826,7 +826,7 @@ class StudentsListViewTestCase(APITestCase):
 class ClassesListViewTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.view_name = 'students:classes-list'
+        self.view_name = 'students:classes-number-list'
 
         self.clazz = Class.objects.create(number=10, letter='A')
 

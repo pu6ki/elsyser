@@ -247,9 +247,9 @@ class NewsStudentsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'], 'You can edit only your own posts.'
+            request.data['detail'], 'You do not have permission to perform this action.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_news_update_with_empty_title(self):
         self.client.force_authenticate(user=self.user)
@@ -363,9 +363,9 @@ class NewsStudentsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'], 'You can delete only your own posts.'
+            request.data['detail'], 'You do not have permission to perform this action.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_news_deletion_with_invalid_id(self):
         self.client.force_authenticate(user=self.user)
@@ -1257,9 +1257,9 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'], 'You can edit only your own comments.'
+            request.data['detail'], 'You do not have permission to perform this action.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_comment_update_with_too_long_content(self):
         self.client.force_authenticate(user=self.user)
@@ -1335,9 +1335,9 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'], 'You can delete only your own comments.'
+            request.data['detail'], 'You do not have permission to perform this action.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_comment_deletion_with_valid_ids(self):
         self.client.force_authenticate(user=self.user)
@@ -1491,9 +1491,9 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'], 'You can edit only your own comments.'
+            request.data['detail'], 'You do not have permission to perform this action.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_comment_update_with_too_long_content(self):
         self.client.force_authenticate(user=self.user)
@@ -1594,9 +1594,9 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'], 'You can delete only your own comments.'
+            request.data['detail'], 'You do not have permission to perform this action.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_comment_deletion_with_valid_ids(self):
         self.client.force_authenticate(user=self.user)

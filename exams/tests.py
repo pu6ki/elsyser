@@ -236,9 +236,9 @@ class ExamsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'], 'You can edit only your own exams.'
+            request.data['detail'], 'You do not have permission to perform this action.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_exams_deletion_of_another_user(self):
         self.client.force_authenticate(user=self.teacher_user)
@@ -253,9 +253,9 @@ class ExamsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'], 'You can delete only your own exams.'
+            request.data['detail'], 'You do not have permission to perform this action.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_exams_deletion(self):
         self.client.force_authenticate(user=self.teacher_user)
