@@ -32,15 +32,18 @@ class NewsStudentsViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return News.objects.filter(clazz=self.request.user.student.clazz)
 
-    def retrieve(self, request, pk=None):
-        news = get_object_or_404(self.get_queryset(), id=pk)
+    def retrieve(self, request, *args, **kwargs):
+        news = get_object_or_404(self.get_queryset(), id=kwargs['pk'])
 
         serializer = self.serializer_class(news)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def create(self, request):
-        context = {'request': request, 'clazz': request.user.student.clazz}
+    def create(self, request, *args, **kwargs):
+        context = {
+            'request': request,
+            'clazz': request.user.student.clazz
+        }
 
         serializer = self.serializer_class(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -48,30 +51,22 @@ class NewsStudentsViewSet(viewsets.ModelViewSet):
 
         headers = self.get_success_headers(serializer.data)
 
-        return Response(
-            serializer.validated_data,
-            status=status.HTTP_201_CREATED,
-            headers=headers
-        )
+        return Response(serializer.validated_data, status=status.HTTP_201_CREATED, headers=headers)
 
-    def update(self, request, pk=None):
-        news = get_object_or_404(News, id=pk)
+    def update(self, request, *args, **kwargs):
+        news = get_object_or_404(News, id=kwargs['pk'])
         self.check_object_permissions(request, news)
 
         serializer = self.serializer_class(news, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-        
+
         headers = self.get_success_headers(serializer.data)
 
-        return Response(
-            serializer.validated_data,
-            status=status.HTTP_200_OK,
-            headers=headers
-        )
+        return Response(serializer.validated_data, status=status.HTTP_200_OK, headers=headers)
 
-    def destroy(self, request, pk=None):
-        news = get_object_or_404(News, id=pk)
+    def destroy(self, request, *args, **kwargs):
+        news = get_object_or_404(News, id=kwargs['pk'])
         self.check_object_permissions(request, news)
 
         news.delete()
@@ -249,6 +244,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer_class()(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+
         headers = self.get_success_headers(serializer.data)
 
         return Response(serializer.validated_data, status=status.HTTP_201_CREATED, headers=headers)

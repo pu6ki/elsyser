@@ -630,7 +630,7 @@ class GradesDetailViewTestCase(APITestCase):
 
         self.assertEqual(
             request.data['detail'],
-            'You do not have permission to perform this action.'
+            'Only teachers are allowed to view and modify this content.'
         )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -686,7 +686,7 @@ class GradesDetailViewTestCase(APITestCase):
 
         self.assertEqual(
             request.data['detail'],
-            'You do not have permission to perform this action.'
+           'You can modify content linked only with your subject.'
         )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 

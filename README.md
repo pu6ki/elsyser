@@ -98,7 +98,7 @@ Logo is designed by [Vladimir Vladinov](https://github.com/thehughmungus).
 
 ### Task list:
 
-- [ ] Custom messages to permissions
+- [x] Custom messages to permissions
 
 ### License
 

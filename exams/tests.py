@@ -117,7 +117,7 @@ class ExamsViewSetTestCase(APITestCase):
 
         self.assertEqual(
             request.data['detail'],
-            'You do not have permission to perform this action.'
+            'Only teachers are allowed to view and modify this content.'
         )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -172,7 +172,7 @@ class ExamsViewSetTestCase(APITestCase):
 
         self.assertEqual(
             request.data['detail'],
-            'You do not have permission to perform this action.'
+            'Only teachers are allowed to view and modify this content.'
         )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -235,7 +235,8 @@ class ExamsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['detail'], 'You do not have permission to perform this action.'
+            request.data['detail'],
+            'You should be the author of this content in order to modify it.'
         )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -252,7 +253,8 @@ class ExamsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['detail'], 'You do not have permission to perform this action.'
+            request.data['detail'],
+            'You should be the author of this content in order to modify it.'
         )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
