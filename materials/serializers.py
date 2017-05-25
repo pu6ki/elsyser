@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from .models import Material
 from students.serializers import SubjectSerializer, TeacherAuthorSerializer
+from .models import Material
 
 
 class MaterialSerializer(serializers.ModelSerializer):
@@ -20,9 +20,9 @@ class MaterialSerializer(serializers.ModelSerializer):
         depth = 1
 
     def create(self, validated_data):
+        request = self.context['request']
         subject = self.context['subject']
 
-        request = self.context['request']
         author = request.user.teacher
 
         return Material.objects.create(subject=subject, author=author, **validated_data)

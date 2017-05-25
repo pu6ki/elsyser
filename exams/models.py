@@ -1,7 +1,7 @@
 from django.db import models
 
-from .validators import validate_date
 from students.models import Class, Subject, Teacher
+from .validators import validate_date
 
 
 class Exam(models.Model):

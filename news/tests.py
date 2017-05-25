@@ -1,12 +1,11 @@
 from django.contrib.auth.models import User
-
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.reverse import reverse
 from rest_framework import status
 
+from students.models import Class, Subject, Student, Teacher
 from .models import News, Comment
 from .serializers import NewsSerializer, CommentSerializer
-from students.models import Class, Subject, Student, Teacher
 
 
 class NewsStudentsViewSetTestCase(APITestCase):

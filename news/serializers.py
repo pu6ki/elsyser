@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from .models import News, Comment
 from students.serializers import UserInfoSerializer, ClassSerializer
+from .models import News, Comment
 
 
 class CommentSerializer(serializers.ModelSerializer):

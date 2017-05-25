@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
-from .models import Homework, Submission
 from students.serializers import (
     ClassSerializer, SubjectSerializer, TeacherAuthorSerializer, StudentAuthorSerializer
 )
+from .models import Homework, Submission
 
 
 class SubmissionSerializer(serializers.ModelSerializer):

@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from .models import Exam
 from students.serializers import ClassSerializer, SubjectSerializer, TeacherAuthorSerializer
+from .models import Exam
 
 
 class ExamSerializer(serializers.ModelSerializer):

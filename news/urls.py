@@ -1,5 +1,4 @@
-from django.conf.urls import url, include
-
+from django.conf.urls import url
 from rest_framework_nested import routers
 
 from .views import (
@@ -22,7 +21,7 @@ teachers_router.register(
 )
 
 students_comments_router = routers.NestedSimpleRouter(
-students_router, r'news/students', lookup='studentsNews'
+    students_router, r'news/students', lookup='studentsNews'
 )
 students_comments_router.register(
     r'comments', CommentsViewSet, base_name='studentsNews-comments'

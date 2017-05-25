@@ -1,13 +1,12 @@
 from datetime import datetime, timedelta
 from django.contrib.auth.models import User
-
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.reverse import reverse
 from rest_framework import status
 
+from students.models import Class, Subject, Student, Teacher
 from .serializers import HomeworkSerializer, SubmissionSerializer
 from .models import Homework, Submission
-from students.models import Class, Subject, Student, Teacher
 
 
 class HomeworksViewSetTestCase(APITestCase):
@@ -353,9 +352,9 @@ class SubmissionsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'], 'You can view only your own submissions.'
+            request.data['detail'], 'You do not have permission to perform this action.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_submissions_list_with_teacher_user(self):
         self.client.force_authenticate(user=self.teacher_user)
@@ -461,8 +460,8 @@ class SubmissionsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'],
-            'You can add only one submission.'
+            request.data['detail'],
+            'You do not have permission to perform this action.'
         )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -496,8 +495,8 @@ class SubmissionsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'],
-            'You can not perform this action.'
+            request.data['detail'],
+            'You do not have permission to perform this action.'
         )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -534,7 +533,7 @@ class SubmissionsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'],
-            'You can not perform this action.'
+            request.data['detail'],
+            'You do not have permission to perform this action.'
         )
         self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)

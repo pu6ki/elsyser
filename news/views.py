@@ -1,15 +1,14 @@
 from django.shortcuts import get_object_or_404
-
 from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
+from students.models import Class
+from students.permissions import IsStudent, IsTeacher, IsUserAuthor
 from .models import News, Comment
 from .serializers import NewsSerializer, CommentSerializer, CommentReadSerializer
 from .permissions import IsCommentAuthor
-from students.models import Class
-from students.permissions import IsStudent, IsTeacher, IsUserAuthor
 
 
 class NewsStudentsViewSet(viewsets.ModelViewSet):
@@ -35,7 +34,7 @@ class NewsStudentsViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, pk=None):
         news = get_object_or_404(self.get_queryset(), id=pk)
-        
+
         serializer = self.serializer_class(news)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -46,7 +45,7 @@ class NewsStudentsViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        
+
         headers = self.get_success_headers(serializer.data)
 
         return Response(
@@ -101,24 +100,23 @@ class NewsTeachersClassNumberList(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated, IsTeacher)
     serializer_class = NewsSerializer
 
-    def get_queryset(self, class_number=None):
-        return News.objects.filter(author=self.request.user, clazz__number=class_number)
-
-    def get(self, request, class_number=None):
-        serializer = self.serializer_class(self.get_queryset(class_number), many=True)
+    def get(self, request, *args, **kwargs):
+        news = News.objects.filter(
+            author=request.user,
+            clazz__number=kwargs['class_number']
+        )
+        serializer = self.serializer_class(news, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request, class_number=None):
-        classes = Class.objects.filter(number=class_number)
+    def post(self, request, *args, **kwargs):
+        classes = Class.objects.filter(number=kwargs['class_number'])
 
         posted_news = 0
         for clazz in classes:
             context = {'clazz': clazz, 'request': request}
 
-            serializer = self.serializer_class(
-                context=context, data=request.data
-            )
+            serializer = self.serializer_class(context=context, data=request.data)
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
 
@@ -151,22 +149,28 @@ class NewsTeachersViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return News.objects.filter(author=self.request.user)
 
-    def list(self, request, class_number=None, class_letter=None):
-        news = self.get_queryset().filter(clazz__number=class_number, clazz__letter=class_letter)
-        
+    def list(self, request, *args, **kwargs):
+        news = self.get_queryset().filter(
+            clazz__number=kwargs['class_number'],
+            clazz__letter=kwargs['class_letter']
+        )
+
         serializer = self.serializer_class(news, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def retrieve(self, request, class_number=None, class_letter=None, pk=None):
-        news = get_object_or_404(self.get_queryset(), id=pk)
-        
+    def retrieve(self, request, *args, **kwargs):
+        news = get_object_or_404(self.get_queryset(), id=kwargs['pk'])
+
         serializer = self.serializer_class(news)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def create(self, request, class_number=None, class_letter=None):
-        clazz = Class.objects.get(number=class_number, letter=class_letter)
+    def create(self, request, *args, **kwargs):
+        clazz = Class.objects.get(
+            number=kwargs['class_number'],
+            letter=kwargs['class_letter']
+        )
         context = {'request': request, 'clazz': clazz}
 
         serializer = self.serializer_class(context=context, data=request.data)
@@ -177,8 +181,8 @@ class NewsTeachersViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.validated_data, status=status.HTTP_201_CREATED, headers=headers)
 
-    def update(self, request, pk=None, *args, **kwargs):
-        news = get_object_or_404(self.get_queryset(), id=pk)
+    def update(self, request, *args, **kwargs):
+        news = get_object_or_404(self.get_queryset(), id=kwargs['pk'])
         self.check_object_permissions(request, news)
 
         serializer = self.serializer_class(news, data=request.data, partial=True)
@@ -189,8 +193,8 @@ class NewsTeachersViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.validated_data, status=status.HTTP_200_OK, headers=headers)
 
-    def destroy(self, request, pk=None, *args, **kwargs):
-        news = get_object_or_404(self.get_queryset(), id=pk)
+    def destroy(self, request, *args, **kwargs):
+        news = get_object_or_404(self.get_queryset(), id=kwargs['pk'])
         self.check_object_permissions(request, news)
 
         news.delete()
@@ -233,11 +237,10 @@ class CommentsViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         comment = get_object_or_404(Comment, id=kwargs['pk'])
-        
+
         serializer = self.get_serializer_class()(comment)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
     def create(self, request, *args, **kwargs):
         news = get_object_or_404(News, id=self.get_news_pk(kwargs))
@@ -258,7 +261,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer_class()(comment, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-        
+
         headers = self.get_success_headers(serializer.data)
 
         return Response(serializer.validated_data, status=status.HTTP_200_OK, headers=headers)

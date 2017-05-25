@@ -2,7 +2,6 @@ from collections import defaultdict
 
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
-
 from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -68,8 +67,8 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
         return TeacherProfileSerializer if teachers else StudentProfileSerializer
 
-    def retrieve(self, request, pk=None):
-        user = get_object_or_404(User, id=pk)
+    def retrieve(self, request, *args, **kwargs):
+        user = get_object_or_404(User, id=kwargs['pk'])
         entry = self.get_entry_model(user)
 
         serializer = self.get_serializer_model(user)(entry)
@@ -79,8 +78,8 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
         return Response(response_data, status=status.HTTP_200_OK)
 
-    def update(self, request, pk=None):
-        user = get_object_or_404(User, id=pk)
+    def update(self, request, *args, **kwargs):
+        user = get_object_or_404(User, id=kwargs['pk'])
         self.check_object_permissions(request, user)
 
         entry = self.get_entry_model(user)

@@ -2,7 +2,6 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.core.validators import validate_email, ValidationError
-
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
@@ -155,16 +154,9 @@ class SubjectSerializer(serializers.ModelSerializer):
         fields = ('id', 'title')
 
 
-class StudentProfileSerializer(serializers.ModelSerializer):
+class DefaultProfileSerializer(serializers.ModelSerializer):
     user = UserInfoSerializer()
-    clazz = ClassSerializer()
     profile_image_url = serializers.URLField(allow_blank=False)
-
-
-    class Meta:
-        model = Student
-        fields = ('user', 'clazz', 'profile_image_url', 'info')
-        depth = 1
 
     def validate_profile_image_url(self, value):
         response = requests.head(value)
@@ -191,10 +183,17 @@ class StudentProfileSerializer(serializers.ModelSerializer):
         return instance
 
 
-class TeacherProfileSerializer(serializers.ModelSerializer):
-    user = UserInfoSerializer()
+class StudentProfileSerializer(DefaultProfileSerializer):
+    clazz = ClassSerializer()
+
+    class Meta:
+        model = Student
+        fields = ('user', 'clazz', 'profile_image_url', 'info')
+        depth = 1
+
+
+class TeacherProfileSerializer(DefaultProfileSerializer):
     subject = SubjectSerializer()
-    profile_image_url = serializers.URLField(allow_blank=False)
 
 
     class Meta:
@@ -202,33 +201,12 @@ class TeacherProfileSerializer(serializers.ModelSerializer):
         fields = ('user', 'subject', 'profile_image_url', 'info')
         depth = 1
 
-    def validate_profile_image_url(self, value):
-        response = requests.head(value)
-        content_type = response.headers.get('content-type')
 
-        if not content_type.startswith('image/'):
-            raise serializers.ValidationError('URL is not a picture.')
-
-        return value
-
-    def update(self, instance, validated_data):
-        user_data = validated_data.get('user', {})
-        username = user_data.get('username', '')
-
-        if User.objects.exclude(pk=instance.user.pk).filter(username=username):
-            raise serializers.ValidationError('User with this username already exists.')
-
-        instance.user.__dict__.update(**user_data)
-        instance.user.save()
-
-        instance.__dict__.update(**validated_data)
-        instance.save()
-
-        return instance
-
-
-class StudentAuthorSerializer(serializers.ModelSerializer):
+class DefaultAuthorSerializer(serializers.ModelSerializer):
     user = UserInfoSerializer(read_only=True)
+
+
+class StudentAuthorSerializer(DefaultAuthorSerializer):
     clazz = ClassSerializer(read_only=True)
 
 
@@ -237,10 +215,7 @@ class StudentAuthorSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'clazz', 'profile_image_url')
 
 
-class TeacherAuthorSerializer(serializers.ModelSerializer):
-    user = UserInfoSerializer(read_only=True)
-
-
+class TeacherAuthorSerializer(DefaultAuthorSerializer):
     class Meta:
         model = Teacher
         fields = ('id', 'user', 'profile_image_url')

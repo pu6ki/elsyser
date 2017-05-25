@@ -1,15 +1,14 @@
 from datetime import datetime
 from django.shortcuts import get_object_or_404
-
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
-from .serializers import ExamSerializer, ExamReadSerializer
-from .models import Exam
 from students.models import Class
 from students.permissions import IsTeacher, IsTeacherAuthor
+from .serializers import ExamSerializer, ExamReadSerializer
+from .models import Exam
 
 
 class ExamsViewSet(viewsets.ModelViewSet):
@@ -41,15 +40,15 @@ class ExamsViewSet(viewsets.ModelViewSet):
 
         return upcoming_exams.filter(clazz=request.user.student.clazz)
 
-    def retrieve(self, request, pk=None):
-        exam = get_object_or_404(self.get_queryset(), id=pk)
+    def retrieve(self, request, *args, **kwargs):
+        exam = get_object_or_404(self.get_queryset(), id=kwargs['pk'])
 
         serializer = self.get_serializer(exam)
         headers = self.get_success_headers(serializer.data)
 
         return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)
 
-    def create(self, request):
+    def create(self, request, *args, **kwargs):
         context = {'request': request}
 
         clazz_data = request.data.get('clazz')
@@ -70,8 +69,8 @@ class ExamsViewSet(viewsets.ModelViewSet):
             headers=headers
         )
 
-    def update(self, request, pk=None):
-        exam = get_object_or_404(Exam, id=pk)
+    def update(self, request, *args, **kwargs):
+        exam = get_object_or_404(Exam, id=kwargs['pk'])
         self.check_object_permissions(request, exam)
 
         serializer = self.get_serializer(exam, data=request.data, partial=True)
@@ -86,8 +85,8 @@ class ExamsViewSet(viewsets.ModelViewSet):
             headers=headers
         )
 
-    def destroy(self, request, pk=None):
-        exam = get_object_or_404(Exam, id=pk)
+    def destroy(self, request, *args, **kwargs):
+        exam = get_object_or_404(Exam, id=kwargs['pk'])
         self.check_object_permissions(request, exam)
 
         exam.delete()

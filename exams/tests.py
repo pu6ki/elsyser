@@ -1,13 +1,12 @@
 from datetime import datetime
 from django.contrib.auth.models import User
-
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.reverse import reverse
 from rest_framework import status
 
+from students.models import Class, Subject, Teacher, Student
 from .serializers import ExamSerializer
 from .models import Exam
-from students.models import Class, Subject, Teacher, Student
 
 
 class ExamsViewSetTestCase(APITestCase):
