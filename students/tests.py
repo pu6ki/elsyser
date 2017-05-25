@@ -290,10 +290,10 @@ class ProfileViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'],
-            'You can only update your own profile.'
+            request.data['detail'],
+            'You do not have permission to perform this action.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_profile_update_with_invalid_username(self):
         self.client.force_authenticate(user=self.user1)
@@ -686,10 +686,10 @@ class GradesDetailViewTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'],
-            'You can only post grades for your subject.'
+            request.data['detail'],
+            'You do not have permission to perform this action.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_grade_posting_with_invalid_user_id(self):
         self.client.force_authenticate(user=self.user3)
