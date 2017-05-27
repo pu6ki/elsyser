@@ -120,7 +120,7 @@ class GradesList(generics.ListAPIView):
 class GradesDetail(generics.ListCreateAPIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes_by_action = {
-        'get': (IsAuthenticated,),
+        'get': (IsAuthenticated, IsValidUser),
         'post': (IsAuthenticated, IsTeacher, IsTeachersSubject)
     }
     serializer_class = GradesSerializer
@@ -134,14 +134,9 @@ class GradesDetail(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         user = get_object_or_404(User, id=kwargs['user_pk'])
-        student = user.student
 
         if IsStudent().has_permission(request, self):
-            if student != request.user.student:
-                return Response(
-                    {'message': 'You can view only your own grades.'},
-                    status=status.HTTP_401_UNAUTHORIZED
-                )
+            self.check_object_permissions(request, user)
 
         grades = Grade.objects.filter(
             subject__id=kwargs['subject_pk']

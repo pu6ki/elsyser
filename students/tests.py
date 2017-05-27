@@ -557,10 +557,10 @@ class GradesDetailViewTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['message'],
-            'You can view only your own grades.'
+            request.data['detail'],
+            'You do not have permission to perform this action.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_grade_detail_with_non_graded_subject(self):
         self.client.force_authenticate(user=self.user1)
