@@ -15,9 +15,7 @@ class Homework(models.Model):
         ordering = ['-deadline', 'clazz', 'subject']
 
     def __str__(self):
-        return '{} ({}) - {}'.format(
-            self.subject, self.clazz, self.deadline
-        )
+        return '{} ({}) - {}'.format(self.subject, self.clazz, self.deadline)
 
 
 class Submission(models.Model):
@@ -35,6 +33,4 @@ class Submission(models.Model):
         ordering = ['-posted_on', '-last_edited_on']
 
     def __str__(self):
-        return '{} - {} ({})'.format(
-            self.student, self.homework, self.posted_on
-        )
+        return '{} - {} ({})'.format(self.student, self.homework, self.posted_on)
