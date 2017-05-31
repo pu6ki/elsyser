@@ -12,7 +12,6 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('id', 'posted_by', 'content', 'posted_on', 'edited', 'last_edited_on')
-        depth = 1
 
     def create(self, validated_data):
         news = self.context['news']
@@ -47,7 +46,6 @@ class NewsSerializer(serializers.ModelSerializer):
             'id', 'title', 'content', 'posted_on', 'author',
             'clazz', 'comment_set', 'edited', 'last_edited_on'
         )
-        depth = 2
 
     def create(self, validated_data):
         request = self.context['request']

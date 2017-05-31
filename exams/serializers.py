@@ -17,21 +17,19 @@ class ExamSerializer(serializers.ModelSerializer):
     )
     details = serializers.CharField(max_length=1000, allow_blank=True)
 
+
     class Meta:
         model = Exam
-        fields = (
-            'id', 'subject', 'clazz', 'topic', 'date', 'details', 'author'
-        )
+        fields = ('id', 'subject', 'clazz', 'topic', 'date', 'details', 'author')
         depth = 1
 
     def create(self, validated_data):
         request = self.context['request']
+
         author = request.user.teacher
         subject = author.subject
 
-        return Exam.objects.create(
-            subject=subject, author=author, **validated_data
-        )
+        return Exam.objects.create(subject=subject, author=author, **validated_data)
 
     def update(self, instance, validated_data):
         instance.__dict__.update(**validated_data)

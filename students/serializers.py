@@ -100,7 +100,6 @@ class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = ('user', 'clazz')
-        depth = 1
 
     def save(self):
         user = User.objects.create_user(**self.validated_data['user'])
@@ -189,7 +188,6 @@ class StudentProfileSerializer(DefaultProfileSerializer):
     class Meta:
         model = Student
         fields = ('user', 'clazz', 'profile_image_url', 'info')
-        depth = 1
 
 
 class TeacherProfileSerializer(DefaultProfileSerializer):
@@ -199,7 +197,6 @@ class TeacherProfileSerializer(DefaultProfileSerializer):
     class Meta:
         model = Teacher
         fields = ('user', 'subject', 'profile_image_url', 'info')
-        depth = 1
 
 
 class DefaultAuthorSerializer(serializers.ModelSerializer):
