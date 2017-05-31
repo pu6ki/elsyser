@@ -221,10 +221,7 @@ class MaterialsViewSetTestCase(APITestCase):
             format='json'
         )
 
-        self.assertEqual(
-            request.data['content'],
-            ['This field may not be blank.']
-        )
+        self.assertEqual(request.data['content'], ['This field may not be blank.'])
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_materials_creation_with_valid_data(self):

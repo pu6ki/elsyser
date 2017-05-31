@@ -22,6 +22,7 @@ class MaterialsViewSet(viewsets.GenericViewSet):
 
     def get_serializer_class(self):
         is_get_request = self.request.method in ('GET',)
+
         return MaterialReadSerializer if is_get_request else MaterialSerializer
 
     def get_permissions(self):
@@ -79,17 +80,13 @@ class NestedMaterialsViewSet(mixins.RetrieveModelMixin,
         material = get_object_or_404(subject.material_set, id=kwargs['pk'])
         self.check_object_permissions(request, material)
 
-        serializer = self.get_serializer_class()(material, data=request.data, partial=True)
+        serializer = self.get_serializer(material, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
         headers = self.get_success_headers(serializer.data)
 
-        return Response(
-            serializer.validated_data,
-            status=status.HTTP_200_OK,
-            headers=headers
-        )
+        return Response(serializer.validated_data, status=status.HTTP_200_OK, headers=headers)
 
     def destroy(self, request, *args, **kwargs):
         subject = get_object_or_404(Subject, id=kwargs['subject_pk'])

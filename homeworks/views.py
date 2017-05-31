@@ -78,11 +78,7 @@ class HomeworksViewSet(viewsets.ModelViewSet):
 
         headers = self.get_success_headers(serializer.data)
 
-        return Response(
-            serializer.validated_data,
-            status=status.HTTP_200_OK,
-            headers=headers
-        )
+        return Response(serializer.validated_data, status=status.HTTP_200_OK, headers=headers)
 
     def destroy(self, request, *args, **kwargs):
         homework = get_object_or_404(Homework, id=kwargs['pk'])
@@ -157,11 +153,7 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
 
         headers = self.get_success_headers(serializer.data)
 
-        return Response(
-            serializer.validated_data,
-            status=status.HTTP_201_CREATED,
-            headers=headers
-        )
+        return Response(serializer.validated_data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
         homework = get_object_or_404(Homework, id=kwargs['homeworks_pk'])
@@ -176,8 +168,4 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
 
         headers = self.get_success_headers(serializer.data)
 
-        return Response(
-            serializer.validated_data,
-            status=status.HTTP_200_OK,
-            headers=headers
-        )
+        return Response(serializer.validated_data, status=status.HTTP_200_OK, headers=headers)

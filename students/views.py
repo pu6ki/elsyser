@@ -84,9 +84,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
         entry = self.get_entry_model(user)
 
-        serializer = self.get_serializer_model(user)(
-            entry, data=request.data, partial=True
-        )
+        serializer = self.get_serializer_model(user)(entry, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 

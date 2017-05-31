@@ -63,11 +63,7 @@ class ExamsViewSet(viewsets.ModelViewSet):
 
         headers = self.get_success_headers(serializer.data)
 
-        return Response(
-            serializer.validated_data,
-            status=status.HTTP_201_CREATED,
-            headers=headers
-        )
+        return Response(serializer.validated_data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
         exam = get_object_or_404(Exam, id=kwargs['pk'])
@@ -79,11 +75,7 @@ class ExamsViewSet(viewsets.ModelViewSet):
 
         headers = self.get_success_headers(serializer.data)
 
-        return Response(
-            serializer.validated_data,
-            status=status.HTTP_200_OK,
-            headers=headers
-        )
+        return Response(serializer.validated_data, status=status.HTTP_200_OK, headers=headers)
 
     def destroy(self, request, *args, **kwargs):
         exam = get_object_or_404(Exam, id=kwargs['pk'])
