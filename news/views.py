@@ -29,6 +29,12 @@ class NewsStudentsViewSet(viewsets.ModelViewSet):
             in self.permission_classes_by_action[self.action]
         ]
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['clazz'] = self.request.user.student.clazz
+
+        return context
+
     def get_queryset(self):
         return News.objects.filter(clazz=self.request.user.student.clazz)
 
@@ -40,12 +46,7 @@ class NewsStudentsViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
-        context = {
-            'request': request,
-            'clazz': request.user.student.clazz
-        }
-
-        serializer = self.serializer_class(context=context, data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
@@ -141,6 +142,15 @@ class NewsTeachersViewSet(viewsets.ModelViewSet):
             in self.permission_classes_by_action[self.action]
         ]
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['clazz'] = Class.objects.get(
+            number=self.kwargs['class_number'],
+            letter=self.kwargs['class_letter']
+        )
+
+        return context
+
     def get_queryset(self):
         return News.objects.filter(author=self.request.user)
 
@@ -162,13 +172,7 @@ class NewsTeachersViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
-        clazz = Class.objects.get(
-            number=kwargs['class_number'],
-            letter=kwargs['class_letter']
-        )
-        context = {'request': request, 'clazz': clazz}
-
-        serializer = self.serializer_class(context=context, data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
@@ -220,28 +224,31 @@ class CommentsViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         return CommentReadSerializer if self.request.method in ('GET',) else CommentSerializer
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['news'] = get_object_or_404(News, id=self.get_news_pk(self.kwargs))
+
+        return context
+
     def get_news_pk(self, kwargs):
         return kwargs.get('studentsNews_pk', kwargs.get('teachersNews_pk', None))
 
     def list(self, request, *args, **kwargs):
         comments = Comment.objects.filter(news__pk=self.get_news_pk(kwargs))
 
-        serializer = self.get_serializer_class()(comments, many=True)
+        serializer = self.get_serializer(comments, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, *args, **kwargs):
         comment = get_object_or_404(Comment, id=kwargs['pk'])
 
-        serializer = self.get_serializer_class()(comment)
+        serializer = self.get_serializer(comment)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
-        news = get_object_or_404(News, id=self.get_news_pk(kwargs))
-        context = {'request': request, 'news': news}
-
-        serializer = self.get_serializer_class()(context=context, data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
@@ -254,7 +261,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
         comment = get_object_or_404(news.comment_set, id=kwargs['pk'])
         self.check_object_permissions(request, comment)
 
-        serializer = self.get_serializer_class()(comment, data=request.data, partial=True)
+        serializer = self.get_serializer(comment, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
