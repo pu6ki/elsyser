@@ -25,12 +25,6 @@ class MaterialsViewSet(viewsets.GenericViewSet):
 
         return MaterialReadSerializer if is_get_request else MaterialSerializer
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context['subject'] = get_object_or_404(Subject, id=self.kwargs['subject_pk'])
-
-        return context
-
     def get_permissions(self):
         return [
             permission()
@@ -55,9 +49,14 @@ class NestedMaterialsViewSet(mixins.RetrieveModelMixin,
                              mixins.UpdateModelMixin,
                              mixins.DestroyModelMixin,
                              MaterialsListViewSet):
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['subject'] = get_object_or_404(Subject, id=self.kwargs['subject_pk'])
+
+        return context
+
     def get_queryset(self):
-        subject_id = self.kwargs['subject_pk']
-        subject = get_object_or_404(Subject, id=subject_id)
+        subject = get_object_or_404(Subject, id=self.kwargs['subject_pk'])
 
         return super().get_queryset().filter(subject=subject)
 
