@@ -9,6 +9,7 @@ from .views import (
     StudentsList
 )
 
+
 app_name = 'students'
 
 router = routers.SimpleRouter()
