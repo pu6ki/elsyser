@@ -1,4 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from students.serializers import UserInfoSerializer, ClassSerializer
@@ -23,7 +22,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
         try:
             field = author.student
-        except ObjectDoesNotExist:
+        except AttributeError:
             field = author.teacher
 
         return field.profile_image_url
