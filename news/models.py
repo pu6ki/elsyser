@@ -30,5 +30,8 @@ class Comment(models.Model):
     edited = models.BooleanField(default=False)
     last_edited_on = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ['-posted_on']
+
     def __str__(self):
         return '{} - {}'.format(self.posted_by, self.news)
