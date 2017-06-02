@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from students.serializers import UserInfoSerializer, ClassSerializer
@@ -6,12 +7,26 @@ from .models import News, Comment
 
 class CommentSerializer(serializers.ModelSerializer):
     posted_by = UserInfoSerializer(read_only=True)
+    author_image = serializers.SerializerMethodField()
     content = serializers.CharField(max_length=2048)
 
 
     class Meta:
         model = Comment
-        fields = ('id', 'posted_by', 'content', 'posted_on', 'edited', 'last_edited_on')
+        fields = (
+            'id', 'posted_by', 'author_image', 'content', 'posted_on', 'edited', 'last_edited_on'
+        )
+
+    def get_author_image(self, obj):
+        field = None
+        author = obj.posted_by
+
+        try:
+            field = author.student
+        except ObjectDoesNotExist:
+            field = author.teacher
+
+        return field.profile_image_url
 
     def create(self, validated_data):
         news = self.context['news']
