@@ -1,6 +1,7 @@
 from django.db import models
 
 from students.models import Class, Subject, Teacher, Student
+from news.models import Post
 
 
 class Homework(models.Model):
@@ -18,14 +19,11 @@ class Homework(models.Model):
         return '{} ({}) - {}'.format(self.subject, self.clazz, self.deadline)
 
 
-class Submission(models.Model):
+class Submission(Post):
     homework = models.ForeignKey(Homework, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     content = models.TextField(max_length=2048)
     solution_url = models.URLField(blank=True)
-    posted_on = models.DateTimeField(auto_now_add=True)
-    edited = models.BooleanField(default=False)
-    last_edited_on = models.DateTimeField(auto_now=True)
     checked = models.BooleanField(default=False)
 
 

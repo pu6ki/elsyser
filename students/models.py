@@ -33,25 +33,29 @@ class Subject(models.Model):
         return self.title
 
 
-class Student(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
+class Account(models.Model):
     profile_image_url = models.URLField(
         default='http://elsyser.herokuapp.com/static/default.png', blank=False
     )
     info = models.TextField(max_length=2048, blank=True)
+
+
+    class Meta:
+        abstract = True
+
+
+class Student(Account):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
+
 
     def __str__(self):
         return '{} ({})'.format(self.user.username, self.clazz)
 
 
-class Teacher(models.Model):
+class Teacher(Account):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    profile_image_url = models.URLField(
-        default='http://elsyser.herokuapp.com/static/default.png', blank=False
-    )
-    info = models.TextField(max_length=2048, blank=True)
 
     def __str__(self):
         return '{} ({})'.format(self.user.username, self.subject)
