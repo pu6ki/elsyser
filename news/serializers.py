@@ -19,6 +19,8 @@ class CommentSerializer(serializers.ModelSerializer):
     def get_author_image(self, obj):
         field = None
         author = obj.posted_by
+        
+        print(author)
 
         try:
             field = author.student
