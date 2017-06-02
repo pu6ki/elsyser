@@ -34,6 +34,7 @@ class Subject(models.Model):
 
 
 class Account(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_image_url = models.URLField(
         default='http://elsyser.herokuapp.com/static/default.png', blank=False
     )
@@ -45,7 +46,6 @@ class Account(models.Model):
 
 
 class Student(Account):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
 
 
@@ -54,7 +54,6 @@ class Student(Account):
 
 
 class Teacher(Account):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
 
     def __str__(self):
