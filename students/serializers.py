@@ -185,6 +185,7 @@ class DefaultProfileSerializer(serializers.ModelSerializer):
 class StudentProfileSerializer(DefaultProfileSerializer):
     clazz = ClassSerializer()
 
+
     class Meta:
         model = Student
         fields = ('user', 'clazz', 'profile_image_url', 'info')
