@@ -132,11 +132,7 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(submission)
         headers = self.get_success_headers(serializer.data)
 
-        return Response(
-            serializer.data,
-            status=status.HTTP_200_OK,
-            headers=headers
-        )
+        return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)
 
     def create(self, request, *args, **kwargs):
         homework = get_object_or_404(Homework, id=kwargs['homeworks_pk'])

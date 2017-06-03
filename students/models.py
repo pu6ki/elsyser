@@ -48,7 +48,6 @@ class Account(models.Model):
 class Student(Account):
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
 
-
     def __str__(self):
         return '{} ({})'.format(self.user.username, self.clazz)
 
