@@ -144,7 +144,7 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
 
         context = {'request': request, 'homework': homework}
 
-        serializer = self.get_serializer(context=context, data=request.data)
+        serializer = self.get_serializer_class()(context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
