@@ -13,17 +13,25 @@ from .permissions import IsCommentAuthor
 class NewsDefaultViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     serializer_class = NewsSerializer
-    permission_classes_by_action = {}
 
-    def get_permissions(self):
-        return [
-            permission()
-            for permission
-            in self.permission_classes_by_action[self.action]
-        ]
+    def get_clazz_info(self):
+        raise NotImplementedError()
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        clazz_info = self.get_clazz_info()
+
+        return dict(list(context.items()) + list(clazz_info.items()))
 
     def get_queryset(self):
-        raise NotImplementedError()
+        class_info = self.get_clazz_info()
+        class_number = class_info['class_number']
+        class_letter = class_info['class_letter']
+
+        common_news = News.objects.filter(class_number=class_number, class_letter='')
+        news = News.objects.filter(class_number=class_number, class_letter=class_letter)
+
+        return common_news | news
 
     def retrieve(self, request, *args, **kwargs):
         news = get_object_or_404(self.get_queryset(), id=kwargs['pk'])
@@ -74,20 +82,20 @@ class NewsStudentsViewSet(NewsDefaultViewSet):
         'destroy': (IsAuthenticated, IsStudent, IsUserAuthor)
     }
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context['class_number'] = self.request.user.student.clazz.number
+    def get_permissions(self):
+        return [
+            permission()
+            for permission
+            in self.permission_classes_by_action[self.action]
+        ]
 
-        return context
-
-    def get_queryset(self):
+    def get_clazz_info(self):
         clazz = self.request.user.student.clazz
 
-        common_news = News.objects.filter(class_number=clazz.number, class_letter='')
-        news = News.objects.filter(class_number=clazz.number, class_letter=clazz.letter)
-
-        return common_news | news
-
+        return {
+            'class_number': clazz.number,
+            'class_letter': clazz.letter
+        }
 
 class NewsTeachersList(generics.ListAPIView):
     authentication_classes = (TokenAuthentication,)
@@ -139,19 +147,15 @@ class NewsTeachersViewSet(NewsDefaultViewSet):
         'destroy': (IsAuthenticated, IsTeacher, IsUserAuthor)
     }
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context['class_number'] = self.kwargs['class_number']
-        context['class_letter'] = self.kwargs['class_letter']
+    def get_permissions(self):
+        return [
+            permission()
+            for permission
+            in self.permission_classes_by_action[self.action]
+        ]
 
-        return context
-
-    def get_queryset(self):
-        return News.objects.filter(
-            class_number=self.kwargs['class_number'],
-            class_letter=self.kwargs['class_letter'],
-            author=self.request.user
-        )
+    def get_clazz_info(self):
+        return self.kwargs
 
 
 class CommentsViewSet(viewsets.ModelViewSet):

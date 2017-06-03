@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from students.serializers import UserInfoSerializer, ClassSerializer
+from students.serializers import UserInfoSerializer
 from .models import News, Comment
 
 
@@ -62,9 +62,10 @@ class NewsSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         author = self.context['request'].user
-        class_number = self.context['class_number']
+        validated_data['class_number'] = self.context['class_number']
+        validated_data['class_letter'] = self.context.get('class_letter', '')
 
-        return News.objects.create(author=author, class_number=class_number, **validated_data)
+        return News.objects.create(author=author, **validated_data)
 
     def update(self, instance, validated_data):
         instance.__dict__.update(**validated_data)

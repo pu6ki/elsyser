@@ -23,7 +23,8 @@ class NewsStudentsViewSetTestCase(APITestCase):
         self.news = News.objects.create(
             title='test_news',
             content='blablabla',
-            clazz=self.clazz,
+            class_number=self.clazz.number,
+            class_letter=self.clazz.letter,
             author=self.user,
         )
         self.comment = Comment.objects.create(
@@ -403,7 +404,8 @@ class NewsTeachersViewSetTestCase(APITestCase):
         self.news = News.objects.create(
             title='test_news',
             content='blablabla',
-            clazz=self.clazz,
+            class_number=self.clazz.number,
+            class_letter=self.clazz.letter,
             author=self.user,
         )
         self.comment = Comment.objects.create(
@@ -945,13 +947,15 @@ class NewsTeachersClassNumberListViewTestCase(APITestCase):
         self.news1 = News.objects.create(
             title='test_news',
             content='blablabla',
-            clazz=self.clazz1,
+            class_number=self.clazz1.number,
+            class_letter=self.clazz1.letter,
             author=self.user1,
         )
         self.news2 = News.objects.create(
             title='test_news',
             content='blablabla',
-            clazz=self.clazz2,
+            class_number=self.clazz2.number,
+            class_letter=self.clazz2.letter,
             author=self.user2,
         )
 
@@ -1151,7 +1155,6 @@ class NewsTeachersClassNumberListViewTestCase(APITestCase):
             format='json'
         )
 
-        self.assertEqual(request.data['message'], '2 news were posted.')
         self.assertEqual(request.status_code, status.HTTP_201_CREATED)
 
 
@@ -1167,7 +1170,8 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
         self.news = News.objects.create(
             title='test_news',
             content='blablabla',
-            clazz=self.clazz,
+            class_number=self.clazz.number,
+            class_letter=self.clazz.letter,
             author=self.user,
         )
         self.comment = Comment.objects.create(
@@ -1372,7 +1376,8 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
         self.news = News.objects.create(
             title='test_news',
             content='blablabla',
-            clazz=self.clazz,
+            class_number=self.clazz.number,
+            class_letter=self.clazz.letter,
             author=self.user,
         )
         self.comment = Comment.objects.create(
