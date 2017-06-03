@@ -13,7 +13,12 @@ app_name = 'news'
 students_router = routers.SimpleRouter()
 students_router.register(r'news/students', NewsStudentsViewSet, base_name='studentsNews')
 
-teachers_url_pattern = r'news/teachers/(?P<class_number>[8]|[9]|1[0-2])/(?P<class_letter>[A-Z])'
+teachers_default_url_pattern = r'news/teachers'
+teachers_detail_url_pattern = r'(?P<class_number>[8]|[9]|1[0-2])/(?P<class_letter>[A-Z])'
+teachers_url_pattern = r'{default_pattern}/{detail_pattern}'.format(
+    default_pattern=teachers_default_url_pattern,
+    detail_pattern=teachers_detail_url_pattern
+)
 
 teachers_router = routers.SimpleRouter()
 teachers_router.register(teachers_url_pattern, NewsTeachersViewSet, base_name='teachersNews')
