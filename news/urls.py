@@ -13,12 +13,10 @@ app_name = 'news'
 students_router = routers.SimpleRouter()
 students_router.register(r'news/students', NewsStudentsViewSet, base_name='studentsNews')
 
+teachers_url_pattern = r'news/teachers/(?P<class_number>[8]|[9]|1[0-2])/(?P<class_letter>[A-Z])'
+
 teachers_router = routers.SimpleRouter()
-teachers_router.register(
-    r'news/teachers/(?P<class_number>[8]|[9]|1[0-2])/(?P<class_letter>[A-Z])',
-    NewsTeachersViewSet,
-    base_name='teachersNews'
-)
+teachers_router.register(teachers_url_pattern, NewsTeachersViewSet, base_name='teachersNews')
 
 students_comments_router = routers.NestedSimpleRouter(
     students_router, r'news/students', lookup='studentsNews'
@@ -29,7 +27,7 @@ students_comments_router.register(
 
 teachers_comments_router = routers.NestedSimpleRouter(
     teachers_router,
-    r'news/teachers/(?P<class_number>[8]|[9]|1[0-2])/(?P<class_letter>[A-Z])',
+    teachers_url_pattern,
     lookup='teachersNews'
 )
 teachers_comments_router.register(r'comments', CommentsViewSet, base_name='teachersNews-comments')

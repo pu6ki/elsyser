@@ -50,7 +50,6 @@ class NewsSerializer(serializers.ModelSerializer):
     title = serializers.CharField(min_length=3, max_length=100)
     content = serializers.CharField(min_length=5, max_length=10000)
     author = UserInfoSerializer(read_only=True)
-    clazz = ClassSerializer(read_only=True)
     comment_set = CommentSerializer(read_only=True, many=True)
 
 
@@ -58,16 +57,14 @@ class NewsSerializer(serializers.ModelSerializer):
         model = News
         fields = (
             'id', 'title', 'content', 'posted_on', 'author',
-            'clazz', 'comment_set', 'edited', 'last_edited_on'
+            'class_number', 'class_letter', 'comment_set', 'edited', 'last_edited_on'
         )
 
     def create(self, validated_data):
-        request = self.context['request']
-        clazz = self.context['clazz']
+        author = self.context['request'].user
+        class_number = self.context['class_number']
 
-        author = request.user
-
-        return News.objects.create(author=author, clazz=clazz, **validated_data)
+        return News.objects.create(author=author, class_number=class_number, **validated_data)
 
     def update(self, instance, validated_data):
         instance.__dict__.update(**validated_data)
