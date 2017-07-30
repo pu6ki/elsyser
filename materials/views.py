@@ -1,13 +1,15 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, mixins, status
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
 from students.models import Subject
 from students.permissions import IsTeacher, IsTeacherAuthor
+
 from .serializers import MaterialSerializer, MaterialReadSerializer
 from .models import Material
+from .filters import MaterialListFilterBackend
 
 
 class MaterialsViewSet(viewsets.GenericViewSet):
@@ -21,9 +23,7 @@ class MaterialsViewSet(viewsets.GenericViewSet):
     }
 
     def get_serializer_class(self):
-        is_get_request = self.request.method in ('GET',)
-
-        return MaterialReadSerializer if is_get_request else MaterialSerializer
+        return MaterialReadSerializer if self.request.method in ('GET',) else MaterialSerializer
 
     def get_permissions(self):
         return [
@@ -34,14 +34,8 @@ class MaterialsViewSet(viewsets.GenericViewSet):
 
 
 class MaterialsListViewSet(mixins.ListModelMixin, MaterialsViewSet):
-    def get_queryset(self):
-        request = self.request
-        all_materials = Material.objects.all()
-
-        if IsTeacher().has_permission(request, self):
-            return all_materials.filter(subject=request.user.teacher.subject)
-
-        return all_materials.filter(class_number=request.user.student.clazz.number)
+    queryset = Material.objects.all()
+    filter_backends = (MaterialListFilterBackend,)
 
 
 class NestedMaterialsViewSet(mixins.RetrieveModelMixin,
@@ -97,7 +91,4 @@ class NestedMaterialsViewSet(mixins.RetrieveModelMixin,
 
         material.delete()
 
-        return Response(
-            {'message': 'Material successfully deleted.'},
-            status=status.HTTP_200_OK
-        )
+        return Response(None, status.HTTP_204_NO_CONTENT)

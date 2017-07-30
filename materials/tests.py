@@ -1,9 +1,11 @@
 from django.contrib.auth.models import User
+
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.reverse import reverse
 from rest_framework import status
 
 from students.models import Class, Subject, Student, Teacher
+
 from .serializers import MaterialSerializer
 from .models import Material
 
@@ -538,7 +540,5 @@ class MaterialsViewSetTestCase(APITestCase):
             ),
         )
 
-        self.assertEqual(
-            request.data['message'], 'Material successfully deleted.'
-        )
-        self.assertEqual(request.status_code, status.HTTP_200_OK)
+        self.assertEqual(Material.objects.count(), 0)
+        self.assertEqual(request.status_code, status.HTTP_204_NO_CONTENT)

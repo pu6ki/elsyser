@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from students.serializers import SubjectSerializer, TeacherAuthorSerializer
+
 from .models import Material
 
 
@@ -26,12 +27,6 @@ class MaterialSerializer(serializers.ModelSerializer):
         author = request.user.teacher
 
         return Material.objects.create(subject=subject, author=author, **validated_data)
-
-    def update(self, instance, validated_data):
-        instance.__dict__.update(**validated_data)
-        instance.save()
-
-        return instance
 
 
 class MaterialReadSerializer(MaterialSerializer):
