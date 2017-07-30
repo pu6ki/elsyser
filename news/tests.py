@@ -1,9 +1,11 @@
 from django.contrib.auth.models import User
+
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.reverse import reverse
 from rest_framework import status
 
 from students.models import Class, Subject, Student, Teacher
+
 from .models import News, Comment
 from .serializers import NewsSerializer, CommentSerializer
 
@@ -385,7 +387,8 @@ class NewsStudentsViewSetTestCase(APITestCase):
             reverse(self.detail_view_name, kwargs={'pk': self.news.id})
         )
 
-        self.assertEqual(request.status_code, status.HTTP_200_OK)
+        self.assertEqual(News.objects.count(), 0)
+        self.assertEqual(request.status_code, status.HTTP_204_NO_CONTENT)
 
 
 class NewsTeachersViewSetTestCase(APITestCase):
@@ -913,7 +916,8 @@ class NewsTeachersViewSetTestCase(APITestCase):
             )
         )
 
-        self.assertEqual(request.status_code, status.HTTP_200_OK)
+        self.assertEqual(News.objects.count(), 0)
+        self.assertEqual(request.status_code, status.HTTP_204_NO_CONTENT)
 
 
 class NewsTeachersClassNumberListViewTestCase(APITestCase):
@@ -1356,10 +1360,8 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
             )
         )
 
-        self.assertEqual(
-            request.data['message'], 'Comment successfully deleted.'
-        )
-        self.assertEqual(request.status_code, status.HTTP_200_OK)
+        self.assertEqual(Comment.objects.count(), 0)
+        self.assertEqual(request.status_code, status.HTTP_204_NO_CONTENT)
 
 
 class NewsTeachersCommentsViewSetTestCase(APITestCase):
@@ -1623,7 +1625,5 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
             )
         )
 
-        self.assertEqual(
-            request.data['message'], 'Comment successfully deleted.'
-        )
-        self.assertEqual(request.status_code, status.HTTP_200_OK)
+        self.assertEqual(Comment.objects.count(), 0)
+        self.assertEqual(request.status_code, status.HTTP_204_NO_CONTENT)

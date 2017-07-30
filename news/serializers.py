@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from students.serializers import UserInfoSerializer
+
 from .models import News, Comment
 
 
@@ -35,12 +36,6 @@ class CommentSerializer(serializers.ModelSerializer):
 
         return Comment.objects.create(news=news, posted_by=posted_by, **validated_data)
 
-    def update(self, instance, validated_data):
-        instance.__dict__.update(**validated_data)
-        instance.save()
-
-        return instance
-
 
 class CommentReadSerializer(CommentSerializer):
     posted_by = UserInfoSerializer(read_only=True)
@@ -66,9 +61,3 @@ class NewsSerializer(serializers.ModelSerializer):
         validated_data['class_letter'] = self.context.get('class_letter', '')
 
         return News.objects.create(author=author, **validated_data)
-
-    def update(self, instance, validated_data):
-        instance.__dict__.update(**validated_data)
-        instance.save()
-
-        return instance
