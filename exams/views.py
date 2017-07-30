@@ -1,14 +1,17 @@
 from datetime import datetime
-from django.shortcuts import get_object_or_404
+
 from rest_framework import viewsets, status
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
 from students.models import Class
 from students.permissions import IsTeacher, IsTeacherAuthor
+
 from .serializers import ExamSerializer, ExamReadSerializer
 from .models import Exam
+from .filters import ExamsFilterBackend
 
 
 class ExamsViewSet(viewsets.ModelViewSet):
@@ -20,6 +23,8 @@ class ExamsViewSet(viewsets.ModelViewSet):
         'update': (IsAuthenticated, IsTeacher, IsTeacherAuthor),
         'destroy': (IsAuthenticated, IsTeacher, IsTeacherAuthor)
     }
+    queryset = Exam.objects.filter(date__gte=datetime.now())
+    filter_backends = (ExamsFilterBackend,)
 
     def get_permissions(self):
         return [
@@ -31,57 +36,15 @@ class ExamsViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         return ExamReadSerializer if self.request.method in ('GET',) else ExamSerializer
 
-    def get_queryset(self):
-        request = self.request
-        upcoming_exams = Exam.objects.filter(date__gte=datetime.now())
-
-        if IsTeacher().has_permission(request, self):
-            return upcoming_exams.filter(subject=request.user.teacher.subject)
-
-        return upcoming_exams.filter(clazz=request.user.student.clazz)
-
-    def retrieve(self, request, *args, **kwargs):
-        exam = get_object_or_404(self.get_queryset(), id=kwargs['pk'])
-
-        serializer = self.get_serializer(exam)
-        headers = self.get_success_headers(serializer.data)
-
-        return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)
-
     def create(self, request, *args, **kwargs):
         clazz_data = request.data.get('clazz')
-        clazz, _ = Class.objects.get_or_create(
-            number=int(clazz_data['number']),
-            letter=clazz_data['letter']
-        )
+        clazz = get_object_or_404(Class, **clazz_data)
+        context = {'request': request, 'clazz': clazz}
 
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer_class()(data=request.data, context=context)
         serializer.is_valid(raise_exception=True)
-        serializer.save(clazz=clazz)
+        self.perform_create(serializer)
 
         headers = self.get_success_headers(serializer.data)
 
         return Response(serializer.validated_data, status=status.HTTP_201_CREATED, headers=headers)
-
-    def update(self, request, *args, **kwargs):
-        exam = get_object_or_404(Exam, id=kwargs['pk'])
-        self.check_object_permissions(request, exam)
-
-        serializer = self.get_serializer(exam, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-
-        headers = self.get_success_headers(serializer.data)
-
-        return Response(serializer.validated_data, status=status.HTTP_200_OK, headers=headers)
-
-    def destroy(self, request, *args, **kwargs):
-        exam = get_object_or_404(Exam, id=kwargs['pk'])
-        self.check_object_permissions(request, exam)
-
-        exam.delete()
-
-        return Response(
-            {'message': 'Exam successfully deleted.'},
-            status=status.HTTP_200_OK
-        )

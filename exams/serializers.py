@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
 from students.serializers import ClassSerializer, SubjectSerializer, TeacherAuthorSerializer
+
 from .models import Exam
 
 
@@ -28,14 +29,9 @@ class ExamSerializer(serializers.ModelSerializer):
 
         author = request.user.teacher
         subject = author.subject
+        clazz = self.context['clazz']
 
-        return Exam.objects.create(subject=subject, author=author, **validated_data)
-
-    def update(self, instance, validated_data):
-        instance.__dict__.update(**validated_data)
-        instance.save()
-
-        return instance
+        return Exam.objects.create(subject=subject, author=author, clazz=clazz, **validated_data)
 
 
 class ExamReadSerializer(ExamSerializer):
