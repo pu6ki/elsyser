@@ -1,10 +1,13 @@
 from datetime import datetime, timedelta
+
 from django.contrib.auth.models import User
+
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.reverse import reverse
 from rest_framework import status
 
 from students.models import Class, Subject, Student, Teacher
+
 from .serializers import HomeworkSerializer, SubmissionSerializer
 from .models import Homework, Submission
 
@@ -231,10 +234,8 @@ class HomeworksViewSetTestCase(APITestCase):
             reverse(self.detail_view_name, kwargs={'pk': self.homework.id})
         )
 
-        self.assertEqual(
-            request.data['message'], 'Homework successfully deleted.'
-        )
-        self.assertEqual(request.status_code, status.HTTP_200_OK)
+        self.assertEqual(Homework.objects.count(), 0)
+        self.assertEqual(request.status_code, status.HTTP_204_NO_CONTENT)
 
 
 class SubmissionsViewSetTestCase(APITestCase):

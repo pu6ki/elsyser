@@ -1,6 +1,7 @@
 from django.db import models
 
 from students.models import Class, Subject, Teacher, Student
+
 from news.models import Post
 
 

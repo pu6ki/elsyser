@@ -3,6 +3,7 @@ from rest_framework import serializers
 from students.serializers import (
     ClassSerializer, SubjectSerializer, TeacherAuthorSerializer, StudentAuthorSerializer
 )
+
 from .models import Homework, Submission
 
 
@@ -27,12 +28,6 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
         return Submission.objects.create(homework=homework, student=student, **validated_data)
 
-    def update(self, instance, validated_data):
-        instance.__dict__.update(**validated_data)
-        instance.save()
-
-        return instance
-
 
 class SubmissionReadSerializer(SubmissionSerializer):
     student = StudentAuthorSerializer(read_only=True)
@@ -53,14 +48,9 @@ class HomeworkSerializer(serializers.ModelSerializer):
 
         author = request.user.teacher
         subject = author.subject
+        clazz = self.context['clazz']
 
-        return Homework.objects.create(subject=subject, author=author, **validated_data)
-
-    def update(self, instance, validated_data):
-        instance.__dict__.update(**validated_data)
-        instance.save()
-
-        return instance
+        return Homework.objects.create(subject=subject, author=author, clazz=clazz, **validated_data)
 
 
 class HomeworkReadSerializer(HomeworkSerializer):
