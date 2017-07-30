@@ -1,7 +1,7 @@
 from collections import defaultdict
 
-from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+
 from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -18,6 +18,7 @@ from .serializers import (
 )
 from .models import Subject, Class, Student, Teacher, Grade
 from .permissions import IsValidUser, IsStudent, IsTeacher, IsTeachersSubject
+from .filters import GradeFilterBackend, StudentsListFilterBackend, ClassNumberFilterBackend
 
 
 class StudentRegistration(generics.CreateAPIView):
@@ -68,7 +69,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
         return TeacherProfileSerializer if teachers else StudentProfileSerializer
 
     def retrieve(self, request, *args, **kwargs):
-        user = get_object_or_404(User, id=kwargs['pk'])
+        user = generics.get_object_or_404(User, id=kwargs['pk'])
         entry = self.get_entry_model(user)
 
         serializer = self.get_serializer_model(user)(entry)
@@ -79,7 +80,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
         return Response(response_data, status=status.HTTP_200_OK)
 
     def update(self, request, *args, **kwargs):
-        user = get_object_or_404(User, id=kwargs['pk'])
+        user = generics.get_object_or_404(User, id=kwargs['pk'])
         self.check_object_permissions(request, user)
 
         entry = self.get_entry_model(user)
@@ -95,24 +96,15 @@ class SubjectsList(generics.ListAPIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = SubjectSerializer
-
-    def get(self, request, *args, **kwargs):
-        serializer = self.serializer_class(Subject.objects.all(), many=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    queryset = Subject.objects.all()
 
 
 class GradesList(generics.ListAPIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = GradesSerializer
-
-    def get(self, request, *args, **kwargs):
-        grades = Grade.objects.filter(subject__id=kwargs['subject_pk']).order_by('-pk')
-
-        serializer = self.serializer_class(grades, many=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    queryset = Grade.objects.all()
+    filter_backends = (GradeFilterBackend,)
 
 
 class GradesDetail(generics.ListCreateAPIView):
@@ -131,7 +123,7 @@ class GradesDetail(generics.ListCreateAPIView):
         ]
 
     def get(self, request, *args, **kwargs):
-        user = get_object_or_404(User, id=kwargs['user_pk'])
+        user = generics.get_object_or_404(User, id=kwargs['user_pk'])
 
         if IsStudent().has_permission(request, self):
             self.check_object_permissions(request, user)
@@ -148,10 +140,10 @@ class GradesDetail(generics.ListCreateAPIView):
 
 
     def post(self, request, *args, **kwargs):
-        subject = get_object_or_404(Subject, id=kwargs['subject_pk'])
+        subject = generics.get_object_or_404(Subject, id=kwargs['subject_pk'])
         self.check_object_permissions(request, subject)
 
-        user = get_object_or_404(User, id=kwargs['user_pk'])
+        user = generics.get_object_or_404(User, id=kwargs['user_pk'])
 
         context = {
             'request': request,
@@ -172,18 +164,8 @@ class StudentsList(generics.ListAPIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = StudentProfileSerializer
-
-    def get(self, request, *args, **kwargs):
-        clazz = get_object_or_404(
-            Class,
-            number=kwargs['class_number'],
-            letter=kwargs['class_letter']
-        )
-        students = Student.objects.filter(clazz=clazz)
-
-        serializer = self.serializer_class(students, many=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    queryset = Student.objects.all()
+    filter_backends = (StudentsListFilterBackend,)
 
 
 class ClassesList(generics.ListAPIView):
@@ -205,9 +187,5 @@ class ClassesNumberList(generics.ListAPIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = ClassSerializer
-
-    def get(self, request, *args, **kwargs):
-        classes = Class.objects.filter(number=kwargs['class_number'])
-        serializer = self.serializer_class(classes, many=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    queryset = Class.objects.all()
+    filter_backends = (ClassNumberFilterBackend,)
