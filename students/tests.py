@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.reverse import reverse
 from rest_framework import status
@@ -462,7 +463,9 @@ class ClassesListViewTestCase(APITestCase):
         self.view_name = 'students:classes-list'
         self.url = reverse(self.view_name)
 
-        self.clazz = Class.objects.create(number=10, letter='A')
+        self.class_number = 10
+        self.clazz1 = Class.objects.create(number=self.class_number, letter='A')
+        self.clazz2 = Class.objects.create(number=self.class_number + 1, letter='V')
 
         self.user = User.objects.create(
             username='tester',
@@ -473,12 +476,12 @@ class ClassesListViewTestCase(APITestCase):
         )
         self.student = Student.objects.create(
             user=self.user,
-            clazz=self.clazz,
+            clazz=self.clazz1,
             info='I am the lord of the rings.'
         )
 
     def test_classes_list_with_anonymous_user(self):
-        response = self.client.get(self.url, {'class_number': self.clazz.number})
+        response = self.client.get(self.url)
 
         self.assertEqual(
             response.data['detail'],
@@ -489,9 +492,17 @@ class ClassesListViewTestCase(APITestCase):
     def test_classes_list_with_authenticated_user(self):
         self.client.force_authenticate(user=self.user)
 
-        response = self.client.get(self.url, {'class_number': self.clazz.number})
+        response = self.client.get(self.url)
 
-        self.assertTrue(response.data)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_classes_list_with_class_number_param(self):
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.get(self.url, {'number': self.class_number})
+
+        self.assertEqual(len(response.data), 1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
