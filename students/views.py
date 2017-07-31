@@ -172,9 +172,10 @@ class ClassesList(generics.ListAPIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = ClassSerializer
+    queryset = Class.objects.all()
 
     def get(self, request, *args, **kwargs):
-        serializer = self.serializer_class(Class.objects.all(), many=True)
+        serializer = self.get_serializer(self.get_queryset(), many=True)
 
         data = defaultdict(list)
         for clazz in serializer.data:

@@ -4,14 +4,24 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Class(models.Model):
-    number = models.IntegerField(
-        validators=[MinValueValidator(8), MaxValueValidator(12)],
-        choices=[(i, i) for i in range(8, 13)],
+    CLASS_NUMBERS = (
+        (8, 8),
+        (9, 9),
+        (10, 10),
+        (11, 11),
+        (12, 12),
     )
-    letter = models.CharField(
-        max_length=1,
-        choices=[(l, l) for l in ['A', 'B', 'V', 'G']],
+    CLASS_NUMBER_VALIDATORS = [MinValueValidator(8), MaxValueValidator(12)]
+
+    CLASS_LETTERS = (
+        ('A', 'A'),
+        ('B', 'B'),
+        ('V', 'V'),
+        ('G', 'G'),
     )
+
+    number = models.IntegerField(validators=CLASS_NUMBER_VALIDATORS, choices=CLASS_NUMBERS)
+    letter = models.CharField(max_length=1, choices=CLASS_LETTERS)
 
 
     class Meta:
@@ -60,7 +70,9 @@ class Teacher(Account):
 
 
 class Grade(models.Model):
-    value = models.FloatField(validators=[MinValueValidator(2), MaxValueValidator(6)])
+    GRADE_VALIDATORS = [MinValueValidator(2), MaxValueValidator(6)]
+
+    value = models.FloatField(validators=GRADE_VALIDATORS)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
 
