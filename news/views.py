@@ -19,9 +19,8 @@ class NewsDefaultViewSet(viewsets.ModelViewSet):
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        clazz_info = self.get_clazz_info()
 
-        return dict(list(context.items()) + list(clazz_info.items()))
+        return dict(context, **self.get_clazz_info())
 
     def get_queryset(self):
         class_info = self.get_clazz_info()
