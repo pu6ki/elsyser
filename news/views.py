@@ -1,5 +1,4 @@
-from rest_framework import generics, viewsets, status
-# from rest_framework.response import Response
+from rest_framework import generics, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
@@ -81,13 +80,6 @@ class NewsTeachersClassNumberList(generics.ListCreateAPIView):
 
         return context
 
-    # def post(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer(data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     self.perform_create(serializer)
-
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 
 class NewsTeachersViewSet(NewsDefaultViewSet):
     permission_classes_by_action = {
@@ -140,28 +132,3 @@ class CommentsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Comment.objects.filter(news__pk=self.get_news_pk(self.kwargs))
-
-    # def update(self, request, *args, **kwargs):
-    #     news = generics.get_object_or_404(News, id=self.get_news_pk(kwargs))
-    #     comment = generics.get_object_or_404(news.comment_set, id=kwargs['pk'])
-    #     self.check_object_permissions(request, comment)
-
-    #     serializer = self.get_serializer(comment, data=request.data, partial=True)
-    #     serializer.is_valid(raise_exception=True)
-    #     self.perform_update(serializer)
-
-    #     headers = self.get_success_headers(serializer.data)
-
-    #     return Response(serializer.validated_data, status=status.HTTP_200_OK, headers=headers)
-
-    # def destroy(self, request, *args, **kwargs):
-    #     news = generics.get_object_or_404(News, id=self.get_news_pk(kwargs))
-    #     comment = generics.get_object_or_404(news.comment_set, id=kwargs['pk'])
-    #     self.check_object_permissions(request, comment)
-
-    #     comment.delete()
-
-    #     return Response(
-    #         {'message': 'Comment successfully deleted.'},
-    #         status=status.HTTP_200_OK
-    #     )

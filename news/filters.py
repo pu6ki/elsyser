@@ -9,3 +9,9 @@ class TeachersListFilterBackend(filters.BaseFilterBackend):
 class ClassNumberFilterBackend(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         return queryset.filter(class_number=view.kwargs['class_number'])
+
+
+class ClassLetterFilterBackend(filters.BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        class_letter = request.GET.get('class_letter', '')
+        return queryset.filter(class_letter=class_letter) if class_letter else queryset
