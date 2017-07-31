@@ -30,69 +30,69 @@ class RegisterViewTestCase(APITestCase):
     def test_registration_with_empty_email(self):
         self.test_data['user']['email'] = ''
 
-        request = self.client.post(
+        response = self.client.post(
             reverse(self.view_name), self.test_data, format='json'
         )
 
         self.assertEqual(
-            request.data['user']['email'], ['This field may not be blank.']
+            response.data['user']['email'], ['This field may not be blank.']
         )
-        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_registration_with_invalid_email(self):
         self.test_data['user']['email'] = 'tester'
 
-        request = self.client.post(
+        response = self.client.post(
             reverse(self.view_name), self.test_data, format='json'
         )
 
         self.assertEqual(
-            request.data['user']['email'], ['Enter a valid email address.']
+            response.data['user']['email'], ['Enter a valid email address.']
         )
-        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_registration_with_empty_password(self):
         self.test_data['user']['password'] = ''
 
-        request = self.client.post(
+        response = self.client.post(
             reverse(self.view_name), self.test_data, format='json'
         )
 
         self.assertEqual(
-            request.data['user']['password'], ['Password cannot be empty.']
+            response.data['user']['password'], ['Password cannot be empty.']
         )
-        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_registration_with_too_short_password(self):
         self.test_data['user']['password'] = 'test'
 
-        request = self.client.post(
+        response = self.client.post(
             reverse(self.view_name), self.test_data, format='json'
         )
 
         self.assertEqual(
-            request.data['user']['password'], ['Password too short.']
+            response.data['user']['password'], ['Password too short.']
         )
-        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_registration_with_invalid_clazz(self):
         self.test_data['clazz']['number'] = 0
 
-        request = self.client.post(
+        response = self.client.post(
             reverse(self.view_name), self.test_data, format='json'
         )
 
         self.assertEqual(
-            request.data['clazz']['number'], ['"0" is not a valid choice.']
+            response.data['clazz']['number'], ['"0" is not a valid choice.']
         )
-        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_registration_with_valid_data(self):
-        request = self.client.post(
+        response = self.client.post(
             reverse(self.view_name), self.test_data, format='json'
         )
 
-        user_data = request.data['user']
+        user_data = response.data['user']
         user = User.objects.get(**user_data)
 
         self.assertEqual(self.test_data['user']['username'], user.username)
@@ -102,7 +102,8 @@ class RegisterViewTestCase(APITestCase):
         self.assertIsNotNone(
             Token.objects.get(user__username=user_data['username'])
         )
-        self.assertEqual(request.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
 
 class LoginViewTestCase(APITestCase):
     def setUp(self):
@@ -122,62 +123,63 @@ class LoginViewTestCase(APITestCase):
         }
 
     def test_login_with_blank_email_or_username(self):
-        request = self.client.post(reverse(self.view_name), self.post_data)
+        response = self.client.post(reverse(self.view_name), self.post_data)
 
         self.assertEqual(
-            request.data['email_or_username'], ['This field may not be blank.']
+            response.data['email_or_username'], ['This field may not be blank.']
         )
-        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_login_with_blank_password(self):
         self.post_data['email_or_username'] = self.user.email
         self.post_data['password'] = ''
 
-        request = self.client.post(reverse(self.view_name), self.post_data)
+        response = self.client.post(reverse(self.view_name), self.post_data)
 
         self.assertEqual(
-            request.data['password'], ['This field may not be blank.']
+            response.data['password'], ['This field may not be blank.']
         )
-        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_login_with_invalid_email_or_username(self):
         self.post_data['email_or_username'] = 'invalid'
 
-        request = self.client.post(reverse(self.view_name), self.post_data)
+        response = self.client.post(reverse(self.view_name), self.post_data)
 
         self.assertEqual(
-            request.data['non_field_errors'],
+            response.data['non_field_errors'],
             ['Unable to log in with provided credentials.']
         )
-        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_login_with_invalid_password(self):
         self.post_data['email_or_username'] = self.user.email
         self.post_data['password'] = 'invalidpassword'
 
-        request = self.client.post(reverse(self.view_name), self.post_data)
+        response = self.client.post(reverse(self.view_name), self.post_data)
 
         self.assertEqual(
-            request.data['non_field_errors'],
+            response.data['non_field_errors'],
             ['Unable to log in with provided credentials.']
         )
-        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_login_with_valid_email_and_password(self):
         self.post_data['email_or_username'] = self.user.email
 
-        request = self.client.post(reverse(self.view_name), self.post_data)
+        response = self.client.post(reverse(self.view_name), self.post_data)
 
-        self.assertEqual(self.token.key, request.data['token'])
-        self.assertEqual(request.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.token.key, response.data['token'])
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_login_with_valid_username_and_password(self):
         self.post_data['email_or_username'] = self.user.username
 
-        request = self.client.post(reverse(self.view_name), self.post_data)
+        response = self.client.post(reverse(self.view_name), self.post_data)
 
-        self.assertEqual(self.token.key, request.data['token'])
-        self.assertEqual(request.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.token.key, response.data['token'])
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 
 class ProfileViewSetTestCase(APITestCase):
     def setUp(self):
@@ -223,57 +225,57 @@ class ProfileViewSetTestCase(APITestCase):
         )
 
     def test_profile_with_anonymous_user(self):
-        request = self.client.get(
+        response = self.client.get(
             reverse(self.view_name, kwargs={'pk': self.user1.id})
         )
 
         self.assertEqual(
-            request.data['detail'],
+            response.data['detail'],
             'Authentication credentials were not provided.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_profile_with_own_user(self):
         self.client.force_authenticate(user=self.user1)
 
-        request = self.client.get(
+        response = self.client.get(
             reverse(self.view_name, kwargs={'pk': self.user1.id})
         )
 
         self.assertEqual(
-            self.student1.user.username, request.data['user']['username']
+            self.student1.user.username, response.data['user']['username']
         )
         self.assertEqual(
-            self.student1.clazz.number, request.data['clazz']['number']
+            self.student1.clazz.number, response.data['clazz']['number']
         )
         self.assertEqual(
-            self.student1.clazz.letter, request.data['clazz']['letter']
+            self.student1.clazz.letter, response.data['clazz']['letter']
         )
-        self.assertEqual(self.student1.info, request.data['info'])
-        self.assertTrue(request.data['can_edit'])
-        self.assertNotIn('password', request.data['user'])
-        self.assertEqual(request.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.student1.info, response.data['info'])
+        self.assertTrue(response.data['can_edit'])
+        self.assertNotIn('password', response.data['user'])
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_profile_with_other_user(self):
         self.client.force_authenticate(user=self.user2)
 
-        request = self.client.get(
+        response = self.client.get(
             reverse(self.view_name, kwargs={'pk': self.user1.id})
         )
 
         self.assertEqual(
-            self.student1.user.username, request.data['user']['username']
+            self.student1.user.username, response.data['user']['username']
         )
         self.assertEqual(
-            self.student1.clazz.number, request.data['clazz']['number']
+            self.student1.clazz.number, response.data['clazz']['number']
         )
         self.assertEqual(
-            self.student1.clazz.letter, request.data['clazz']['letter']
+            self.student1.clazz.letter, response.data['clazz']['letter']
         )
-        self.assertEqual(self.student1.info, request.data['info'])
-        self.assertFalse(request.data['can_edit'])
-        self.assertNotIn('password', request.data['user'])
-        self.assertEqual(request.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.student1.info, response.data['info'])
+        self.assertFalse(response.data['can_edit'])
+        self.assertNotIn('password', response.data['user'])
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_profile_update_of_another_user(self):
         self.client.force_authenticate(user=self.user2)
@@ -282,81 +284,81 @@ class ProfileViewSetTestCase(APITestCase):
         self.student1.user.last_name = 'Travolta'
         put_data = StudentProfileSerializer(self.student1).data
 
-        request = self.client.put(
+        response = self.client.put(
             reverse(self.view_name, kwargs={'pk': self.user1.id}),
             put_data,
             format='json'
         )
 
         self.assertEqual(
-            request.data['detail'],
+            response.data['detail'],
             'You do not have permission to perform this action.'
         )
-        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_profile_update_with_invalid_username(self):
         self.client.force_authenticate(user=self.user1)
         self.student1.user.username = ''
         put_data = StudentProfileSerializer(self.student1).data
 
-        request = self.client.put(
+        response = self.client.put(
             reverse(self.view_name, kwargs={'pk': self.user1.id}),
             put_data,
             format='json'
         )
 
         self.assertEqual(
-            request.data['user']['username'], ['This field may not be blank.']
+            response.data['user']['username'], ['This field may not be blank.']
         )
-        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_profile_update_with_invalid_first_name(self):
         self.client.force_authenticate(user=self.user1)
         self.student1.user.first_name = ''
         put_data = StudentProfileSerializer(self.student1).data
 
-        request = self.client.put(
+        response = self.client.put(
             reverse(self.view_name, kwargs={'pk': self.user1.id}),
             put_data,
             format='json'
         )
 
         self.assertEqual(
-            request.data['user']['first_name'], ['This field may not be blank.']
+            response.data['user']['first_name'], ['This field may not be blank.']
         )
-        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_profile_update_with_invalid_last_name(self):
         self.client.force_authenticate(user=self.user1)
         self.student1.user.last_name = ''
         put_data = StudentProfileSerializer(self.student1).data
 
-        request = self.client.put(
+        response = self.client.put(
             reverse(self.view_name, kwargs={'pk': self.user1.id}),
             put_data,
             format='json'
         )
 
         self.assertEqual(
-            request.data['user']['last_name'], ['This field may not be blank.']
+            response.data['user']['last_name'], ['This field may not be blank.']
         )
-        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_profile_update_with_invalid_profile_picture_url(self):
         self.client.force_authenticate(user=self.user1)
         self.student1.profile_image_url = 'https://www.youtube.com/watch?v=vSoUp-SxLrQ'
         put_data = StudentProfileSerializer(self.student1).data
 
-        request = self.client.put(
+        response = self.client.put(
             reverse(self.view_name, kwargs={'pk': self.user1.id}),
             put_data,
             format='json'
         )
 
         self.assertEqual(
-            request.data['profile_image_url'], ['URL is not a picture.']
+            response.data['profile_image_url'], ['URL is not a picture.']
         )
-        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_profile_update_with_valid_data(self):
         self.client.force_authenticate(user=self.user1)
@@ -366,13 +368,132 @@ class ProfileViewSetTestCase(APITestCase):
         self.student1.profile_image_url = 'http://books.sulla.bg/wp-content/uploads/2011/11/kurt_vonnegut.jpg'
         put_data = StudentProfileSerializer(self.student1).data
 
-        request = self.client.put(
+        response = self.client.put(
             reverse(self.view_name, kwargs={'pk': self.user1.id}),
             put_data,
             format='json'
         )
 
-        self.assertEqual(request.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class StudentsListViewTestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.view_name = 'students:students-list'
+        self.url = reverse(self.view_name)
+
+        self.clazz = Class.objects.create(number=10, letter='A')
+
+        self.user = User.objects.create(
+            username='tester',
+            first_name='test',
+            last_name='user',
+            email='tester@gmail.com',
+            password='pass'
+        )
+        self.student = Student.objects.create(
+            user=self.user,
+            clazz=self.clazz,
+            info='I am the lord of the rings.'
+        )
+
+    def test_students_list_with_anonymous_user(self):
+        response = self.client.get(
+            self.url,
+            {
+                'class_number': self.clazz.number,
+                'class_letter': self.clazz.letter
+            }
+        )
+
+        self.assertEqual(
+            response.data['detail'],
+            'Authentication credentials were not provided.'
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_students_list_with_authenticated_user(self):
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.get(
+            self.url,
+            {
+                'class_number': self.clazz.number,
+                'class_letter': self.clazz.letter
+            }
+        )
+
+        self.assertTrue(response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_students_list_with_invalid_class_number(self):
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.get(
+            self.url,
+            {
+                'class_number': 42,
+                'class_letter': self.clazz.letter
+            }
+        )
+
+        self.assertEqual(response.data, [])
+        self.assertEqual(response.status_code, status.HTTP_200_OK)        
+
+    def test_students_list_with_invalid_class_letter(self):
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.get(
+            self.url,
+            {
+                'class_number': self.clazz.number,
+                'class_letter': 'z'
+            }
+        )
+
+        self.assertEqual(response.data, [])
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class ClassesListViewTestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.view_name = 'students:classes-list'
+        self.url = reverse(self.view_name)
+
+        self.clazz = Class.objects.create(number=10, letter='A')
+
+        self.user = User.objects.create(
+            username='tester',
+            first_name='test',
+            last_name='user',
+            email='tester@gmail.com',
+            password='pass'
+        )
+        self.student = Student.objects.create(
+            user=self.user,
+            clazz=self.clazz,
+            info='I am the lord of the rings.'
+        )
+
+    def test_classes_list_with_anonymous_user(self):
+        response = self.client.get(self.url, {'class_number': self.clazz.number})
+
+        self.assertEqual(
+            response.data['detail'],
+            'Authentication credentials were not provided.'
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_classes_list_with_authenticated_user(self):
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.get(self.url, {'class_number': self.clazz.number})
+
+        self.assertTrue(response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 
 class GradesListViewTestCase(APITestCase):
     def setUp(self):
@@ -408,44 +529,45 @@ class GradesListViewTestCase(APITestCase):
             student=self.student
         )
 
-    def test_list_with_anonymous_user(self):
-        request = self.client.get(
+    def test_subject_list_with_anonymous_user(self):
+        response = self.client.get(
             reverse(self.view_name, kwargs={'subject_pk': self.subject.id})
         )
 
         self.assertEqual(
-            request.data['detail'],
+            response.data['detail'],
             'Authentication credentials were not provided.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_list_with_authenticated_user(self):
+    def test_subject_list_with_authenticated_user(self):
         self.client.force_authenticate(user=self.user)
 
-        request = self.client.get(
+        response = self.client.get(
             reverse(self.view_name, kwargs={'subject_pk': self.subject.id})
         )
 
-        self.assertEqual(request.data[0]['value'], self.grade2.value)
-        self.assertEqual(request.data[1]['value'], self.grade1.value)
+        self.assertEqual(response.data[0]['value'], self.grade2.value)
+        self.assertEqual(response.data[1]['value'], self.grade1.value)
         self.assertEqual(
-            request.data[0]['student']['user']['username'],
+            response.data[0]['student']['user']['username'],
             self.user.username
         )
         self.assertEqual(
-            request.data[1]['student']['user']['username'],
+            response.data[1]['student']['user']['username'],
             self.user.username
         )
-        self.assertEqual(request.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_list_with_invalid_subject_id(self):
+    def test_subject_list_with_invalid_subject_id(self):
         self.client.force_authenticate(user=self.user)
-        request = self.client.get(
+        response = self.client.get(
             reverse(self.view_name, kwargs={'subject_pk': self.subject.id - 1})
         )
 
-        self.assertFalse(request.data)
-        self.assertEqual(request.status_code, status.HTTP_200_OK)
+        self.assertFalse(response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 
 class GradesDetailViewTestCase(APITestCase):
     def setUp(self):
@@ -507,7 +629,7 @@ class GradesDetailViewTestCase(APITestCase):
         )
 
     def test_grade_detail_with_anonymous_user(self):
-        request = self.client.get(
+        response = self.client.get(
             reverse(
                 self.view_name,
                 kwargs={
@@ -518,15 +640,15 @@ class GradesDetailViewTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['detail'],
+            response.data['detail'],
             'Authentication credentials were not provided.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_grade_detail_with_authenticated_user(self):
         self.client.force_authenticate(user=self.user1)
 
-        request = self.client.get(
+        response = self.client.get(
             reverse(
                 self.view_name,
                 kwargs={
@@ -536,17 +658,17 @@ class GradesDetailViewTestCase(APITestCase):
             )
         )
 
-        self.assertEqual(request.data[0]['value'], self.grade1.value)
+        self.assertEqual(response.data[0]['value'], self.grade1.value)
         self.assertEqual(
-            request.data[0]['student']['user']['username'],
+            response.data[0]['student']['user']['username'],
             self.user1.username
         )
-        self.assertEqual(request.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_grade_detail_of_another_user(self):
         self.client.force_authenticate(user=self.user2)
 
-        request = self.client.get(
+        response = self.client.get(
             reverse(
                 self.view_name,
                 kwargs={
@@ -557,15 +679,15 @@ class GradesDetailViewTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['detail'],
+            response.data['detail'],
             'You do not have permission to perform this action.'
         )
-        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_grade_detail_with_non_graded_subject(self):
         self.client.force_authenticate(user=self.user1)
 
-        request = self.client.get(
+        response = self.client.get(
             reverse(
                 self.view_name,
                 kwargs={
@@ -575,13 +697,13 @@ class GradesDetailViewTestCase(APITestCase):
             )
         )
 
-        self.assertFalse(request.data)
-        self.assertEqual(request.status_code, status.HTTP_200_OK)
+        self.assertFalse(response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_grade_detail_with_invalid_user(self):
         self.client.force_authenticate(user=self.user1)
 
-        request = self.client.get(
+        response = self.client.get(
             reverse(
                 self.view_name,
                 kwargs={
@@ -591,11 +713,11 @@ class GradesDetailViewTestCase(APITestCase):
             )
         )
 
-        self.assertEqual(request.data['detail'], 'Not found.')
-        self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data['detail'], 'Not found.')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_grade_posting_with_anonymous_user(self):
-        request = self.client.post(
+        response = self.client.post(
             reverse(
                 self.view_name,
                 kwargs={
@@ -608,15 +730,15 @@ class GradesDetailViewTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['detail'],
+            response.data['detail'],
             'Authentication credentials were not provided.'
         )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_grade_posting_with_student(self):
         self.client.force_authenticate(user=self.user1)
 
-        request = self.client.post(
+        response = self.client.post(
             reverse(
                 self.view_name,
                 kwargs={
@@ -629,15 +751,15 @@ class GradesDetailViewTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['detail'],
+            response.data['detail'],
             'Only teachers are allowed to view and modify this content.'
         )
-        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_grade_posting_with_teacher(self):
         self.client.force_authenticate(user=self.user3)
 
-        request = self.client.post(
+        response = self.client.post(
             reverse(
                 self.view_name,
                 kwargs={
@@ -649,12 +771,12 @@ class GradesDetailViewTestCase(APITestCase):
             format='json'
         )
 
-        self.assertEqual(request.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_grade_posting_with_invalid_subject_id(self):
         self.client.force_authenticate(user=self.user3)
 
-        request = self.client.post(
+        response = self.client.post(
             reverse(
                 self.view_name,
                 kwargs={
@@ -666,13 +788,13 @@ class GradesDetailViewTestCase(APITestCase):
             format='json'
         )
 
-        self.assertEqual(request.data['detail'], 'Not found.')
-        self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data['detail'], 'Not found.')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_grade_posting_with_different_subject(self):
         self.client.force_authenticate(user=self.user3)
 
-        request = self.client.post(
+        response = self.client.post(
             reverse(
                 self.view_name,
                 kwargs={
@@ -685,15 +807,15 @@ class GradesDetailViewTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['detail'],
+            response.data['detail'],
            'You can modify content linked only with your subject.'
         )
-        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_grade_posting_with_invalid_user_id(self):
         self.client.force_authenticate(user=self.user3)
 
-        request = self.client.post(
+        response = self.client.post(
             reverse(
                 self.view_name,
                 kwargs={
@@ -705,13 +827,13 @@ class GradesDetailViewTestCase(APITestCase):
             format='json'
         )
 
-        self.assertEqual(request.data['detail'], 'Not found.')
-        self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data['detail'], 'Not found.')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_grade_posting_with_too_low_grade(self):
         self.client.force_authenticate(user=self.user3)
 
-        request = self.client.post(
+        response = self.client.post(
             reverse(
                 self.view_name,
                 kwargs={
@@ -724,15 +846,15 @@ class GradesDetailViewTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['value'],
+            response.data['value'],
             ['Ensure this value is greater than or equal to 2.']
         )
-        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_grade_posting_with_too_high_grade(self):
         self.client.force_authenticate(user=self.user3)
 
-        request = self.client.post(
+        response = self.client.post(
             reverse(
                 self.view_name,
                 kwargs={
@@ -745,131 +867,7 @@ class GradesDetailViewTestCase(APITestCase):
         )
 
         self.assertEqual(
-            request.data['value'],
+            response.data['value'],
             ['Ensure this value is less than or equal to 6.']
         )
-        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
-
-class StudentsListViewTestCase(APITestCase):
-    def setUp(self):
-        self.client = APIClient()
-        self.view_name = 'students:students-list'
-
-        self.clazz = Class.objects.create(number=10, letter='A')
-        self.subject = Subject.objects.create(title='Maths')
-
-        self.user = User.objects.create(
-            username='tester',
-            first_name='test',
-            last_name='user',
-            email='tester@gmail.com',
-            password='pass'
-        )
-
-        self.student = Student.objects.create(
-            user=self.user,
-            clazz=self.clazz,
-            info='I am the lord of the rings.'
-        )
-
-    def test_students_list_with_anonymous_user(self):
-        request = self.client.get(
-            reverse(
-                self.view_name,
-                kwargs={
-                    'class_number': self.clazz.number,
-                    'class_letter': self.clazz.letter
-                }
-            )
-        )
-
-        self.assertEqual(
-            request.data['detail'],
-            'Authentication credentials were not provided.'
-        )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_students_list_with_authenticated_user(self):
-        self.client.force_authenticate(user=self.user)
-
-        request = self.client.get(
-            reverse(
-                self.view_name,
-                kwargs={
-                    'class_number': self.clazz.number,
-                    'class_letter': self.clazz.letter
-                }
-            )
-        )
-
-        self.assertTrue(request.data)
-        self.assertEqual(request.status_code, status.HTTP_200_OK)
-
-    def test_students_list_with_invalid_clazz_letter(self):
-        self.client.force_authenticate(user=self.user)
-
-        request = self.client.get(
-            reverse(
-                self.view_name,
-                kwargs={
-                    'class_number': self.clazz.number,
-                    'class_letter': 'Z'
-                }
-            )
-        )
-
-        self.assertEqual(request.data['detail'], 'Not found.')
-        self.assertEqual(request.status_code, status.HTTP_404_NOT_FOUND)
-
-
-class ClassesListViewTestCase(APITestCase):
-    def setUp(self):
-        self.client = APIClient()
-        self.view_name = 'students:classes-number-list'
-
-        self.clazz = Class.objects.create(number=10, letter='A')
-
-        self.user = User.objects.create(
-            username='tester',
-            first_name='test',
-            last_name='user',
-            email='tester@gmail.com',
-            password='pass'
-        )
-
-        self.student = Student.objects.create(
-            user=self.user,
-            clazz=self.clazz,
-            info='I am the lord of the rings.'
-        )
-
-    def test_classes_list_with_anonymous_user(self):
-        request = self.client.get(
-            reverse(
-                self.view_name,
-                kwargs={
-                    'class_number': self.clazz.number
-                }
-            )
-        )
-
-        self.assertEqual(
-            request.data['detail'],
-            'Authentication credentials were not provided.'
-        )
-        self.assertEqual(request.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_classes_list_with_authenticated_user(self):
-        self.client.force_authenticate(user=self.user)
-
-        request = self.client.get(
-            reverse(
-                self.view_name,
-                kwargs={
-                    'class_number': self.clazz.number
-                }
-            )
-        )
-        
-        self.assertTrue(request.data)
-        self.assertEqual(request.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
