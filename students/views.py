@@ -18,7 +18,7 @@ from .serializers import (
 )
 from .models import Subject, Class, Student, Teacher, Grade
 from .permissions import IsValidUser, IsStudent, IsTeacher, IsTeachersSubject
-from .filters import GradeFilterBackend, StudentsListFilterBackend, ClassNumberFilterBackend
+from .filters import GradeFilterBackend
 
 
 class StudentRegistration(generics.CreateAPIView):
@@ -99,6 +99,53 @@ class SubjectsList(generics.ListAPIView):
     queryset = Subject.objects.all()
 
 
+class ClassesList(generics.ListAPIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ClassSerializer
+
+    def get_queryset(self):
+        all_classes = Class.objects.all()
+        class_number = self.request.GET.get('number')
+
+        return all_classes.filter(number=class_number) if class_number else all_classes
+
+    def get(self, request, *args, **kwargs):
+        serializer = self.get_serializer(self.get_queryset(), many=True)
+
+        data = defaultdict(list)
+        for clazz in serializer.data:
+            data[clazz['number']].append(clazz)
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class StudentsList(generics.ListAPIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = StudentProfileSerializer
+    queryset = Student.objects.all()
+
+    def get_queryset(self):
+        all_students = Student.objects.all()
+        class_number = self.request.GET.get('class_number')
+        class_letter = self.request.GET.get('class_letter', '')
+
+        students_by_number = all_students.filter(clazz__number=class_number)
+        students_by_letter = all_students.filter(clazz__letter=class_letter)
+        students_by_number_and_letter = students_by_number.filter(clazz__letter=class_letter)
+
+        if class_number and class_letter:
+            return students_by_number_and_letter
+        else:
+            if class_number:
+                return students_by_number
+            elif class_letter:
+                return students_by_letter
+
+        return all_students
+
+
 class GradesList(generics.ListAPIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -158,35 +205,3 @@ class GradesDetail(generics.ListCreateAPIView):
         headers = self.get_success_headers(serializer.data)
 
         return Response(serializer.validated_data, status=status.HTTP_201_CREATED, headers=headers)
-
-
-class StudentsList(generics.ListAPIView):
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
-    serializer_class = StudentProfileSerializer
-    queryset = Student.objects.all()
-    filter_backends = (StudentsListFilterBackend,)
-
-
-class ClassesList(generics.ListAPIView):
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
-    serializer_class = ClassSerializer
-    queryset = Class.objects.all()
-
-    def get(self, request, *args, **kwargs):
-        serializer = self.get_serializer(self.get_queryset(), many=True)
-
-        data = defaultdict(list)
-        for clazz in serializer.data:
-            data[clazz['number']].append(clazz)
-
-        return Response(data, status=status.HTTP_200_OK)
-
-
-class ClassesNumberList(generics.ListAPIView):
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
-    serializer_class = ClassSerializer
-    queryset = Class.objects.all()
-    filter_backends = (ClassNumberFilterBackend,)
