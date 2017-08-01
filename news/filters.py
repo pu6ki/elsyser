@@ -13,5 +13,5 @@ class ClassNumberFilterBackend(filters.BaseFilterBackend):
 
 class ClassLetterFilterBackend(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
-        class_letter = request.GET.get('class_letter', '')
+        class_letter = request.query_params.get('class_letter', '')
         return queryset.filter(class_letter=class_letter) if class_letter else queryset

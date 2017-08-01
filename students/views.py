@@ -106,7 +106,7 @@ class ClassesList(generics.ListAPIView):
 
     def get_queryset(self):
         all_classes = Class.objects.all()
-        class_number = self.request.GET.get('number')
+        class_number = self.request.query_params.get('number')
 
         return all_classes.filter(number=class_number) if class_number else all_classes
 
@@ -128,8 +128,8 @@ class StudentsList(generics.ListAPIView):
 
     def get_queryset(self):
         all_students = Student.objects.all()
-        class_number = self.request.GET.get('class_number')
-        class_letter = self.request.GET.get('class_letter', '')
+        class_number = self.request.query_params.get('class_number')
+        class_letter = self.request.query_params.get('class_letter', '')
 
         students_by_number = all_students.filter(clazz__number=class_number)
         students_by_letter = all_students.filter(clazz__letter=class_letter)
