@@ -1,3 +1,5 @@
+import re
+
 import requests
 
 from django.contrib.auth import authenticate
@@ -30,7 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
         validators=[
             UniqueValidator(
                 queryset=User.objects.all(),
-                message='Student with this email already exists.'
+                message='User with this email already exists.'
             )
         ],
     )
@@ -48,6 +50,16 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password')
+
+    def validate_username(self, username):
+        pattern = re.compile(r'^(?=.*[a-z])[a-z0-9]+$')
+
+        if not pattern.match(username):
+            raise serializers.ValidationError(
+                'Username should be present with alphanumeric characters.'
+            )
+
+        return username
 
 
 class UserLoginSerializer(serializers.Serializer):
