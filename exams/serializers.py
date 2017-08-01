@@ -18,7 +18,6 @@ class ExamSerializer(serializers.ModelSerializer):
     )
     details = serializers.CharField(max_length=1000, allow_blank=True)
 
-
     class Meta:
         model = Exam
         fields = ('id', 'subject', 'clazz', 'topic', 'date', 'details', 'author')

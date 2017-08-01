@@ -12,12 +12,11 @@ class Homework(models.Model):
     details = models.TextField(max_length=256, blank=True)
     author = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
 
+    def __str__(self):
+        return '{} ({}) - {}'.format(self.subject, self.clazz, self.deadline)
 
     class Meta:
         ordering = ['-deadline', 'clazz', 'subject']
-
-    def __str__(self):
-        return '{} ({}) - {}'.format(self.subject, self.clazz, self.deadline)
 
 
 class Submission(Post):
@@ -27,9 +26,8 @@ class Submission(Post):
     solution_url = models.URLField(blank=True)
     checked = models.BooleanField(default=False)
 
+    def __str__(self):
+        return '{} - {} ({})'.format(self.student, self.homework, self.posted_on)
 
     class Meta:
         ordering = ['-posted_on', '-last_edited_on']
-
-    def __str__(self):
-        return '{} - {} ({})'.format(self.student, self.homework, self.posted_on)

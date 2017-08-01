@@ -13,9 +13,8 @@ class Exam(models.Model):
     details = models.TextField(max_length=1000, blank=True)
     author = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
 
+    def __str__(self):
+        return '{} - {} ({})'.format(self.subject, self.clazz, self.date)
 
     class Meta:
         ordering = ['date', 'subject', 'clazz']
-
-    def __str__(self):
-        return '{} - {} ({})'.format(self.subject, self.clazz, self.date)

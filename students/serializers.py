@@ -96,7 +96,6 @@ class StudentSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     clazz = ClassSerializer()
 
-
     class Meta:
         model = Student
         fields = ('user', 'clazz')
@@ -117,7 +116,6 @@ class UserInfoSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(min_length=3, max_length=30)
     last_name = serializers.CharField(min_length=3, max_length=30)
     email = serializers.EmailField(read_only=True, max_length=100)
-
 
     class Meta:
         model = User
@@ -146,7 +144,6 @@ class SubjectSerializer(serializers.ModelSerializer):
             )
         ]
     )
-
 
     class Meta:
         model = Subject
@@ -185,7 +182,6 @@ class DefaultProfileSerializer(serializers.ModelSerializer):
 class StudentProfileSerializer(DefaultProfileSerializer):
     clazz = ClassSerializer()
 
-
     class Meta:
         model = Student
         fields = ('user', 'clazz', 'profile_image_url', 'info')
@@ -193,7 +189,6 @@ class StudentProfileSerializer(DefaultProfileSerializer):
 
 class TeacherProfileSerializer(DefaultProfileSerializer):
     subject = SubjectSerializer()
-
 
     class Meta:
         model = Teacher
@@ -206,7 +201,6 @@ class DefaultAuthorSerializer(serializers.ModelSerializer):
 
 class StudentAuthorSerializer(DefaultAuthorSerializer):
     clazz = ClassSerializer(read_only=True)
-
 
     class Meta:
         model = Student
@@ -222,7 +216,6 @@ class TeacherAuthorSerializer(DefaultAuthorSerializer):
 class GradesSerializer(serializers.ModelSerializer):
     student = StudentSerializer(read_only=True)
     subject = SubjectSerializer(read_only=True)
-
 
     class Meta:
         model = Grade

@@ -7,7 +7,6 @@ class Post(models.Model):
     edited = models.BooleanField(default=False)
     last_edited_on = models.DateTimeField(auto_now=True)
 
-
     class Meta:
         abstract = True
 
@@ -19,13 +18,12 @@ class News(Post):
     class_number = models.IntegerField(default=8)
     class_letter = models.CharField(max_length=1, blank=True)
 
+    def __str__(self):
+        return '{} ({})'.format(self.title, self.posted_on.date())
 
     class Meta:
         ordering = ['-last_edited_on']
         verbose_name_plural = 'news'
-
-    def __str__(self):
-        return '{} ({})'.format(self.title, self.posted_on.date())
 
 
 class Comment(Post):
@@ -34,9 +32,8 @@ class Comment(Post):
     author_image = models.URLField(blank=True)
     content = models.TextField(max_length=2048)
 
+    def __str__(self):
+        return '{} - {}'.format(self.posted_by, self.news)
 
     class Meta:
         ordering = ['-posted_on']
-
-    def __str__(self):
-        return '{} - {}'.format(self.posted_by, self.news)

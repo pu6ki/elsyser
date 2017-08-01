@@ -11,7 +11,6 @@ class SubmissionSerializer(serializers.ModelSerializer):
     content = serializers.CharField(max_length=2048, allow_blank=False)
     solution_url = serializers.URLField(required=False, allow_blank=True)
 
-
     class Meta:
         model = Submission
         fields = (
@@ -36,7 +35,6 @@ class SubmissionReadSerializer(SubmissionSerializer):
 class HomeworkSerializer(serializers.ModelSerializer):
     details = serializers.CharField(max_length=256, allow_blank=True)
     submission_set = SubmissionSerializer(read_only=True, many=True)
-
 
     class Meta:
         model = Homework

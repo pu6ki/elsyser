@@ -12,7 +12,6 @@ class MaterialSerializer(serializers.ModelSerializer):
     subject = SubjectSerializer(read_only=True)
     video_url = serializers.URLField(allow_blank=True)
 
-
     class Meta:
         model = Material
         fields = (

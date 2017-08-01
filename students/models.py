@@ -23,24 +23,22 @@ class Class(models.Model):
     number = models.IntegerField(validators=CLASS_NUMBER_VALIDATORS, choices=CLASS_NUMBERS)
     letter = models.CharField(max_length=1, choices=CLASS_LETTERS)
 
+    def __str__(self):
+        return '{}{}'.format(self.number, self.letter)
 
     class Meta:
         ordering = ['number', 'letter']
         verbose_name_plural = 'classes'
 
-    def __str__(self):
-        return '{}{}'.format(self.number, self.letter)
-
 
 class Subject(models.Model):
     title = models.CharField(unique=True, max_length=50)
 
+    def __str__(self):
+        return self.title
 
     class Meta:
         ordering = ['title']
-
-    def __str__(self):
-        return self.title
 
 
 class Account(models.Model):
@@ -49,7 +47,6 @@ class Account(models.Model):
         default='http://elsyser.herokuapp.com/static/default.png', blank=False
     )
     info = models.TextField(max_length=2048, blank=True)
-
 
     class Meta:
         abstract = True

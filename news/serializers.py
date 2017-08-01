@@ -10,7 +10,6 @@ class CommentSerializer(serializers.ModelSerializer):
     author_image = serializers.SerializerMethodField()
     content = serializers.CharField(max_length=2048)
 
-
     class Meta:
         model = Comment
         fields = (
@@ -46,7 +45,6 @@ class NewsSerializer(serializers.ModelSerializer):
     content = serializers.CharField(min_length=5, max_length=10000)
     author = UserInfoSerializer(read_only=True)
     comment_set = CommentSerializer(read_only=True, many=True)
-
 
     class Meta:
         model = News
