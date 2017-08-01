@@ -15,7 +15,6 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ('id', 'posted_by', 'author_image', 'content')
 
     def get_author_image(self, obj):
-        field = None
         author = obj.posted_by
 
         try:
