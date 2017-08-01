@@ -28,9 +28,7 @@ teachers_router.register(teachers_url_pattern, NewsTeachersViewSet, base_name='t
 students_comments_router = routers.NestedSimpleRouter(
     students_router, students_url_pattern, lookup='studentsNews'
 )
-students_comments_router.register(
-    r'comments', CommentsViewSet, base_name='studentsNews-comments'
-)
+students_comments_router.register(r'comments', CommentsViewSet, base_name='studentsNews-comments')
 
 teachers_comments_router = routers.NestedSimpleRouter(
     teachers_router, teachers_url_pattern, lookup='teachersNews'

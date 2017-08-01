@@ -71,7 +71,7 @@ class NewsTeachersClassNumberList(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated, IsTeacher)
     serializer_class = NewsSerializer
     queryset = News.objects.all()
-    filter_backends = (TeachersListFilterBackend, ClassNumberFilterBackend,)
+    filter_backends = (TeachersListFilterBackend, ClassNumberFilterBackend)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -120,14 +120,14 @@ class CommentsViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         return CommentReadSerializer if self.request.method in ('GET',) else CommentSerializer
 
+    def get_news_pk(self):
+        return self.kwargs.get('studentsNews_pk', self.kwargs.get('teachersNews_pk'))
+
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        context['news'] = generics.get_object_or_404(News, id=self.get_news_pk(self.kwargs))
+        context['news'] = generics.get_object_or_404(News, id=self.get_news_pk())
 
         return context
 
-    def get_news_pk(self, kwargs):
-        return kwargs.get('studentsNews_pk', kwargs.get('teachersNews_pk', None))
-
     def get_queryset(self):
-        return Comment.objects.filter(news__pk=self.get_news_pk(self.kwargs))
+        return Comment.objects.filter(news__pk=self.get_news_pk())
