@@ -21,7 +21,7 @@
 **elsyser** uses a number of open-source projects to work properly:
 
 * [Django](https://github.com/django/django) - A really nice high-level Python web framework
-* [Django Rest Framework](https://github.com/tomchristie/django-rest-framework) - Framework for building REST APIs in Django
+* [Django REST Framework](https://github.com/tomchristie/django-rest-framework) - Framework for building REST APIs in Django
 * [django-cors-headers](https://github.com/ottoyiu/django-cors-headers) - Django app for handling the server headers required for Cross-Origin Resource Sharing (CORS)
 * [drf-nested-routers](https://github.com/alanjds/drf-nested-routers) - Nested routing for DRF
 * [Visual Studio Code](https://github.com/Microsoft/vscode) - A really nice text editor
@@ -83,13 +83,12 @@ How to copy this project to your local machine and run it:
     - *GET* - Personal info about the user.
     - *UPDATE* - Update profile info.
 - *GET* /api/subjects/ - List of all subjects in the database.
-- *GET* /api/classes/ - List of all classes in the database.
-- *GET* /api/classes/:class_number/ - List of classes with that class number.
+- *GET* /api/classes?class_number - List of all classes (with class number filter).
 - *GET* /api/grades/:subject_id/ - Get list of grades for a certain subject.
 - /api/grades/:subject_id/:user_id/
     - *GET* - List of grades for a certain user.
     - *POST* - Add a new grade for this user. **(only for teachers)**
-- *GET* /api/students/:class_letter/:class_number/ - List of all students in a certain class.
+- *GET* /api/students?class_letter&class_number - List of all students in a certain class (with class letter and number filters).
 
 ### Exams app:
 
@@ -187,7 +186,6 @@ How to copy this project to your local machine and run it:
 [wencakisa](https://github.com/wencakisa) - I am a student in 10th grade in ELSYS.
 I am developing this back end service, used by [the ELSYSER web client](https://github.com/pu6ki/elsyser-web-client),
 which is developed by my schoolmate [matir8](https://github.com/matir8).
-Logo is designed by [Vladimir Vladinov](https://github.com/thehughmungus).
 
 ### License
 
