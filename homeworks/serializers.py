@@ -13,10 +13,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Submission
-        fields = (
-            'id', 'student', 'content', 'solution_url',
-            'posted_on', 'edited', 'last_edited_on', 'checked'
-        )
+        fields = ('__all__')
         depth = 1
 
     def create(self, validated_data):
@@ -38,7 +35,7 @@ class HomeworkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Homework
-        fields = ('id', 'subject', 'clazz', 'deadline', 'details', 'author', 'submission_set')
+        fields = ('__all__')
         depth = 1
 
     def create(self, validated_data):

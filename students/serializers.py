@@ -1,11 +1,13 @@
+import requests
+
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404
 from django.core.validators import validate_email, ValidationError
+
 from rest_framework import serializers
+from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
-import requests
 
 from .models import Class, Subject, Student, Teacher, Grade
 
@@ -89,7 +91,7 @@ class UserLoginSerializer(serializers.Serializer):
 class ClassSerializer(serializers.ModelSerializer):
     class Meta:
         model = Class
-        fields = ('number', 'letter')
+        fields = ('__all__')
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -147,7 +149,7 @@ class SubjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Subject
-        fields = ('id', 'title')
+        fields = ('__all__')
 
 
 class DefaultProfileSerializer(serializers.ModelSerializer):
@@ -184,7 +186,7 @@ class StudentProfileSerializer(DefaultProfileSerializer):
 
     class Meta:
         model = Student
-        fields = ('user', 'clazz', 'profile_image_url', 'info')
+        fields = ('__all__')
 
 
 class TeacherProfileSerializer(DefaultProfileSerializer):
@@ -192,7 +194,7 @@ class TeacherProfileSerializer(DefaultProfileSerializer):
 
     class Meta:
         model = Teacher
-        fields = ('user', 'subject', 'profile_image_url', 'info')
+        fields = ('__all__')
 
 
 class DefaultAuthorSerializer(serializers.ModelSerializer):
@@ -204,13 +206,13 @@ class StudentAuthorSerializer(DefaultAuthorSerializer):
 
     class Meta:
         model = Student
-        fields = ('id', 'user', 'clazz', 'profile_image_url')
+        fields = ('__all__')
 
 
 class TeacherAuthorSerializer(DefaultAuthorSerializer):
     class Meta:
         model = Teacher
-        fields = ('id', 'user', 'profile_image_url')
+        fields = ('__all__')
 
 
 class GradesSerializer(serializers.ModelSerializer):
@@ -219,7 +221,7 @@ class GradesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Grade
-        fields = ('id', 'value', 'student', 'subject')
+        fields = ('__all__')
 
     def create(self, validated_data):
         subject = self.context['subject']

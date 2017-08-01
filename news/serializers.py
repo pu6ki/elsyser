@@ -12,9 +12,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = (
-            'id', 'posted_by', 'author_image', 'content', 'posted_on', 'edited', 'last_edited_on'
-        )
+        fields = ('id', 'posted_by', 'author_image', 'content')
 
     def get_author_image(self, obj):
         field = None
@@ -48,10 +46,7 @@ class NewsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = News
-        fields = (
-            'id', 'title', 'content', 'posted_on', 'author',
-            'class_number', 'class_letter', 'comment_set', 'edited', 'last_edited_on'
-        )
+        fields = ('__all__')
 
     def create(self, validated_data):
         author = self.context['request'].user

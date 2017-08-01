@@ -8,6 +8,7 @@ from .models import Exam
 
 class ExamSerializer(serializers.ModelSerializer):
     topic = serializers.CharField(
+        required=True,
         max_length=60,
         validators=[
             UniqueValidator(
@@ -20,7 +21,7 @@ class ExamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Exam
-        fields = ('id', 'subject', 'clazz', 'topic', 'date', 'details', 'author')
+        fields = ('__all__')
         depth = 1
 
     def create(self, validated_data):
