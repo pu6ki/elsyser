@@ -26,6 +26,15 @@ from .filters import GradeFilterBackend
 class StudentRegistration(generics.CreateAPIView):
     serializer_class = StudentSerializer
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(serializer.validated_data, status=status.HTTP_201_CREATED, headers=headers)
+
 
 class UserLogin(generics.CreateAPIView):
     serializer_class = UserLoginSerializer

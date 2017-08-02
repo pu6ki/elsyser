@@ -5,9 +5,9 @@ import requests
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.core.validators import validate_email, ValidationError
+from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
-from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
 
@@ -84,12 +84,8 @@ class UserLoginSerializer(serializers.Serializer):
 
             user = authenticate(username=email_or_username, password=password)
 
-            if user:
-                if not user.is_active:
-                    msg = 'User account is disabled.'
-                    raise serializers.ValidationError(msg)
-            else:
-                msg = 'Unable to log in with provided credentials.'
+            if not user:
+                msg = 'Unable to log in with provided credentials or account is inactive.'
                 raise serializers.ValidationError(msg)
         else:
             msg = 'Must include "email or username" and "password"'
@@ -114,15 +110,16 @@ class StudentSerializer(serializers.ModelSerializer):
         model = Student
         fields = ('user', 'clazz')
 
-    def save(self):
-        user = User.objects.create_user(**self.validated_data['user'])
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data['user'])
+        user.is_active = False
+        user.save()
+
         Token.objects.create(user=user)
-        self.validated_data['user'] = user
 
-        clazz, _ = Class.objects.get_or_create(**self.validated_data['clazz'])
-        self.validated_data['clazz'] = clazz
+        clazz, _ = Class.objects.get_or_create(**validated_data['clazz'])
 
-        return Student.objects.create(**self.validated_data)
+        return Student.objects.create(user=user, clazz=clazz)
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
