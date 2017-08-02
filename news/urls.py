@@ -37,11 +37,9 @@ teachers_comments_router.register(r'comments', CommentsViewSet, base_name='teach
 
 urlpatterns = [
     url(r'^news/teachers/$', NewsTeachersList.as_view(), name='teachers-news-list'),
-    url(
-        r'^news/teachers/(?P<class_number>[8]|[9]|1[0-2])/$',
+    url(r'^news/teachers/(?P<class_number>[8]|[9]|1[0-2])/$',
         NewsTeachersClassNumberList.as_view(),
-        name='teachers-class-number-list'
-    )
+        name='teachers-class-number-list')
 ]
 
 urlpatterns += students_router.urls
