@@ -33,7 +33,30 @@ class StudentRegistration(generics.CreateAPIView):
 
         headers = self.get_success_headers(serializer.data)
 
-        return Response(serializer.validated_data, status=status.HTTP_201_CREATED, headers=headers)
+        user_email = serializer.validated_data['user']['email']
+        response = {
+            'message': 'Verification email has been sent to {email}.'.format(email=user_email)
+        }
+
+        return Response(response, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class AccountActivation(generics.UpdateAPIView):
+    serializer_class = UserInfoSerializer
+
+    def update(self, request, *args, **kwargs):
+        user = generics.get_object_or_404(User, id=kwargs['id'])
+
+        if not user.student.activation_key == kwargs['activation_key']:
+            return Response(
+                {'message': 'Invalid activation URL.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user.is_active = True
+        user.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class UserLogin(generics.CreateAPIView):

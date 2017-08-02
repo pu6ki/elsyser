@@ -19,7 +19,7 @@ class RegisterViewTestCase(APITestCase):
                 'username': 'tester',
                 'first_name': 'test',
                 'last_name': 'user',
-                'email': 'tester@gmail.com',
+                'email': 'test@test.test',
                 'password': 'testerpassword123456',
             },
             'clazz': {
@@ -92,17 +92,7 @@ class RegisterViewTestCase(APITestCase):
         response = self.client.post(
             reverse(self.view_name), self.test_data, format='json'
         )
-
-        user_data = response.data['user']
-        user = User.objects.get(**user_data)
-
-        self.assertEqual(self.test_data['user']['username'], user.username)
-        self.assertEqual(self.test_data['user']['first_name'], user.first_name)
-        self.assertEqual(self.test_data['user']['last_name'], user.last_name)
-        self.assertEqual(self.test_data['user']['email'], user.email)
-        self.assertIsNotNone(
-            Token.objects.get(user__username=user_data['username'])
-        )
+        
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
@@ -149,7 +139,7 @@ class LoginViewTestCase(APITestCase):
 
         self.assertEqual(
             response.data['non_field_errors'],
-            ['Unable to log in with provided credentials.']
+            ['Unable to log in with provided credentials or account is inactive.']
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -161,7 +151,7 @@ class LoginViewTestCase(APITestCase):
 
         self.assertEqual(
             response.data['non_field_errors'],
-            ['Unable to log in with provided credentials.']
+            ['Unable to log in with provided credentials or account is inactive.']
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 

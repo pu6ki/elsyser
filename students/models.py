@@ -47,6 +47,7 @@ class Account(models.Model):
         default='http://elsyser.herokuapp.com/static/default.png', blank=False
     )
     info = models.TextField(max_length=2048, blank=True)
+    activation_key = models.CharField(max_length=40, blank=True, null=True)
 
     class Meta:
         abstract = True

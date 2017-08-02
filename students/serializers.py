@@ -1,17 +1,18 @@
 import re
+import uuid
 
 import requests
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.core.validators import validate_email, ValidationError
 from django.shortcuts import get_object_or_404
+from django.core.validators import validate_email, ValidationError
 
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-from rest_framework.authtoken.models import Token
 
 from .models import Class, Subject, Student, Teacher, Grade
+from .utils import send_verification_email
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -111,15 +112,16 @@ class StudentSerializer(serializers.ModelSerializer):
         fields = ('user', 'clazz')
 
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data['user'])
-        user.is_active = False
-        user.save()
-
-        Token.objects.create(user=user)
+        user = User.objects.create_user(**validated_data['user'], is_active=False)
 
         clazz, _ = Class.objects.get_or_create(**validated_data['clazz'])
 
-        return Student.objects.create(user=user, clazz=clazz)
+        student_activation_key = uuid.uuid4().hex
+        student = Student.objects.create(user=user, clazz=clazz, activation_key=student_activation_key)
+
+        send_verification_email(user)
+
+        return student
 
 
 class UserInfoSerializer(serializers.ModelSerializer):

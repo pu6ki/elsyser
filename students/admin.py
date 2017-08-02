@@ -9,10 +9,12 @@ class SubjectAdmin(admin.ModelAdmin):
 
 class StudentAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'clazz']
+    exclude = ('activation_key',)
 
 
 class TeacherAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'subject']
+    exclude = ('activation_key',)
 
 
 class GradeAdmin(admin.ModelAdmin):
