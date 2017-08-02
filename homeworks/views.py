@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
+from rest_framework_word_filter import FullWordSearchFilter
+
 from students.models import Class
 from students.permissions import IsStudent, IsTeacher, IsTeacherAuthor
 
@@ -27,7 +29,8 @@ class HomeworksViewSet(viewsets.ModelViewSet):
         'destroy': (IsAuthenticated, IsTeacher, IsTeacherAuthor)
     }
     queryset = Homework.objects.filter(deadline__gte=datetime.now())
-    filter_backends = (HomeworksFilterBackend,)
+    filter_backends = (HomeworksFilterBackend, FullWordSearchFilter)
+    word_fields = ('subject__title', 'author__user__username')
 
     def get_permissions(self):
         return [
@@ -61,7 +64,8 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
         'create': (IsAuthenticated, IsStudent, HasOnlyOneSubmission),
         'update': (IsAuthenticated, IsValidStudent, IsNotChecked),
     }
-    filter_backends = (SubmissionsFilterBackend,)
+    filter_backends = (SubmissionsFilterBackend, FullWordSearchFilter)
+    word_fields = ('student__user__username',)
 
     def get_permissions(self):
         return [

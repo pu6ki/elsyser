@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
+from rest_framework_word_filter import FullWordSearchFilter
+
 from students.models import Subject
 from students.permissions import IsTeacher, IsTeacherAuthor
 
@@ -35,7 +37,8 @@ class MaterialsViewSet(viewsets.GenericViewSet):
 
 class MaterialsListViewSet(mixins.ListModelMixin, MaterialsViewSet):
     queryset = Material.objects.all()
-    filter_backends = (MaterialListFilterBackend,)
+    filter_backends = (MaterialListFilterBackend, FullWordSearchFilter)
+    word_fields = ('title', 'section')
 
 
 class NestedMaterialsViewSet(mixins.RetrieveModelMixin,

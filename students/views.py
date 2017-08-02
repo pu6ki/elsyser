@@ -8,6 +8,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 
+from rest_framework_word_filter import FullWordSearchFilter
+
 from .serializers import (
     UserLoginSerializer, UserInfoSerializer,
     ClassSerializer,
@@ -125,6 +127,8 @@ class StudentsList(generics.ListAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = StudentProfileSerializer
     queryset = Student.objects.all()
+    filter_backends = (FullWordSearchFilter,)
+    word_fields = ('user__username',)
 
     def get_queryset(self):
         all_students = Student.objects.all()

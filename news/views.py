@@ -2,6 +2,8 @@ from rest_framework import generics, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
+from rest_framework_word_filter import FullWordSearchFilter
+
 from students.permissions import IsStudent, IsTeacher, IsUserAuthor
 
 from .models import News, Comment
@@ -41,6 +43,8 @@ class NewsStudentsViewSet(NewsDefaultViewSet):
         'update': (IsAuthenticated, IsStudent, IsUserAuthor),
         'destroy': (IsAuthenticated, IsStudent, IsUserAuthor)
     }
+    filter_backends = (FullWordSearchFilter,)
+    word_fields = ('title', 'author__username')
 
     def get_permissions(self):
         return [
@@ -63,7 +67,8 @@ class NewsTeachersList(generics.ListAPIView):
     permission_classes = (IsAuthenticated, IsTeacher)
     serializer_class = NewsSerializer
     queryset = News.objects.all()
-    filters = (TeachersListFilterBackend,)
+    filters = (TeachersListFilterBackend, FullWordSearchFilter)
+    word_fields = ('title',)
 
 
 class NewsTeachersClassNumberList(generics.ListCreateAPIView):
@@ -71,7 +76,8 @@ class NewsTeachersClassNumberList(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated, IsTeacher)
     serializer_class = NewsSerializer
     queryset = News.objects.all()
-    filter_backends = (TeachersListFilterBackend, ClassNumberFilterBackend)
+    filter_backends = (TeachersListFilterBackend, ClassNumberFilterBackend, FullWordSearchFilter)
+    word_fields = ('title',)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -88,6 +94,8 @@ class NewsTeachersViewSet(NewsDefaultViewSet):
         'update': (IsAuthenticated, IsTeacher, IsUserAuthor),
         'destroy': (IsAuthenticated, IsTeacher, IsUserAuthor)
     }
+    filter_backends = (FullWordSearchFilter,)
+    word_fields = ('title',)
 
     def get_permissions(self):
         return [

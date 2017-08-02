@@ -24,6 +24,7 @@
 * [Django REST Framework](https://github.com/tomchristie/django-rest-framework) - Framework for building REST APIs in Django
 * [django-cors-headers](https://github.com/ottoyiu/django-cors-headers) - Django app for handling the server headers required for Cross-Origin Resource Sharing (CORS)
 * [drf-nested-routers](https://github.com/alanjds/drf-nested-routers) - Nested routing for DRF
+* [drf-word-filter](https://github.com/trollknurr/django-rest-framework-word-search-filter) - Word search filter for DRF
 * [Visual Studio Code](https://github.com/Microsoft/vscode) - A really nice text editor
 
 ## Getting started
@@ -83,19 +84,21 @@ How to copy this project to your local machine and run it:
     - *GET* - Personal info about the user.
     - *UPDATE* - Update profile info.
 - *GET* /api/subjects/ - List of all subjects in the database.
-- *GET* /api/classes?class_number - List of all classes (with class number filter).
+- *GET* /api/classes?class_number=arg - List of all classes (with class number filter).
 - *GET* /api/grades/:subject_id/ - Get list of grades for a certain subject.
 - /api/grades/:subject_id/:user_id/
     - *GET* - List of grades for a certain user.
     - *POST* - Add a new grade for this user. **(only for teachers)**
-- *GET* /api/students?class_letter&class_number - List of all students in a certain class (with class letter and number filters).
+- *GET* /api/students?class_letter=arg1&class_number=arg2&search=arg3 - List of all students in a certain class (with class letter and number filters).
+    - You can search by *student's username*.
 
 ### Exams app:
 
-- /api/exams/
+- /api/exams?search=arg
     - *GET*: List upcoming exams.
         - *Student acc*: Filters exams only for your class.
         - *Teacher acc*: Filters exams posted by this teacher.
+        - You can search exams by *topic*
     - *POST*: Schedule an exam. **(only for teachers)**
 
 - /api/exams/:id/
@@ -108,9 +111,10 @@ How to copy this project to your local machine and run it:
 - **Common urls**:
 
 ***
-- /api/news/*/
+- /api/news/*/?search=arg
     - *GET* - Get news list for a certain group.
     - *POST* - Create a new post.
+    - You can search by *title*.
 - /api/news/*/:id/
     - *GET* - Details about a certain post.
     - *UPDATE* - Update news' details.
@@ -124,9 +128,10 @@ How to copy this project to your local machine and run it:
     - *DELETE* - Destroy a comment.
 ***
 
-- /api/news/students/
+- /api/news/students
     - **only accessible by students**
     - All urls correspond the common ones above.
+    - You can search by *teacher's username* too.
 
 - /api/news/teachers/
     - **only accessible by teachers**
@@ -139,22 +144,24 @@ How to copy this project to your local machine and run it:
 
 ### Homeworks app:
 
-- /api/homeworks/
+- /api/homeworks?search=arg
     - *GET* - List current homeworks.
         - *Student acc*: Homeworks about you.
         - *Teacher acc*: Homeworks, posted by you.
     - *POST* - Add a new homework **(only for teachers)**
+    - You can search by *subject's title* and *teacher's username*.
 
 - /api/homeworks/:id/
     - *GET* - Detailed information about a homework.
     - *UPDATE* - Update homework's info. **(only for teachers)**
     - *DELETE* - Destroy a homework. **(only for teachers)**
 
-- /api/homeworks/:id/submissions/
+- /api/homeworks/:id/submissions?search=arg
     - *GET* - Get list of submissions that are not checked yet.
         - *Student acc*: Filters your submissions for this homework.
         - *Teacher acc*: Get submissions from all students.
     - *POST* - Submit a submission for a certain homework. **(only for students)**
+    - You can search by *student's username*.
 
 - /api/homeworks/:id/submissions/:submission_id/
     - *GET* - Detailed information about a submission.
@@ -163,9 +170,10 @@ How to copy this project to your local machine and run it:
 
 ### Materials app:
 
-- /api/materials/ - List of useful materials.
+- /api/materials?search=arg - List of useful materials.
     - *Student acc*: Filters materials only linked with your class.
     - *Teacher acc*: Filters materials only linked with your subject.
+    - You can search by *title* and *section*.
 
 - /api/materials/:subject_id/ - Materials linked with a certain subject.
     - *GET* - List of these materials.

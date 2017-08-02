@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
+from rest_framework_word_filter import FullWordSearchFilter
+
 from students.models import Class
 from students.permissions import IsTeacher, IsTeacherAuthor
 
@@ -24,7 +26,8 @@ class ExamsViewSet(viewsets.ModelViewSet):
         'destroy': (IsAuthenticated, IsTeacher, IsTeacherAuthor)
     }
     queryset = Exam.objects.filter(date__gte=datetime.now())
-    filter_backends = (ExamsFilterBackend,)
+    filter_backends = (ExamsFilterBackend, FullWordSearchFilter)
+    word_fields = ('topic',)
 
     def get_permissions(self):
         return [
