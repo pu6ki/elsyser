@@ -5,7 +5,6 @@ import requests
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404
 from django.core.validators import validate_email, ValidationError
 
 from rest_framework import serializers
@@ -75,22 +74,17 @@ class UserLoginSerializer(serializers.Serializer):
         email_or_username = attrs.get('email_or_username')
         password = attrs.get('password')
 
-        if email_or_username and password:
-            try:
-                validate_email(email_or_username)
-                user_request = get_object_or_404(User, email=email_or_username)
-                email_or_username = user_request.username
-            except ValidationError:
-                pass
+        try:
+            validate_email(email_or_username)
+            user_request = User.objects.get(email=email_or_username)
+            email_or_username = user_request.username
+        except (ValidationError, User.DoesNotExist):
+            pass
 
-            user = authenticate(username=email_or_username, password=password)
+        user = authenticate(username=email_or_username, password=password)
 
-            if not user:
-                msg = 'Unable to log in with provided credentials or account is inactive.'
-                raise serializers.ValidationError(msg)
-        else:
-            msg = 'Must include "email or username" and "password"'
-            raise serializers.ValidationError(msg)
+        if not user:
+            raise serializers.ValidationError('Unable to log in with provided credentials.')
 
         attrs['user'] = user
 

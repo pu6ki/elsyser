@@ -45,14 +45,11 @@ class AccountActivation(generics.UpdateAPIView):
     serializer_class = UserInfoSerializer
 
     def update(self, request, *args, **kwargs):
-        user = generics.get_object_or_404(User, id=kwargs['id'])
-
-        if not user.student.activation_key == kwargs['activation_key']:
-            return Response(
-                {'message': 'Invalid activation URL.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
+        user = generics.get_object_or_404(
+            User,
+            id=kwargs['id'],
+            student__activation_key=kwargs['activation_key']
+        )
         user.is_active = True
         user.save()
 
@@ -73,7 +70,9 @@ class UserLogin(generics.CreateAPIView):
         response_data['token'] = token.key
         response_data['is_teacher'] = Teacher.objects.filter(user=user).exists()
 
-        return Response(response_data, status=status.HTTP_200_OK)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(response_data, status=status.HTTP_200_OK, headers=headers)
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
