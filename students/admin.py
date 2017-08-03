@@ -6,7 +6,7 @@ from .models import Class, Subject, Student, Teacher, Grade
 
 
 class SubjectAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title']
+    list_display = ('id', 'title')
     inlines = [
         MaterialInline
     ]
@@ -17,7 +17,7 @@ class GradeInline(admin.TabularInline):
 
 
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'clazz']
+    list_display = ('id', 'user', 'clazz')
     exclude = ('activation_key',)
     inlines = [
         GradeInline
@@ -25,12 +25,13 @@ class StudentAdmin(admin.ModelAdmin):
 
 
 class TeacherAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'subject']
+    list_display = ('id', 'user', 'subject')
     exclude = ('activation_key',)
 
 
 class GradeAdmin(admin.ModelAdmin):
-    list_display = ['id', 'value', 'student', 'subject']
+    list_display = ('id', 'value', 'student', 'subject')
+    list_filter = ('student', 'subject')
 
 admin.site.register(Class)
 admin.site.register(Subject, SubjectAdmin)

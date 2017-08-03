@@ -14,6 +14,7 @@ class MaterialAdmin(admin.ModelAdmin):
         'video_url',
         'author'
     )
-    list_display = ['id', 'title', 'section', 'class_number', 'subject', 'author']
+    list_display = ('id', 'title', 'section', 'class_number', 'subject', 'author')
+    list_filter = ('class_number', 'subject', 'author')
 
 admin.site.register(Material, MaterialAdmin)
