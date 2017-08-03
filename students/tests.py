@@ -142,7 +142,7 @@ class AccountActivationTestCase(APITestCase):
         self.assertEqual(login_response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             login_response.data['non_field_errors'],
-            ['Unable to log in with provided credentials or account is inactive.']
+            ['Unable to log in with provided credentials.']
         )
 
     def test_activation_with_invalid_id(self):
@@ -278,7 +278,7 @@ class LoginViewTestCase(APITestCase):
 
         self.assertEqual(
             response.data['non_field_errors'],
-            ['Unable to log in with provided credentials or account is inactive.']
+            ['Unable to log in with provided credentials.']
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -290,7 +290,7 @@ class LoginViewTestCase(APITestCase):
 
         self.assertEqual(
             response.data['non_field_errors'],
-            ['Unable to log in with provided credentials or account is inactive.']
+            ['Unable to log in with provided credentials.']
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
