@@ -89,11 +89,150 @@ class RegisterViewTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_registration_with_valid_data(self):
-        response = self.client.post(
-            reverse(self.view_name), self.test_data, format='json'
-        )
-        
+        response = self.client.post(reverse(self.view_name), self.test_data, format='json')
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(
+            response.data['message'],
+            'Verification email has been sent to {}.'.format(self.test_data['user']['email'])
+        )
+
+
+class AccountActivationTestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.registration_view = reverse('students:register')
+        self.login_view = reverse('students:login')
+        self.view_name = 'students:activation'
+
+        self.registration_data = {
+            'user': {
+                'username': 'tester123',
+                'first_name': 'test',
+                'last_name': 'testoff',
+                'email': 'test@test.test',
+                'password': 'testerpassword123456',
+            },
+            'clazz': {
+                'number': 10,
+                'letter': 'A',
+            }
+        }
+
+        self.login_data = {
+            'email_or_username': self.registration_data['user']['username'],
+            'password': self.registration_data['user']['password']
+        }
+
+    def test_registration_and_login_with_unactivated_account(self):
+        register_response = self.client.post(
+            self.registration_view,
+            data=self.registration_data,
+            format='json'
+        )
+
+        self.assertEqual(register_response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(
+            register_response.data['message'],
+            'Verification email has been sent to {}.'.format(self.registration_data['user']['email'])
+        )
+
+        login_response = self.client.post(self.login_view, data=self.login_data, format='json')
+
+        self.assertEqual(login_response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            login_response.data['non_field_errors'],
+            ['Unable to log in with provided credentials or account is inactive.']
+        )
+
+    def test_activation_with_invalid_id(self):
+        register_response = self.client.post(
+            self.registration_view,
+            data=self.registration_data,
+            format='json'
+        )
+        created_student = Student.objects.get(
+            user__username=self.registration_data['user']['username']
+        )
+
+        self.assertEqual(register_response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(
+            register_response.data['message'],
+            'Verification email has been sent to {}.'.format(created_student.user.email)
+        )
+
+        activation_response = self.client.put(
+            reverse(
+                self.view_name,
+                kwargs={
+                    'id': created_student.id - 1,
+                    'activation_key': created_student.activation_key
+                }
+            )
+        )
+
+        self.assertEqual(activation_response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_activation_with_invalid_activation_key(self):
+        register_response = self.client.post(
+            self.registration_view,
+            data=self.registration_data,
+            format='json'
+        )
+        created_student = Student.objects.get(
+            user__username=self.registration_data['user']['username']
+        )
+
+        self.assertEqual(register_response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(
+            register_response.data['message'],
+            'Verification email has been sent to {}.'.format(created_student.user.email)
+        )
+
+        activation_response = self.client.put(
+            reverse(
+                self.view_name,
+                kwargs={
+                    'id': created_student.id,
+                    'activation_key': created_student.activation_key + 'f'
+                }
+            )
+        )
+
+        self.assertEqual(activation_response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_activation_and_login_with_valid_credentials(self):
+        register_response = self.client.post(
+            self.registration_view,
+            data=self.registration_data,
+            format='json'
+        )
+        created_student = Student.objects.get(
+            user__username=self.registration_data['user']['username']
+        )
+
+        self.assertEqual(register_response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(
+            register_response.data['message'],
+            'Verification email has been sent to {}.'.format(created_student.user.email)
+        )
+
+        activation_response = self.client.put(
+            reverse(
+                self.view_name,
+                kwargs={
+                    'id': created_student.id,
+                    'activation_key': created_student.activation_key
+                }
+            )
+        )
+
+        self.assertEqual(activation_response.status_code, status.HTTP_204_NO_CONTENT)
+        
+        login_response = self.client.post(self.login_view, data=self.login_data, format='json')
+        
+        self.assertEqual(login_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(login_response.data['id'], created_student.id)
 
 
 class LoginViewTestCase(APITestCase):
