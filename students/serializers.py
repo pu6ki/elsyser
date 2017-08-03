@@ -1,5 +1,4 @@
 import re
-import uuid
 
 import requests
 
@@ -11,7 +10,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
 from .models import Class, Subject, Student, Teacher, Grade
-from .utils import send_verification_email
+from .utils import send_verification_email, generate_activation_key
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -110,8 +109,8 @@ class StudentSerializer(serializers.ModelSerializer):
 
         clazz, _ = Class.objects.get_or_create(**validated_data['clazz'])
 
-        student_activation_key = uuid.uuid4().hex
-        student = Student.objects.create(user=user, clazz=clazz, activation_key=student_activation_key)
+        activation_key = generate_activation_key()
+        student = Student.objects.create(user=user, clazz=clazz, activation_key=activation_key)
 
         send_verification_email(user)
 

@@ -1,5 +1,11 @@
+import uuid
+
 from django.conf import settings
 from django.core.mail import send_mail
+
+
+def generate_activation_key():
+    return uuid.uuid4().hex
 
 
 def send_verification_email(user):
