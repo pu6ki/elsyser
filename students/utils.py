@@ -14,12 +14,13 @@ def send_verification_email(user):
         activation_key=user.student.activation_key
     )
 
+    subject = 'ELSYSER Account activation'
     message = '''Hello, {full_name}!
-Visit this link to activate your account: {url}
+Visit this link to activate your ELSYSER account: {url}
     '''.format(full_name=user.get_full_name(), url=client_url)
 
     send_mail(
-        subject='ELSYSER Account verification',
+        subject=subject,
         message=message,
         from_email=settings.EMAIL_HOST_USER,
         recipient_list=[user.email],

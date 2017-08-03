@@ -80,6 +80,7 @@ How to copy this project to your local machine and run it:
 
 - *POST* /api/register/ - Create new account.
 - *POST* /api/login/ - Log in.
+- *PUT* /api/activate/:user_id/:activation_key/ - Activate your account (via email).
 - /api/profile/:user_id/
     - *GET* - Personal info about the user.
     - *UPDATE* - Update profile info.
