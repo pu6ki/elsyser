@@ -3,6 +3,10 @@ from django.contrib import admin
 from .models import Material
 
 
+class MaterialInline(admin.StackedInline):
+    model = Material
+
+
 class MaterialAdmin(admin.ModelAdmin):
     fields = (
         ('title', 'section'), 'content',

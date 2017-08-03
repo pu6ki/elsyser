@@ -1,15 +1,27 @@
 from django.contrib import admin
 
+from materials.admin import MaterialInline
+
 from .models import Class, Subject, Student, Teacher, Grade
 
 
 class SubjectAdmin(admin.ModelAdmin):
     list_display = ['id', 'title']
+    inlines = [
+        MaterialInline
+    ]
+
+
+class GradeInline(admin.TabularInline):
+    model = Grade
 
 
 class StudentAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'clazz']
     exclude = ('activation_key',)
+    inlines = [
+        GradeInline
+    ]
 
 
 class TeacherAdmin(admin.ModelAdmin):
