@@ -127,16 +127,11 @@ class UserInfoSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'first_name', 'last_name', 'email')
 
-    def update(self, instance, validated_data):
-        username = validated_data.get('username', '')
-
-        if User.objects.exclude(pk=instance.pk).filter(username=username):
+    def validate_username(self, value):
+        if self.instance and User.objects.exclude(pk=self.instance.pk).filter(username=value):
             raise serializers.ValidationError('User with this username already exists.')
 
-        instance.__dict__.update(**validated_data)
-        instance.save()
-
-        return instance
+        return value
 
 
 class SubjectSerializer(serializers.ModelSerializer):
@@ -171,11 +166,6 @@ class DefaultProfileSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         user_data = validated_data.get('user', {})
-        username = user_data.get('username', '')
-
-        if User.objects.exclude(pk=instance.user.pk).filter(username=username):
-            raise serializers.ValidationError('User with this username already exists.')
-
         instance.user.__dict__.update(**user_data)
         instance.user.save()
 
