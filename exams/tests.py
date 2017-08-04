@@ -246,6 +246,7 @@ class ExamsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['topic'], self.exam1.topic)
 
     def test_exams_update_of_another_user(self):
         self.client.force_authenticate(user=self.teacher_user)

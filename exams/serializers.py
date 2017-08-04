@@ -2,8 +2,8 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework.generics import get_object_or_404
 
-from students.serializers import ClassSerializer, SubjectSerializer, TeacherAuthorSerializer
 from students.models import Class
+from students.serializers import ClassSerializer, SubjectSerializer, TeacherAuthorSerializer
 
 from .models import Exam
 
@@ -19,7 +19,8 @@ class ExamSerializer(serializers.ModelSerializer):
             )
         ]
     )
-    details = serializers.CharField(max_length=1000, allow_blank=True)
+    details = serializers.CharField(max_length=1000, allow_blank=True, required=False)
+    clazz = ClassSerializer()
 
     class Meta:
         model = Exam
@@ -31,10 +32,14 @@ class ExamSerializer(serializers.ModelSerializer):
 
         author = request.user.teacher
         subject = author.subject
+        validated_data['clazz'] = get_object_or_404(Class, **validated_data.get('clazz'))
 
-        clazz = get_object_or_404(Class, **self.context['clazz_data'])
+        return Exam.objects.create(subject=subject, author=author, **validated_data)
 
-        return Exam.objects.create(subject=subject, author=author, clazz=clazz, **validated_data)
+    def update(self, instance, validated_data):
+        instance.__dict__.update(**validated_data)
+
+        return instance
 
 
 class ExamReadSerializer(ExamSerializer):
