@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from rest_framework.validators import UniqueValidator
 from rest_framework.generics import get_object_or_404
 
 from students.models import Class
@@ -9,16 +8,7 @@ from .models import Exam
 
 
 class ExamSerializer(serializers.ModelSerializer):
-    topic = serializers.CharField(
-        required=True,
-        max_length=60,
-        validators=[
-            UniqueValidator(
-                queryset=Exam.objects.all(),
-                message='Exam with this topic already exists.'
-            )
-        ]
-    )
+    topic = serializers.CharField(required=True, max_length=60)
     details = serializers.CharField(max_length=1000, allow_blank=True, required=False)
     clazz = ClassSerializer()
 
