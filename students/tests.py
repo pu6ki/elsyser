@@ -72,7 +72,8 @@ class RegisterViewTestCase(APITestCase):
         )
 
         self.assertEqual(
-            response.data['user']['password'], ['Password too short.']
+            response.data['user']['password'],
+            ['Password too short. It must contain at least 8 characters.']
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -279,6 +280,56 @@ class LoginViewTestCase(APITestCase):
 
         self.assertEqual(self.token.key, response.data['token'])
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class ChangePasswordViewTestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.view = reverse('students:change-password')
+
+        self.user_password = 'mys3cr3tp@ssw0rd'
+        self.new_password = 'b3stk3pts3cr3t'
+        self.user = User.objects.create_user(username='tester', password=self.user_password)
+
+        self.put_data = {
+            'old_password': self.user_password,
+            'new_password': self.new_password
+        }
+
+    def test_password_change_with_non_authenticated_user(self):
+        response = self.client.put(self.view, data=self.put_data)
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_password_change_with_non_matching_old_password(self):
+        self.client.force_authenticate(user=self.user)
+
+        self.put_data['old_password'] += 'bla'
+        response = self.client.put(self.view, data=self.put_data)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['message'], 'Wrong password.')
+
+    def test_password_change_with_invalid_new_password(self):
+        self.client.force_authenticate(user=self.user)
+
+        self.put_data['new_password'] = 'bla'
+        response = self.client.put(self.view, data=self.put_data)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data['new_password'],
+            ['This password is too short. It must contain at least 8 characters.']
+        )
+
+    def test_password_change_with_matching_passwords(self):
+        self.client.force_authenticate(user=self.user)
+
+        self.put_data['new_password'] = self.new_password
+        response = self.client.put(self.view, data=self.put_data)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertTrue(self.user.check_password(self.new_password))
 
 
 class ProfileViewSetTestCase(APITestCase):

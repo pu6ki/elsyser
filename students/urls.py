@@ -2,7 +2,8 @@ from django.conf.urls import url
 from rest_framework import routers
 
 from .views import (
-    StudentRegistration, AccountActivation, UserLogin, ProfileViewSet,
+    StudentRegistration, AccountActivation, ChangePassword, UserLogin,
+    ProfileViewSet,
     SubjectsList,
     ClassesList,
     StudentsList,
@@ -21,6 +22,7 @@ urlpatterns = [
         AccountActivation.as_view(),
         name='activation'),
     url(r'^login/$', UserLogin.as_view(), name='login'),
+    url(r'^change-password/$', ChangePassword.as_view(), name='change-password'),
     url(r'^subjects/$', SubjectsList.as_view(), name='subjects-list'),
     url(r'^classes/$', ClassesList.as_view(), name='classes-list'),
     url(r'^students/$', StudentsList.as_view(), name='students-list'),

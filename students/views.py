@@ -12,6 +12,7 @@ from rest_framework_word_filter import FullWordSearchFilter
 
 from .serializers import (
     UserLoginSerializer, UserInfoSerializer,
+    ChangePasswordSerializer,
     ClassSerializer,
     StudentSerializer,
     SubjectSerializer,
@@ -69,6 +70,27 @@ class UserLogin(generics.CreateAPIView):
         headers = self.get_success_headers(serializer.data)
 
         return Response(response_data, status=status.HTTP_200_OK, headers=headers)
+
+
+class ChangePassword(generics.GenericAPIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ChangePasswordSerializer
+
+    def put(self, request, *args, **kwargs):
+        user = request.user
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        old_password = serializer.data.get('old_password')
+
+        if not user.check_password(old_password):
+            return Response({'message': 'Wrong password.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(serializer.data.get('new_password'))
+        user.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ProfileViewSet(viewsets.ModelViewSet):

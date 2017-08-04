@@ -4,6 +4,7 @@ import requests
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email, ValidationError
 
 from rest_framework import serializers
@@ -38,11 +39,11 @@ class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True,
         required=True,
-        min_length=6,
+        min_length=8,
         style={'input_type': 'password'},
         error_messages={
             'blank': 'Password cannot be empty.',
-            'min_length': 'Password too short.',
+            'min_length': 'Password too short. It must contain at least 8 characters.',
         },
     )
 
@@ -88,6 +89,15 @@ class UserLoginSerializer(serializers.Serializer):
         attrs['user'] = user
 
         return attrs
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+    def validate_new_password(self, value):
+        validate_password(value)
+        return value
 
 
 class ClassSerializer(serializers.ModelSerializer):
