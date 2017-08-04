@@ -145,34 +145,6 @@ class AccountActivationTestCase(APITestCase):
             ['Unable to log in with provided credentials.']
         )
 
-    def test_activation_with_invalid_id(self):
-        register_response = self.client.post(
-            self.registration_view,
-            data=self.registration_data,
-            format='json'
-        )
-        created_student = Student.objects.get(
-            user__username=self.registration_data['user']['username']
-        )
-
-        self.assertEqual(register_response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(
-            register_response.data['message'],
-            'Verification email has been sent to {}.'.format(created_student.user.email)
-        )
-
-        activation_response = self.client.put(
-            reverse(
-                self.view_name,
-                kwargs={
-                    'id': created_student.id - 1,
-                    'activation_key': created_student.activation_key
-                }
-            )
-        )
-
-        self.assertEqual(activation_response.status_code, status.HTTP_404_NOT_FOUND)
-
     def test_activation_with_invalid_activation_key(self):
         register_response = self.client.post(
             self.registration_view,
@@ -193,7 +165,6 @@ class AccountActivationTestCase(APITestCase):
             reverse(
                 self.view_name,
                 kwargs={
-                    'id': created_student.id,
                     'activation_key': created_student.activation_key + 'f'
                 }
             )
@@ -201,7 +172,7 @@ class AccountActivationTestCase(APITestCase):
 
         self.assertEqual(activation_response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_activation_and_login_with_valid_credentials(self):
+    def test_activation_and_login_with_valid_activation_key(self):
         register_response = self.client.post(
             self.registration_view,
             data=self.registration_data,
@@ -221,7 +192,6 @@ class AccountActivationTestCase(APITestCase):
             reverse(
                 self.view_name,
                 kwargs={
-                    'id': created_student.id,
                     'activation_key': created_student.activation_key
                 }
             )

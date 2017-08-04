@@ -17,7 +17,7 @@ router.register(r'profile', ProfileViewSet, base_name='profile')
 
 urlpatterns = [
     url(r'^register/$', StudentRegistration.as_view(), name='register'),
-    url(r'^activate/(?P<id>[0-9]+)/(?P<activation_key>\w+)/$',
+    url(r'^activate/(?P<activation_key>\w+)/$',
         AccountActivation.as_view(),
         name='activation'),
     url(r'^login/$', UserLogin.as_view(), name='login'),

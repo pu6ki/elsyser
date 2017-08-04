@@ -45,11 +45,7 @@ class AccountActivation(generics.UpdateAPIView):
     serializer_class = UserInfoSerializer
 
     def update(self, request, *args, **kwargs):
-        user = generics.get_object_or_404(
-            User,
-            id=kwargs['id'],
-            student__activation_key=kwargs['activation_key']
-        )
+        user = generics.get_object_or_404(User, student__activation_key=kwargs['activation_key'])
         user.is_active = True
         user.save()
 
