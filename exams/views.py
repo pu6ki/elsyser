@@ -41,8 +41,7 @@ class ExamsViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         clazz_data = request.data.get('clazz')
-        clazz = get_object_or_404(Class, **clazz_data)
-        context = {'request': request, 'clazz': clazz}
+        context = {'request': request, 'clazz_data': clazz_data}
 
         serializer = self.get_serializer_class()(data=request.data, context=context)
         serializer.is_valid(raise_exception=True)

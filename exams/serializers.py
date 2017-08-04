@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
+from rest_framework.generics import get_object_or_404
 
 from students.serializers import ClassSerializer, SubjectSerializer, TeacherAuthorSerializer
+from students.models import Class
 
 from .models import Exam
 
@@ -29,7 +31,8 @@ class ExamSerializer(serializers.ModelSerializer):
 
         author = request.user.teacher
         subject = author.subject
-        clazz = self.context['clazz']
+
+        clazz = get_object_or_404(Class, **self.context['clazz_data'])
 
         return Exam.objects.create(subject=subject, author=author, clazz=clazz, **validated_data)
 
