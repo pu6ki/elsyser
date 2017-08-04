@@ -160,7 +160,8 @@ class DefaultProfileSerializer(serializers.ModelSerializer):
         content_type = response.headers.get('content-type')
 
         if not content_type.startswith('image/'):
-            raise serializers.ValidationError('URL is not a picture.')
+            if not content_type.startswith('application/json'):
+                raise serializers.ValidationError('URL is not a picture.')
 
         return value
 
