@@ -32,6 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
         write_only=True,
         required=True,
         min_length=8,
+        max_length=64,
         style={'input_type': 'password'}
     )
 
@@ -84,8 +85,8 @@ class UserLoginSerializer(serializers.Serializer):
 
 
 class ChangePasswordSerializer(serializers.Serializer):
-    old_password = serializers.CharField(write_only=True, required=True)
-    new_password = serializers.CharField(write_only=True, required=True)
+    old_password = serializers.CharField(write_only=True, required=True, max_length=64)
+    new_password = serializers.CharField(write_only=True, required=True, max_length=64)
 
     def validate_new_password(self, value):
         auth_validate_password(value)

@@ -77,6 +77,19 @@ class RegisterViewTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_registration_with_too_long_password(self):
+        self.test_data['user']['password'] = 'test123' * 123
+
+        response = self.client.post(
+            reverse(self.view_name), self.test_data, format='json'
+        )
+
+        self.assertEqual(
+            response.data['user']['password'],
+            ['Ensure this field has no more than 64 characters.']
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_registration_with_invalid_clazz(self):
         self.test_data['clazz']['number'] = 0
 
@@ -310,7 +323,7 @@ class ChangePasswordViewTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['message'], 'Wrong password.')
 
-    def test_password_change_with_invalid_new_password(self):
+    def test_password_change_with_too_short_new_password(self):
         self.client.force_authenticate(user=self.user)
 
         self.put_data['new_password'] = 'bla'
@@ -320,6 +333,18 @@ class ChangePasswordViewTestCase(APITestCase):
         self.assertEqual(
             response.data['new_password'],
             ['This password is too short. It must contain at least 8 characters.']
+        )
+
+    def test_password_change_with_too_long_new_password(self):
+        self.client.force_authenticate(user=self.user)
+
+        self.put_data['new_password'] = self.new_password * 1000
+        response = self.client.put(self.view, data=self.put_data)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data['new_password'],
+            ['Ensure this field has no more than 64 characters.']
         )
 
     def test_password_change_with_matching_passwords(self):
