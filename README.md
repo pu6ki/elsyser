@@ -92,8 +92,9 @@ How to copy this project to your local machine and run it:
 ### Students app:
 
 - *POST* `/api/register/` - Create new account.
-- *POST* `/api/login/` - Log in.
 - *PUT* `/api/activate/:activation_key/` - Activate your account (via email).
+- *POST* `/api/login/` - Log in.
+- *PUT* `/api/change-password/` - Change your password
 - `/api/profile/:user_id/`
     - *GET* - Personal info about the user.
     - *UPDATE* - Update profile info.
