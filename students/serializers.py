@@ -32,11 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
         write_only=True,
         required=True,
         min_length=8,
-        # style={'input_type': 'password'},
-        # error_messages={
-        #     'blank': 'Password cannot be empty.',
-        #     'min_length': 'Password too short. It must contain at least 8 characters.',
-        # }
+        style={'input_type': 'password'}
     )
 
     class Meta:
@@ -44,7 +40,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('username', 'first_name', 'last_name', 'email', 'password')
 
     def validate_username(self, value):
-        pattern = re.compile(r'^(?=.*[A-Za-z])[a-z0-9]+$')
+        pattern = re.compile(r'^(?=.*[a-z])[A-Za-z0-9]+$')
 
         if not pattern.match(value):
             raise serializers.ValidationError(
