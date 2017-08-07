@@ -1267,7 +1267,7 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
 
         self.assertEqual(
             response.data['detail'],
-            'You must be the author of the comment in order to modify it.'
+            'You should be the author of this content in order to modify it.'
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -1346,7 +1346,7 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
 
         self.assertEqual(
             response.data['detail'],
-            'You must be the author of the comment in order to modify it.'
+            'You should be the author of this content in order to modify it.'
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -1502,7 +1502,7 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
 
         self.assertEqual(
             response.data['detail'],
-            'You must be the author of the comment in order to modify it.'
+            'You should be the author of this content in order to modify it.'
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -1606,7 +1606,7 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
 
         self.assertEqual(
             response.data['detail'],
-            'You must be the author of the comment in order to modify it.'
+            'You should be the author of this content in order to modify it.'
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 

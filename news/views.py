@@ -8,7 +8,6 @@ from students.permissions import IsStudent, IsTeacher, IsUserAuthor
 
 from .models import News, Comment
 from .serializers import NewsSerializer, CommentSerializer, CommentReadSerializer
-from .permissions import IsCommentAuthor
 from .filters import TeachersListFilterBackend, ClassNumberFilterBackend
 
 
@@ -114,8 +113,8 @@ class CommentsViewSet(viewsets.ModelViewSet):
         'list': (IsAuthenticated,),
         'retrieve': (IsAuthenticated,),
         'create': (IsAuthenticated,),
-        'update': (IsAuthenticated, IsCommentAuthor),
-        'destroy': (IsAuthenticated, IsCommentAuthor)
+        'update': (IsAuthenticated, IsUserAuthor),
+        'destroy': (IsAuthenticated, IsUserAuthor)
     }
 
     def get_permissions(self):
