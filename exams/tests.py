@@ -234,20 +234,6 @@ class ExamsViewSetTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_exams_update_with_valid_topic(self):
-        self.client.force_authenticate(user=self.teacher_user)
-        self.exam1.topic = 'glucimir'
-        put_data = self.serializer_class(self.exam1).data
-
-        response = self.client.put(
-            reverse(self.detail_view_name, kwargs={'pk': self.exam1.id}),
-            put_data,
-            format='json'
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['topic'], self.exam1.topic)
-
     def test_exams_update_of_another_user(self):
         self.client.force_authenticate(user=self.teacher_user)
 
@@ -267,6 +253,20 @@ class ExamsViewSetTestCase(APITestCase):
             'You should be the author of this content in order to modify it.'
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_exams_update_with_valid_topic(self):
+        self.client.force_authenticate(user=self.teacher_user)
+        self.exam1.topic = 'glucimir'
+        put_data = self.serializer_class(self.exam1).data
+
+        response = self.client.put(
+            reverse(self.detail_view_name, kwargs={'pk': self.exam1.id}),
+            put_data,
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['topic'], self.exam1.topic)
 
     def test_exams_deletion_of_another_user(self):
         self.client.force_authenticate(user=self.teacher_user)

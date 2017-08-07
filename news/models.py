@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from students.models import Class
+
 
 class Post(models.Model):
     posted_on = models.DateTimeField(auto_now_add=True)
@@ -15,8 +17,15 @@ class News(Post):
     title = models.CharField(max_length=100, blank=False)
     content = models.TextField(max_length=10000, blank=False)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    class_number = models.IntegerField(default=8)
-    class_letter = models.CharField(max_length=1, blank=True)
+    class_number = models.IntegerField(
+        validators=[Class.CLASS_NUMBER_VALIDATORS],
+        choices=Class.CLASS_NUMBERS
+    )
+    class_letter = models.CharField(
+        max_length=1,
+        blank=True,
+        choices=Class.CLASS_LETTERS
+    )
 
     def __str__(self):
         return '{} ({})'.format(self.title, self.posted_on.date())
