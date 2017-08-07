@@ -112,6 +112,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+# Cross-Origin Resource Sharing settings
+
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOW_HEADERS = (
@@ -125,6 +128,7 @@ CORS_ALLOW_HEADERS = (
     'x-csrftoken',
     'x-requested-with',
 )
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/

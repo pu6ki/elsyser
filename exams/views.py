@@ -53,7 +53,7 @@ class ExamsViewSet(viewsets.ModelViewSet):
         exam = get_object_or_404(Exam, id=kwargs['pk'])
         self.check_object_permissions(request, exam)
 
-        serializer = self.get_serializer_class()(exam, data=request.data, partial=True)
+        serializer = self.get_serializer(exam, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
