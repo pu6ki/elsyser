@@ -2,7 +2,7 @@ from django.db import models
 
 from students.models import Class, Subject, Teacher, Student
 
-from news.models import AbstractPost
+from news.models import BaseAbstractPost
 
 
 class Homework(models.Model):
@@ -19,7 +19,7 @@ class Homework(models.Model):
         ordering = ['-deadline', 'clazz', 'subject']
 
 
-class Submission(AbstractPost):
+class Submission(BaseAbstractPost):
     homework = models.ForeignKey(Homework, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     content = models.TextField(max_length=2048)
