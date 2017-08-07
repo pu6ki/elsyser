@@ -4,7 +4,7 @@ import requests
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.password_validation import validate_password as auth_validate_password
 from django.core.validators import validate_email, ValidationError
 
 from rest_framework import serializers
@@ -15,51 +15,47 @@ from .utils import send_verification_email, generate_activation_key
 
 
 class UserSerializer(serializers.ModelSerializer):
+    USER_UNIQUE_VALIDATOR = UniqueValidator(
+        queryset=User.objects.all(),
+        message='User with this username/email already exists.'
+    )
+
     username = serializers.CharField(
         min_length=3,
         max_length=30,
-        validators=[
-            UniqueValidator(
-                queryset=User.objects.all(),
-                message='User with this username already exists.'
-            )
-        ]
+        validators=[USER_UNIQUE_VALIDATOR]
     )
     first_name = serializers.CharField(min_length=3, max_length=30)
     last_name = serializers.CharField(min_length=3, max_length=30)
-    email = serializers.EmailField(
-        max_length=100,
-        validators=[
-            UniqueValidator(
-                queryset=User.objects.all(),
-                message='User with this email already exists.'
-            )
-        ],
-    )
+    email = serializers.EmailField(max_length=100, validators=[USER_UNIQUE_VALIDATOR])
     password = serializers.CharField(
         write_only=True,
         required=True,
         min_length=8,
-        style={'input_type': 'password'},
-        error_messages={
-            'blank': 'Password cannot be empty.',
-            'min_length': 'Password too short. It must contain at least 8 characters.',
-        },
+        # style={'input_type': 'password'},
+        # error_messages={
+        #     'blank': 'Password cannot be empty.',
+        #     'min_length': 'Password too short. It must contain at least 8 characters.',
+        # }
     )
 
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password')
 
-    def validate_username(self, username):
-        pattern = re.compile(r'^(?=.*[a-z])[a-z0-9]+$')
+    def validate_username(self, value):
+        pattern = re.compile(r'^(?=.*[A-Za-z])[a-z0-9]+$')
 
-        if not pattern.match(username):
+        if not pattern.match(value):
             raise serializers.ValidationError(
                 'Username should be present with alphanumeric characters.'
             )
 
-        return username
+        return value
+
+    def validate_password(self, value):
+        auth_validate_password(value)
+        return value
 
 
 class UserLoginSerializer(serializers.Serializer):
@@ -92,11 +88,11 @@ class UserLoginSerializer(serializers.Serializer):
 
 
 class ChangePasswordSerializer(serializers.Serializer):
-    old_password = serializers.CharField(required=True)
-    new_password = serializers.CharField(required=True)
+    old_password = serializers.CharField(write_only=True, required=True)
+    new_password = serializers.CharField(write_only=True, required=True)
 
     def validate_new_password(self, value):
-        validate_password(value)
+        auth_validate_password(value)
         return value
 
 
