@@ -31,7 +31,7 @@ class NewsStudentsViewSetTestCase(APITestCase):
         )
         self.comment = Comment.objects.create(
             news=self.news,
-            posted_by=self.user,
+            author=self.user,
             content='This is a very nice platform!'
         )
 
@@ -413,7 +413,7 @@ class NewsTeachersViewSetTestCase(APITestCase):
         )
         self.comment = Comment.objects.create(
             news=self.news,
-            posted_by=self.user,
+            author=self.user,
             content='This is a very nice platform!'
         )
 
@@ -1180,7 +1180,7 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
         )
         self.comment = Comment.objects.create(
             news=self.news,
-            posted_by=self.user,
+            author=self.user,
             content='This is a very nice platform!'
         )
 
@@ -1253,7 +1253,7 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
 
         new_user = User.objects.create(username='test2', password='pass')
         new_student = Student.objects.create(user=new_user, clazz=self.clazz)
-        self.comment.posted_by = new_user
+        self.comment.author = new_user
         self.comment.save()
 
         response = self.client.put(
@@ -1334,7 +1334,7 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
 
         new_user = User.objects.create(username='test3', password='pass')
         new_student = Student.objects.create(user=new_user, clazz=self.clazz)
-        self.comment.posted_by = new_user
+        self.comment.author = new_user
         self.comment.save()
 
         response = self.client.delete(
@@ -1384,7 +1384,7 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
         )
         self.comment = Comment.objects.create(
             news=self.news,
-            posted_by=self.user,
+            author=self.user,
             content='This is a very nice platform!'
         )
 
@@ -1483,7 +1483,7 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
 
         new_user = User.objects.create(username='test2', password='pass')
         Teacher.objects.create(user=new_user, subject=self.subject)
-        self.comment.posted_by = new_user
+        self.comment.author = new_user
         self.comment.save()
 
         response = self.client.put(
@@ -1589,7 +1589,7 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
 
         new_user = User.objects.create(username='test3', password='pass')
         Teacher.objects.create(user=new_user, subject=self.subject)
-        self.comment.posted_by = new_user
+        self.comment.author = new_user
         self.comment.save()
 
         response = self.client.delete(

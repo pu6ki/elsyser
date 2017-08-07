@@ -6,16 +6,16 @@ from .models import News, Comment
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    posted_by = UserInfoSerializer(read_only=True)
+    author = UserInfoSerializer(read_only=True)
     author_image = serializers.SerializerMethodField()
     content = serializers.CharField(max_length=2048)
 
     class Meta:
         model = Comment
-        fields = ('id', 'posted_by', 'author_image', 'content')
+        fields = ('id', 'author', 'author_image', 'content')
 
     def get_author_image(self, obj):
-        author = obj.posted_by
+        author = obj.author
 
         try:
             field = author.student
@@ -28,13 +28,13 @@ class CommentSerializer(serializers.ModelSerializer):
         news = self.context['news']
         request = self.context['request']
 
-        posted_by = request.user
+        author = request.user
 
-        return Comment.objects.create(news=news, posted_by=posted_by, **validated_data)
+        return Comment.objects.create(news=news, author=author, **validated_data)
 
 
 class CommentReadSerializer(CommentSerializer):
-    posted_by = UserInfoSerializer(read_only=True)
+    author = UserInfoSerializer(read_only=True)
 
 
 class NewsSerializer(serializers.ModelSerializer):

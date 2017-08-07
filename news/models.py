@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from students.models import Class
 
 
-class Post(models.Model):
+class AbstractPost(models.Model):
     posted_on = models.DateTimeField(auto_now_add=True)
     edited = models.BooleanField(default=False)
     last_edited_on = models.DateTimeField(auto_now=True)
@@ -13,11 +13,18 @@ class Post(models.Model):
         abstract = True
 
 
+class Post(AbstractPost):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        abstract = True
+
+
 class News(Post):
     title = models.CharField(max_length=100, blank=False)
     content = models.TextField(max_length=10000, blank=False)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
     class_number = models.IntegerField(
+        default=8,
         validators=[Class.CLASS_NUMBER_VALIDATORS],
         choices=Class.CLASS_NUMBERS
     )
@@ -37,12 +44,11 @@ class News(Post):
 
 class Comment(Post):
     news = models.ForeignKey(News, on_delete=models.CASCADE)
-    posted_by = models.ForeignKey(User, on_delete=models.CASCADE)
     author_image = models.URLField(blank=True)
     content = models.TextField(max_length=2048)
 
     def __str__(self):
-        return '{} - {}'.format(self.posted_by, self.news)
+        return '{} - {}'.format(self.author, self.news)
 
     class Meta:
         ordering = ['-posted_on']
