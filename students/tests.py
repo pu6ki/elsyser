@@ -60,7 +60,7 @@ class RegisterViewTestCase(APITestCase):
         )
 
         self.assertEqual(
-            response.data['user']['password'], ['Password cannot be empty.']
+            response.data['user']['password'], ['This field may not be blank.']
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -73,7 +73,7 @@ class RegisterViewTestCase(APITestCase):
 
         self.assertEqual(
             response.data['user']['password'],
-            ['Password too short. It must contain at least 8 characters.']
+            ['Ensure this field has at least 8 characters.']
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
