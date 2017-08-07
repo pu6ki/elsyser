@@ -41,7 +41,7 @@ class ExamsViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         context = {'request': request}
 
-        serializer = self.get_serializer_class()(data=request.data, context=context)
+        serializer = self.get_serializer(data=request.data, context=context)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
