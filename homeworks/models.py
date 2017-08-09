@@ -6,6 +6,7 @@ from news.models import BaseAbstractPost
 
 
 class Homework(models.Model):
+    topic = models.CharField(default='Homework', max_length=50)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     deadline = models.DateField(auto_now=False)
@@ -13,7 +14,7 @@ class Homework(models.Model):
     author = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        return '{} ({}) - {}'.format(self.subject, self.clazz, self.deadline)
+        return '{} ({}) - {}'.format(self.topic, self.subject, self.clazz)
 
     class Meta:
         ordering = ['-deadline', 'clazz', 'subject']

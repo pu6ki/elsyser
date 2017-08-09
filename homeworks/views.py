@@ -30,7 +30,7 @@ class HomeworksViewSet(viewsets.ModelViewSet):
     }
     queryset = Homework.objects.filter(deadline__gte=datetime.now())
     filter_backends = (HomeworksFilterBackend, FullWordSearchFilter)
-    word_fields = ('subject__title', 'author__user__username')
+    word_fields = ('topic', 'subject__title', 'author__user__username')
 
     def get_permissions(self):
         return [
