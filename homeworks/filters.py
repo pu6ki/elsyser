@@ -14,6 +14,6 @@ class HomeworksFilterBackend(filters.BaseFilterBackend):
 class SubmissionsFilterBackend(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         if IsStudent().has_permission(request, self):
-            return queryset.filter(student=request.user.student)
+            return queryset.filter(student=request.user.student).first()
 
         return queryset.filter(checked=False)

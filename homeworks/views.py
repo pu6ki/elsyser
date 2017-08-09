@@ -79,6 +79,7 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         homework = get_object_or_404(Homework, id=self.kwargs['homeworks_pk'])
+
         return Submission.objects.filter(homework=homework)
 
     def retrieve(self, request, *args, **kwargs):
