@@ -2,7 +2,7 @@
 __pycache__/
 *.pyc
 
-# Virtualenv files
+# Virtual environment files
 *.env
 
 # Database files
@@ -11,5 +11,5 @@ __pycache__/
 # Media files
 media/
 
-# VSCode settings
+# Visual Studio Code settings
 .vscode/

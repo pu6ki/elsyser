@@ -6,11 +6,11 @@ from .models import Material
 
 
 class MaterialSerializer(serializers.ModelSerializer):
-    title = serializers.CharField(min_length=3, max_length=150, allow_blank=True)
-    section = serializers.CharField(min_length=3, max_length=150, allow_blank=True)
+    title = serializers.CharField(required=False, min_length=3, max_length=150, allow_blank=True)
+    section = serializers.CharField(required=False, min_length=3, max_length=150, allow_blank=True)
     content = serializers.CharField(allow_blank=False)
     subject = SubjectSerializer(read_only=True)
-    video_url = serializers.URLField(allow_blank=True)
+    video_url = serializers.URLField(required=False, allow_blank=True)
 
     class Meta:
         model = Material
