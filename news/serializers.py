@@ -12,7 +12,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ('id', 'author', 'author_image', 'content')
+        fields = ('id', 'author', 'author_image', 'content', 'posted_on', 'edited', 'last_edited_on')
 
     def get_author_image(self, obj):
         author = obj.author
