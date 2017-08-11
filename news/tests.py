@@ -93,8 +93,9 @@ class NewsStudentsViewSetTestCase(APITestCase):
 
         response = self.client.get(reverse(self.list_view_name))
 
-        self.assertEqual(response.data[0]['title'], self.news.title)
-        self.assertEqual(response.data[0]['content'], self.news.content)
+        results = response.data['results']
+        self.assertEqual(results[0]['title'], self.news.title)
+        self.assertEqual(results[0]['content'], self.news.content)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_news_list_with_different_class(self):
@@ -103,7 +104,7 @@ class NewsStudentsViewSetTestCase(APITestCase):
 
         response = self.client.get(reverse(self.list_view_name))
 
-        self.assertEqual(response.data, [])
+        self.assertEqual(response.data['results'], [])
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_news_creation_with_empty_title(self):
@@ -520,8 +521,9 @@ class NewsTeachersViewSetTestCase(APITestCase):
             )
         )
 
-        self.assertEqual(response.data[0]['title'], self.news.title)
-        self.assertEqual(response.data[0]['content'], self.news.content)
+        results = response.data['results']
+        self.assertEqual(results[0]['title'], self.news.title)
+        self.assertEqual(results[0]['content'], self.news.content)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_news_list_with_different_class(self):
@@ -537,7 +539,7 @@ class NewsTeachersViewSetTestCase(APITestCase):
             )
         )
 
-        self.assertEqual(response.data, [])
+        self.assertEqual(response.data['results'], [])
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_news_creation_with_empty_title(self):

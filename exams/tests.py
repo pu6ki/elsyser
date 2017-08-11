@@ -74,7 +74,7 @@ class ExamsViewSetTestCase(APITestCase):
         response = self.client.get(reverse(self.list_view_name))
 
         self.assertEqual(
-            self.subject1.title, response.data[1]['subject']['title']
+            self.subject1.title, response.data['results'][1]['subject']['title']
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -83,8 +83,9 @@ class ExamsViewSetTestCase(APITestCase):
 
         response = self.client.get(reverse(self.list_view_name))
 
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['id'], self.exam1.id)
+        results = response.data['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['id'], self.exam1.id)
 
     def test_exams_detail_with_authenticated_user(self):
         self.client.force_authenticate(user=self.student_user)
@@ -108,7 +109,7 @@ class ExamsViewSetTestCase(APITestCase):
 
         response = self.client.get(reverse(self.list_view_name))
 
-        self.assertEqual(response.data, [])
+        self.assertEqual(response.data['results'], [])
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_exams_detail_with_invalid_id(self):

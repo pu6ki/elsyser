@@ -614,7 +614,7 @@ class StudentsListViewTestCase(APITestCase):
             }
         )
 
-        self.assertEqual(response.data, [])
+        self.assertEqual(response.data['results'], [])
         self.assertEqual(response.status_code, status.HTTP_200_OK)        
 
     def test_students_list_with_invalid_class_letter(self):
@@ -628,7 +628,7 @@ class StudentsListViewTestCase(APITestCase):
             }
         )
 
-        self.assertEqual(response.data, [])
+        self.assertEqual(response.data['results'], [])
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
@@ -733,14 +733,15 @@ class GradesListViewTestCase(APITestCase):
             reverse(self.view_name, kwargs={'subject_pk': self.subject.id})
         )
 
-        self.assertEqual(response.data[0]['value'], self.grade2.value)
-        self.assertEqual(response.data[1]['value'], self.grade1.value)
+        results = response.data['results']
+        self.assertEqual(results[0]['value'], self.grade2.value)
+        self.assertEqual(results[1]['value'], self.grade1.value)
         self.assertEqual(
-            response.data[0]['student']['user']['username'],
+            results[0]['student']['user']['username'],
             self.user.username
         )
         self.assertEqual(
-            response.data[1]['student']['user']['username'],
+            results[1]['student']['user']['username'],
             self.user.username
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -751,7 +752,7 @@ class GradesListViewTestCase(APITestCase):
             reverse(self.view_name, kwargs={'subject_pk': self.subject.id - 1})
         )
 
-        self.assertFalse(response.data)
+        self.assertEqual(response.data['results'], [])
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 

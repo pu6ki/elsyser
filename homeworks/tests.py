@@ -88,7 +88,7 @@ class HomeworksViewSetTestCase(APITestCase):
 
         response = self.client.get(reverse(self.list_view_name))
 
-        self.assertEqual(response.data, [])
+        self.assertEqual(response.data['results'], [])
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_homeworks_detail_with_invalid_id(self):
@@ -321,7 +321,7 @@ class SubmissionsViewSetTestCase(APITestCase):
         )
 
         self.assertNotEqual(
-            response.data[0],
+            response.data['results'][0],
             SubmissionSerializer(self.student2_submission).data
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -371,8 +371,10 @@ class SubmissionsViewSetTestCase(APITestCase):
             )
         )
 
-        self.assertEqual(response.data[1]['id'], self.student1_submission.id)
-        self.assertEqual(response.data[0]['id'], self.student2_submission.id)
+        results = response.data['results']
+
+        self.assertEqual(results[1]['id'], self.student1_submission.id)
+        self.assertEqual(results[0]['id'], self.student2_submission.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_submissions_detail_with_teacher_user(self):
@@ -425,7 +427,7 @@ class SubmissionsViewSetTestCase(APITestCase):
             )
         )
 
-        self.assertEqual(response.data, [])
+        self.assertEqual(response.data['results'], [])
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_submission_creation_with_teacher_user(self):

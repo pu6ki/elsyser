@@ -1,7 +1,6 @@
 from rest_framework import generics, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.pagination import PageNumberPagination
 
 from rest_framework_word_filter import FullWordSearchFilter
 
@@ -117,7 +116,6 @@ class CommentsViewSet(viewsets.ModelViewSet):
         'update': (IsAuthenticated, IsUserAuthor),
         'destroy': (IsAuthenticated, IsUserAuthor)
     }
-    pagination_class = PageNumberPagination
 
     def get_permissions(self):
         return [
