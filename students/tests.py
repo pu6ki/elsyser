@@ -733,7 +733,7 @@ class GradesListViewTestCase(APITestCase):
             reverse(self.view_name, kwargs={'subject_pk': self.subject.id})
         )
 
-        results = response.data['results']
+        results = response.data
         self.assertEqual(results[0]['value'], self.grade2.value)
         self.assertEqual(results[1]['value'], self.grade1.value)
         self.assertEqual(
@@ -752,7 +752,7 @@ class GradesListViewTestCase(APITestCase):
             reverse(self.view_name, kwargs={'subject_pk': self.subject.id - 1})
         )
 
-        self.assertEqual(response.data['results'], [])
+        self.assertEqual(response.data, [])
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 

@@ -204,6 +204,7 @@ class GradesList(generics.ListAPIView):
     serializer_class = GradesSerializer
     queryset = Grade.objects.all()
     filter_backends = (GradeFilterBackend,)
+    pagination_class = None
 
 
 class GradesDetail(generics.ListCreateAPIView):
