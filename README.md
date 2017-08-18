@@ -38,6 +38,7 @@
 * [django-cors-headers](https://github.com/ottoyiu/django-cors-headers) - Django app for handling the server headers required for Cross-Origin Resource Sharing (CORS)
 * [drf-nested-routers](https://github.com/alanjds/drf-nested-routers) - Nested routing for DRF
 * [drf-word-filter](https://github.com/trollknurr/django-rest-framework-word-search-filter) - Word search filter for DRF
+* [drf-docs](https://github.com/manosim/django-rest-framework-docs) - Document Web APIs made with Django REST Framework
 * [Visual Studio Code](https://github.com/Microsoft/vscode) - A really nice text editor
 
 ## Getting started
