@@ -5,14 +5,20 @@ from students.serializers import UserInfoSerializer
 from .models import News, Comment
 
 
-class CommentSerializer(serializers.ModelSerializer):
+class AbstractPostSerializer(serializers.ModelSerializer):
     author = UserInfoSerializer(read_only=True)
+
+    class Meta:
+        fields = ('author', 'posted_on', 'edited', 'last_edited_on')
+
+
+class CommentSerializer(AbstractPostSerializer):
     author_image = serializers.SerializerMethodField()
     content = serializers.CharField(max_length=2048)
 
     class Meta:
         model = Comment
-        fields = ('id', 'author', 'author_image', 'content', 'posted_on', 'edited', 'last_edited_on')
+        fields = AbstractPostSerializer.Meta.fields + ('id', 'author_image', 'content')
 
     def get_author_image(self, obj):
         author = obj.author
@@ -37,19 +43,15 @@ class CommentReadSerializer(CommentSerializer):
     author = UserInfoSerializer(read_only=True)
 
 
-class NewsSerializer(serializers.ModelSerializer):
+class NewsSerializer(AbstractPostSerializer):
     title = serializers.CharField(min_length=3, max_length=100)
     content = serializers.CharField(min_length=5, max_length=10000)
-    author = UserInfoSerializer(read_only=True)
     comments = CommentSerializer(read_only=True, many=True)
 
     class Meta:
         model = News
-        fields = (
-            'id',
-            'author',
-            'posted_on', 'edited', 'last_edited_on',
-            'title', 'content', 'class_number', 'class_letter', 'comments'
+        fields = AbstractPostSerializer.Meta.fields + (
+            'id', 'title', 'content', 'class_number', 'class_letter', 'comments'
         )
 
     def create(self, validated_data):
