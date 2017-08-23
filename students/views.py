@@ -6,7 +6,6 @@ from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
-from rest_framework.authentication import TokenAuthentication
 
 from rest_framework_word_filter import FullWordSearchFilter
 
@@ -73,7 +72,6 @@ class UserLogin(generics.CreateAPIView):
 
 
 class ChangePassword(generics.GenericAPIView):
-    authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = ChangePasswordSerializer
 
@@ -93,7 +91,6 @@ class ChangePassword(generics.GenericAPIView):
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
-    authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     permission_classes_by_action = {
         'retrieve': (IsAuthenticated,),
@@ -143,14 +140,12 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 
 class SubjectsList(generics.ListAPIView):
-    authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = SubjectSerializer
     queryset = Subject.objects.all()
 
 
 class ClassesList(generics.ListAPIView):
-    authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = ClassSerializer
 
@@ -171,7 +166,6 @@ class ClassesList(generics.ListAPIView):
 
 
 class StudentsList(generics.ListAPIView):
-    authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = StudentProfileSerializer
     queryset = Student.objects.all()
@@ -199,7 +193,6 @@ class StudentsList(generics.ListAPIView):
 
 
 class GradesList(generics.ListAPIView):
-    authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = GradesSerializer
     queryset = Grade.objects.all()
@@ -208,7 +201,6 @@ class GradesList(generics.ListAPIView):
 
 
 class GradesDetail(generics.ListCreateAPIView):
-    authentication_classes = (TokenAuthentication,)
     permission_classes_by_action = {
         'get': (IsAuthenticated, IsValidUser),
         'post': (IsAuthenticated, IsTeacher, IsTeachersSubject)

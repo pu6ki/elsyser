@@ -1,18 +1,16 @@
 from rest_framework import generics, viewsets
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
 
 from rest_framework_word_filter import FullWordSearchFilter
 
 from students.permissions import IsStudent, IsTeacher, IsUserAuthor
 
-from .models import News, Comment
+from .models import News
 from .serializers import NewsSerializer, CommentSerializer, CommentReadSerializer
 from .filters import TeachersListFilterBackend, ClassNumberFilterBackend
 
 
 class NewsDefaultViewSet(viewsets.ModelViewSet):
-    authentication_classes = (TokenAuthentication,)
     serializer_class = NewsSerializer
 
     def get_clazz_info(self):
@@ -62,7 +60,6 @@ class NewsStudentsViewSet(NewsDefaultViewSet):
 
 
 class NewsTeachersList(generics.ListAPIView):
-    authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated, IsTeacher)
     serializer_class = NewsSerializer
     queryset = News.objects.all()
@@ -71,7 +68,6 @@ class NewsTeachersList(generics.ListAPIView):
 
 
 class NewsTeachersClassNumberList(generics.ListCreateAPIView):
-    authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated, IsTeacher)
     serializer_class = NewsSerializer
     queryset = News.objects.all()
@@ -108,7 +104,6 @@ class NewsTeachersViewSet(NewsDefaultViewSet):
 
 
 class CommentsViewSet(viewsets.ModelViewSet):
-    authentication_classes = (TokenAuthentication,)
     permission_classes_by_action = {
         'list': (IsAuthenticated,),
         'retrieve': (IsAuthenticated,),
@@ -130,11 +125,16 @@ class CommentsViewSet(viewsets.ModelViewSet):
     def get_news_pk(self):
         return self.kwargs.get('studentsNews_pk', self.kwargs.get('teachersNews_pk'))
 
+    def get_related_news(self):
+        return generics.get_object_or_404(News, id=self.get_news_pk())
+
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        context['news'] = generics.get_object_or_404(News, id=self.get_news_pk())
+        context['news'] = self.get_related_news()
 
         return context
 
     def get_queryset(self):
-        return Comment.objects.filter(news__pk=self.get_news_pk())
+        news = self.get_related_news()
+
+        return news.comments

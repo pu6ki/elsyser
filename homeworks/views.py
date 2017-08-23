@@ -4,7 +4,6 @@ from rest_framework import viewsets, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
 
 from rest_framework_word_filter import FullWordSearchFilter
 
@@ -14,13 +13,12 @@ from students.permissions import IsStudent, IsTeacher, IsTeacherAuthor
 from .serializers import (
     HomeworkSerializer, HomeworkReadSerializer, SubmissionSerializer, SubmissionReadSerializer
 )
-from .models import Homework, Submission
+from .models import Homework
 from .permissions import HasOnlyOneSubmission, IsValidStudent, IsNotChecked
 from .filters import HomeworksFilterBackend, SubmissionsFilterBackend
 
 
 class HomeworksViewSet(viewsets.ModelViewSet):
-    authentication_classes = (TokenAuthentication,)
     permission_classes_by_action = {
         'list': (IsAuthenticated,),
         'retrieve': (IsAuthenticated,),
@@ -57,7 +55,6 @@ class HomeworksViewSet(viewsets.ModelViewSet):
 
 
 class SubmissionsViewSet(viewsets.ModelViewSet):
-    authentication_classes = (TokenAuthentication,)
     permission_classes_by_action = {
         'list': (IsAuthenticated,),
         'retrieve': (IsAuthenticated, IsValidStudent),
@@ -77,14 +74,19 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         return SubmissionReadSerializer if self.request.method in ('GET',) else SubmissionSerializer
 
-    def get_queryset(self):
-        homework = get_object_or_404(Homework, id=self.kwargs['homeworks_pk'])
+    def get_related_homework(self):
+        return get_object_or_404(Homework, id=self.kwargs['homeworks_pk'])
 
-        return Submission.objects.filter(homework=homework)
+    def get_queryset(self):
+        homework = self.get_related_homework()
+
+        return homework.submissions
+
+    def get_object(self):
+        return get_object_or_404(self.get_queryset(), id=self.kwargs['pk'])
 
     def retrieve(self, request, *args, **kwargs):
-        homework = get_object_or_404(Homework, id=kwargs['homeworks_pk'])
-        submission = get_object_or_404(homework.submission_set, id=kwargs['pk'])
+        submission = self.get_object()
 
         if IsStudent().has_permission(request, self):
             self.check_object_permissions(request, submission)
@@ -95,7 +97,7 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)
 
     def create(self, request, *args, **kwargs):
-        homework = get_object_or_404(Homework, id=kwargs['homeworks_pk'])
+        homework = self.get_related_homework()
         self.check_object_permissions(request, homework)
 
         context = {'request': request, 'homework': homework}
@@ -109,8 +111,7 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
         return Response(serializer.validated_data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
-        homework = get_object_or_404(Homework, id=kwargs['homeworks_pk'])
-        submission = get_object_or_404(homework.submission_set, id=kwargs['pk'])
+        submission = self.get_object()
 
         if IsStudent().has_permission(request, self):
             self.check_object_permissions(request, submission)
