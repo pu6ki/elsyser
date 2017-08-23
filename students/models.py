@@ -54,14 +54,14 @@ class Account(models.Model):
 
 
 class Student(Account):
-    clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
+    clazz = models.ForeignKey(Class, related_name='students', on_delete=models.CASCADE)
 
     def __str__(self):
         return '{} ({})'.format(self.user.username, self.clazz)
 
 
 class Teacher(Account):
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, related_name='teachers', on_delete=models.CASCADE)
 
     def __str__(self):
         return '{} ({})'.format(self.user.username, self.subject)
@@ -71,8 +71,8 @@ class Grade(models.Model):
     GRADE_VALIDATORS = [MinValueValidator(2), MaxValueValidator(6)]
 
     value = models.FloatField(validators=GRADE_VALIDATORS)
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, related_name='grades', on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, related_name='grades', on_delete=models.CASCADE)
 
     def __str__(self):
         return '{} - {} ({})'.format(self.student, self.subject, self.value)

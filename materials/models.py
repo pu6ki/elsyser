@@ -11,9 +11,9 @@ class Material(models.Model):
         choices=Class.CLASS_NUMBERS,
         validators=[Class.CLASS_NUMBER_VALIDATORS]
     )
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, related_name='materials', on_delete=models.CASCADE)
     video_url = models.URLField(blank=True)
-    author = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(Teacher, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return '{} - {} ({} class) posted by {}'.format(

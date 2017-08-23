@@ -11,7 +11,7 @@ class Exam(models.Model):
     clazz = models.ForeignKey(Class, on_delete=models.CASCADE)
     topic = models.CharField(max_length=60)
     details = models.TextField(max_length=1000, blank=True)
-    author = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(Teacher, null=True, related_name='exams', on_delete=models.CASCADE)
 
     def __str__(self):
         return '{} - {} ({})'.format(self.subject, self.clazz, self.date)

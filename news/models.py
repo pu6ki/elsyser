@@ -43,7 +43,7 @@ class News(AbstractPost):
 
 
 class Comment(AbstractPost):
-    news = models.ForeignKey(News, on_delete=models.CASCADE)
+    news = models.ForeignKey(News, related_name='comments', on_delete=models.CASCADE)
     author_image = models.URLField(blank=True)
     content = models.TextField(max_length=2048)
 
