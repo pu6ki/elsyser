@@ -541,7 +541,6 @@ class ProfileViewSetTestCase(APITestCase):
         self.student1.user.username = 'MyNewUsername'
         self.student1.user.first_name = 'John'
         self.student1.user.last_name = 'Travolta'
-        self.student1.profile_image_url = 'http://books.sulla.bg/wp-content/uploads/2011/11/kurt_vonnegut.jpg'
         put_data = StudentProfileSerializer(self.student1).data
 
         response = self.client.put(
@@ -701,7 +700,6 @@ class GradesListViewTestCase(APITestCase):
             user=self.user,
             clazz=self.clazz,
             info='I am the lord of the rings.',
-            profile_image_url='http://www.shockmansion.com/wp-content/myimages/2016/03/rr231.jpg'
         )
 
         self.grade1 = Grade.objects.create(
@@ -791,7 +789,6 @@ class GradesDetailViewTestCase(APITestCase):
             user=self.user1,
             clazz=self.clazz,
             info='I am the lord of the rings.',
-            profile_image_url='http://www.shockmansion.com/wp-content/myimages/2016/03/rr231.jpg'
         )
         self.student2 = Student.objects.create(
             user=self.user2,

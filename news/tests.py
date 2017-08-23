@@ -230,7 +230,7 @@ class NewsStudentsViewSetTestCase(APITestCase):
         self.assertEqual(response.data['title'], self.news.title)
         self.assertEqual(response.data['content'], self.news.content)
 
-        comments_data = response.data['comment_set']
+        comments_data = response.data['comments']
         self.assertEqual(comments_data[0]['content'], self.comment.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -735,7 +735,7 @@ class NewsTeachersViewSetTestCase(APITestCase):
         self.assertEqual(response.data['title'], self.news.title)
         self.assertEqual(response.data['content'], self.news.content)
 
-        comments_data = response.data['comment_set']
+        comments_data = response.data['comments']
         self.assertEqual(comments_data[0]['content'], self.comment.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
