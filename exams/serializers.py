@@ -8,13 +8,13 @@ from .models import Exam
 
 
 class ExamSerializer(serializers.ModelSerializer):
+    clazz = ClassSerializer()
     topic = serializers.CharField(required=True, max_length=60)
     details = serializers.CharField(max_length=1000, allow_blank=True, required=False)
-    clazz = ClassSerializer()
 
     class Meta:
         model = Exam
-        fields = ('__all__')
+        fields = ('id', 'subject', 'date', 'clazz', 'topic', 'details', 'author')
         depth = 1
 
     def create(self, validated_data):

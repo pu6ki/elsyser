@@ -52,6 +52,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate_password(self, value):
         auth_validate_password(value)
+
         return value
 
 
@@ -96,7 +97,7 @@ class ChangePasswordSerializer(serializers.Serializer):
 class ClassSerializer(serializers.ModelSerializer):
     class Meta:
         model = Class
-        fields = ('__all__')
+        fields = ('id', 'number', 'letter')
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -151,12 +152,15 @@ class SubjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Subject
-        fields = ('__all__')
+        fields = ('id', 'title')
 
 
 class DefaultProfileSerializer(serializers.ModelSerializer):
     user = UserInfoSerializer()
     profile_image_url = serializers.URLField(allow_blank=False)
+    
+    class Meta:
+        fields = ('id', 'user', 'info', 'profile_image_url')
 
     def validate_profile_image_url(self, value):
         response = requests.head(value)
@@ -184,7 +188,7 @@ class StudentProfileSerializer(DefaultProfileSerializer):
 
     class Meta:
         model = Student
-        fields = ('__all__')
+        fields = DefaultProfileSerializer.Meta.fields + ('clazz',)
 
 
 class TeacherProfileSerializer(DefaultProfileSerializer):
@@ -192,7 +196,7 @@ class TeacherProfileSerializer(DefaultProfileSerializer):
 
     class Meta:
         model = Teacher
-        fields = ('__all__')
+        fields = DefaultProfileSerializer.Meta.fields + ('subject',)
 
 
 class DefaultAuthorSerializer(serializers.ModelSerializer):
@@ -204,22 +208,22 @@ class StudentAuthorSerializer(DefaultAuthorSerializer):
 
     class Meta:
         model = Student
-        fields = ('__all__')
+        fields = ('id', 'user', 'clazz')
 
 
 class TeacherAuthorSerializer(DefaultAuthorSerializer):
     class Meta:
         model = Teacher
-        fields = ('__all__')
+        fields = ('id', 'user', 'subject')
 
 
 class GradesSerializer(serializers.ModelSerializer):
-    student = StudentSerializer(read_only=True)
     subject = SubjectSerializer(read_only=True)
+    student = StudentSerializer(read_only=True)
 
     class Meta:
         model = Grade
-        fields = ('__all__')
+        fields = ('id', 'value', 'subject', 'student')
 
     def create(self, validated_data):
         subject = self.context['subject']

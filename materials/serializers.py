@@ -14,7 +14,9 @@ class MaterialSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Material
-        fields = ('__all__')
+        fields = (
+            'id', 'title', 'section', 'content', 'class_number', 'subject', 'video_url', 'author'
+        )
         depth = 1
 
     def create(self, validated_data):

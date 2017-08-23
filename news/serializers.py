@@ -41,11 +41,16 @@ class NewsSerializer(serializers.ModelSerializer):
     title = serializers.CharField(min_length=3, max_length=100)
     content = serializers.CharField(min_length=5, max_length=10000)
     author = UserInfoSerializer(read_only=True)
-    comment_set = CommentSerializer(read_only=True, many=True)
+    comments = CommentSerializer(read_only=True, many=True)
 
     class Meta:
         model = News
-        fields = ('__all__')
+        fields = (
+            'id',
+            'author',
+            'posted_on', 'edited', 'last_edited_on',
+            'title', 'content', 'class_number', 'class_letter', 'comments'
+        )
 
     def create(self, validated_data):
         author = self.context['request'].user
