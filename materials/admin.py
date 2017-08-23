@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.admin.decorators import register
 
 from .models import Material
 
@@ -7,6 +8,7 @@ class MaterialInline(admin.StackedInline):
     model = Material
 
 
+@register(Material)
 class MaterialAdmin(admin.ModelAdmin):
     fields = (
         ('title', 'section'), 'content',
@@ -16,5 +18,3 @@ class MaterialAdmin(admin.ModelAdmin):
     )
     list_display = ('id', 'title', 'section', 'class_number', 'subject', 'author')
     list_filter = ('class_number', 'subject', 'author')
-
-admin.site.register(Material, MaterialAdmin)
