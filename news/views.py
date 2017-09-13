@@ -137,4 +137,4 @@ class CommentsViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         news = self.get_related_news()
 
-        return news.comments
+        return news.comments.all()
