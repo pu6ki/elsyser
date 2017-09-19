@@ -89,7 +89,7 @@ class NewsTeachersViewSet(NewsDefaultViewSet):
         'update': (IsAuthenticated, IsTeacher, IsUserAuthor),
         'destroy': (IsAuthenticated, IsTeacher, IsUserAuthor)
     }
-    filter_backends = (FullWordSearchFilter,)
+    filter_backends = (TeachersListFilterBackend, FullWordSearchFilter)
     word_fields = ('title',)
 
     def get_permissions(self):
