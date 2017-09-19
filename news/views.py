@@ -63,7 +63,7 @@ class NewsTeachersList(generics.ListAPIView):
     permission_classes = (IsAuthenticated, IsTeacher)
     serializer_class = NewsSerializer
     queryset = News.objects.all()
-    filters = (TeachersListFilterBackend, FullWordSearchFilter)
+    filter_backends = (TeachersListFilterBackend, FullWordSearchFilter)
     word_fields = ('title',)
 
 
