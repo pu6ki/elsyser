@@ -10,7 +10,7 @@ from .models import Exam
 class ExamSerializer(serializers.ModelSerializer):
     clazz = ClassSerializer()
     topic = serializers.CharField(required=True, max_length=60)
-    details = serializers.CharField(max_length=1000, allow_blank=True, required=False)
+    details = serializers.CharField(max_length=10000, allow_blank=True, required=False)
 
     class Meta:
         model = Exam
