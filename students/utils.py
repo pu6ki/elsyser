@@ -9,7 +9,7 @@ def generate_activation_key():
 
 
 def send_verification_email(user):
-    client_url = 'http://elsyser.aerobatic.io/auth/activate/{activation_key}/'.format(
+    client_url = 'http://elsyser.netlify.com/#/auth/activate/{activation_key}/'.format(
         activation_key=user.student.activation_key
     )
 
