@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'rest_framework_word_filter',
     'rest_framework_docs',
     'corsheaders',
-    'rest_auth',
 
     'students',
     'news',
@@ -190,8 +189,3 @@ REST_FRAMEWORK = {
     )
 }
 
-
-# REST Auth settings
-
-OLD_PASSWORD_FIELD_ENABLED = True
-LOGOUT_ON_PASSWORD_CHANGE = False

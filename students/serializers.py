@@ -85,6 +85,15 @@ class UserLoginSerializer(serializers.Serializer):
         return attrs
 
 
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(write_only=True, required=True, max_length=64)
+    new_password = serializers.CharField(write_only=True, required=True, max_length=64)
+
+    def validate_new_password(self, value):
+        auth_validate_password(value)
+        return value
+
+
 class ClassSerializer(serializers.ModelSerializer):
     class Meta:
         model = Class

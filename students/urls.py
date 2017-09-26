@@ -1,8 +1,6 @@
 from django.conf.urls import url
 from rest_framework import routers
 
-from rest_auth import views as rest_auth_views
-
 from . import views
 
 
@@ -18,14 +16,8 @@ urlpatterns = [
         name='activation'),
     url(r'^login/$', views.UserLogin.as_view(), name='login'),
     url(r'^password/change/$',
-        rest_auth_views.PasswordChangeView.as_view(),
+        views.ChangePassword.as_view(),
         name='change_password'),
-    url(r'^password/reset/$',
-        rest_auth_views.PasswordResetView.as_view(),
-        name='password_reset'),
-    url(r'^password/reset/confirm/$',
-        rest_auth_views.PasswordResetConfirmView.as_view(),
-        name='password_reset_confirm'),
     url(r'^subjects/$', views.SubjectsList.as_view(), name='subjects_list'),
     url(r'^classes/$', views.ClassesList.as_view(), name='classes_list'),
     url(r'^students/$', views.StudentsList.as_view(), name='students_list'),
