@@ -1,35 +1,40 @@
 from django.conf.urls import url
 from rest_framework import routers
 
-from .views import (
-    StudentRegistration, AccountActivation, ChangePassword, UserLogin,
-    ProfileViewSet,
-    SubjectsList,
-    ClassesList,
-    StudentsList,
-    GradesList, GradesDetail
-)
+from rest_auth import views as rest_auth_views
+
+from . import views
 
 
 app_name = 'students'
 
 router = routers.SimpleRouter()
-router.register(r'profile', ProfileViewSet, base_name='profile')
+router.register(r'profile', views.ProfileViewSet, base_name='profile')
 
 urlpatterns = [
-    url(r'^register/$', StudentRegistration.as_view(), name='register'),
+    url(r'^register/$', views.StudentRegistration.as_view(), name='register'),
     url(r'^activate/(?P<activation_key>\w+)/$',
-        AccountActivation.as_view(),
+        views.AccountActivation.as_view(),
         name='activation'),
-    url(r'^login/$', UserLogin.as_view(), name='login'),
-    url(r'^change-password/$', ChangePassword.as_view(), name='change-password'),
-    url(r'^subjects/$', SubjectsList.as_view(), name='subjects-list'),
-    url(r'^classes/$', ClassesList.as_view(), name='classes-list'),
-    url(r'^students/$', StudentsList.as_view(), name='students-list'),
-    url(r'^grades/(?P<subject_pk>[0-9]+)/$', GradesList.as_view(), name='grades-list'),
+    url(r'^login/$', views.UserLogin.as_view(), name='login'),
+
+    url(r'^password/change/$',
+        rest_auth_views.PasswordChangeView.as_view(),
+        name='change_password'),
+    url(r'^password/reset/$',
+        rest_auth_views.PasswordResetView.as_view(),
+        name='password_reset'),
+    url(r'^password/reset/confirm/$',
+        rest_auth_views.PasswordResetConfirmView.as_view(),
+        name='password_reset_confirm'),
+
+    url(r'^subjects/$', views.SubjectsList.as_view(), name='subjects-list'),
+    url(r'^classes/$', views.ClassesList.as_view(), name='classes-list'),
+    url(r'^students/$', views.StudentsList.as_view(), name='students-list'),
+    url(r'^grades/(?P<subject_pk>[0-9]+)/$', views.GradesList.as_view(), name='grades-list'),
     url(r'^grades/(?P<subject_pk>[0-9]+)/(?P<user_pk>[0-9]+)/$',
-        GradesDetail.as_view(),
-        name='grades-detail')
+        views.GradesDetail.as_view(),
+        name='grades-detail'),
 ]
 
 urlpatterns += router.urls

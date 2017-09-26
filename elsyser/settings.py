@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework_word_filter',
     'rest_framework_docs',
     'corsheaders',
+    'rest_auth',
 
     'students',
     'news',
@@ -175,6 +176,8 @@ EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_HOST_PASSWORD', '')
 
 EMAIL_USE_TLS = True
 
+DEFAULT_FROM_EMAIL = 'elsyser.bot@gmail.com'
+
 
 # Django REST Framework settings
 
@@ -186,3 +189,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     )
 }
+
+
+# REST Auth settings
+OLD_PASSWORD_FIELD_ENABLED = True
+LOGOUT_ON_PASSWORD_CHANGE = False

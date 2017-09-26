@@ -21,7 +21,7 @@ Visit this link to activate your ELSYSER account: {url}
     send_mail(
         subject=subject,
         message=message,
-        from_email=settings.EMAIL_HOST_USER,
+        from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[user.email],
         fail_silently=False
     )
