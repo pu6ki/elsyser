@@ -13,8 +13,8 @@ from .serializers import NewsSerializer, CommentSerializer
 class NewsStudentsViewSetTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.list_view_name = 'news:studentsNews-list'
-        self.detail_view_name = 'news:studentsNews-detail'
+        self.list_view_name = 'news:students_news-list'
+        self.detail_view_name = 'news:students_news-detail'
 
         self.user = User(username='test', email='sisko@gmail.com')
         self.user.set_password('password123')
@@ -395,8 +395,8 @@ class NewsStudentsViewSetTestCase(APITestCase):
 class NewsTeachersViewSetTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.list_view_name = 'news:teachersNews-list'
-        self.detail_view_name = 'news:teachersNews-detail'
+        self.list_view_name = 'news:teachers_news-list'
+        self.detail_view_name = 'news:teachers_news-detail'
 
         self.user = User(username='test', email='sisko@gmail.com')
         self.user.set_password('password123')
@@ -925,7 +925,7 @@ class NewsTeachersViewSetTestCase(APITestCase):
 class NewsTeachersClassNumberListViewTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.view_name = 'news:teachers-class-number-list'
+        self.view_name = 'news:teachers_class_number_list'
 
         self.user1 = User(username='test', email='sisko@gmail.com')
         self.user1.set_password('password123')
@@ -1167,8 +1167,8 @@ class NewsTeachersClassNumberListViewTestCase(APITestCase):
 class NewsStudentsCommentsViewSetTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.list_view_name = 'news:studentsNews-comments-list'
-        self.detail_view_name = 'news:studentsNews-comments-detail'
+        self.list_view_name = 'news:students_news_comments-list'
+        self.detail_view_name = 'news:students_news_comments-detail'
 
         self.user = User.objects.create(username='test1', password='pass')
         self.clazz = Class.objects.create(number=10, letter='A')
@@ -1192,7 +1192,7 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
         post_data = CommentSerializer(self.comment).data
 
         response = self.client.post(
-            reverse(self.list_view_name, kwargs={'studentsNews_pk': self.news.id}),
+            reverse(self.list_view_name, kwargs={'students_news_pk': self.news.id}),
             post_data,
             format='json'
         )
@@ -1208,7 +1208,7 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
         post_data = CommentSerializer(self.comment).data
 
         response = self.client.post(
-            reverse(self.list_view_name, kwargs={'studentsNews_pk': self.news.id}),
+            reverse(self.list_view_name, kwargs={'students_news_pk': self.news.id}),
             post_data,
             format='json'
         )
@@ -1225,7 +1225,7 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
         post_data = CommentSerializer(self.comment).data
 
         response = self.client.post(
-            reverse(self.list_view_name, kwargs={'studentsNews_pk': self.news.id}),
+            reverse(self.list_view_name, kwargs={'students_news_pk': self.news.id}),
             post_data,
             format='json'
         )
@@ -1239,7 +1239,7 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
         response = self.client.put(
             reverse(
                 self.detail_view_name,
-                kwargs={'studentsNews_pk': self.news.id, 'pk': self.comment.id}
+                kwargs={'students_news_pk': self.news.id, 'pk': self.comment.id}
             ),
             {'content': ''},
             format='json'
@@ -1261,7 +1261,7 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
         response = self.client.put(
             reverse(
                 self.detail_view_name,
-                kwargs={'studentsNews_pk': self.news.id, 'pk': self.comment.id}
+                kwargs={'students_news_pk': self.news.id, 'pk': self.comment.id}
             ),
             {'content': 'I am stupid!!!'},
             format='json'
@@ -1279,7 +1279,7 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
         response = self.client.put(
             reverse(
                 self.detail_view_name,
-                kwargs={'studentsNews_pk': self.news.id, 'pk': self.comment.id}
+                kwargs={'students_news_pk': self.news.id, 'pk': self.comment.id}
             ),
             {'content': 'Hey Jude!' * 1024},
             format='json'
@@ -1297,7 +1297,7 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
         response = self.client.put(
             reverse(
                 self.detail_view_name,
-                kwargs={'studentsNews_pk': self.news.id, 'pk': self.comment.id}
+                kwargs={'students_news_pk': self.news.id, 'pk': self.comment.id}
             ),
             {'content': 'Hey Jude, don`t be afraid.'},
             format='json'
@@ -1311,7 +1311,7 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
         response = self.client.delete(
             reverse(
                 self.detail_view_name,
-                kwargs={'studentsNews_pk': self.news.id + 1, 'pk': self.comment.id}
+                kwargs={'students_news_pk': self.news.id + 1, 'pk': self.comment.id}
             )
         )
 
@@ -1324,7 +1324,7 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
         response = self.client.delete(
             reverse(
                 self.detail_view_name,
-                kwargs={'studentsNews_pk': self.news.id, 'pk': self.comment.id + 1}
+                kwargs={'students_news_pk': self.news.id, 'pk': self.comment.id + 1}
             )
         )
 
@@ -1342,7 +1342,7 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
         response = self.client.delete(
             reverse(
                 self.detail_view_name,
-                kwargs={'studentsNews_pk': self.news.id, 'pk': self.comment.id}
+                kwargs={'students_news_pk': self.news.id, 'pk': self.comment.id}
             )
         )
 
@@ -1358,7 +1358,7 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
         response = self.client.delete(
             reverse(
                 self.detail_view_name,
-                kwargs={'studentsNews_pk': self.news.id, 'pk': self.comment.id}
+                kwargs={'students_news_pk': self.news.id, 'pk': self.comment.id}
             )
         )
 
@@ -1369,8 +1369,8 @@ class NewsStudentsCommentsViewSetTestCase(APITestCase):
 class NewsTeachersCommentsViewSetTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.list_view_name = 'news:teachersNews-comments-list'
-        self.detail_view_name = 'news:teachersNews-comments-detail'
+        self.list_view_name = 'news:teachers_news_comments-list'
+        self.detail_view_name = 'news:teachers_news_comments-detail'
 
         self.user = User.objects.create(username='test1', password='pass')
         self.clazz = Class.objects.create(number=10, letter='A')
@@ -1401,7 +1401,7 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
                 kwargs={
                     'class_number': self.clazz.number,
                     'class_letter': self.clazz.letter,
-                    'teachersNews_pk': self.news.id
+                    'teachers_news_pk': self.news.id
                 }
             ),
             post_data,
@@ -1424,7 +1424,7 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
                 kwargs={
                     'class_number': self.clazz.number,
                     'class_letter': self.clazz.letter,
-                    'teachersNews_pk': self.news.id
+                    'teachers_news_pk': self.news.id
                 }
             ),
             post_data,
@@ -1448,7 +1448,7 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
                 kwargs={
                     'class_number': self.clazz.number,
                     'class_letter': self.clazz.letter,
-                    'teachersNews_pk': self.news.id
+                    'teachers_news_pk': self.news.id
                 }
             ),
             post_data,
@@ -1467,7 +1467,7 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
                 kwargs={
                     'class_number': self.clazz.number,
                     'class_letter': self.clazz.letter,
-                    'teachersNews_pk': self.news.id,
+                    'teachers_news_pk': self.news.id,
                     'pk': self.comment.id
                 }
             ),
@@ -1494,7 +1494,7 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
                 kwargs={
                     'class_number': self.clazz.number,
                     'class_letter': self.clazz.letter,
-                    'teachersNews_pk': self.news.id,
+                    'teachers_news_pk': self.news.id,
                     'pk': self.comment.id
                 }
             ),
@@ -1517,7 +1517,7 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
                 kwargs={
                     'class_number': self.clazz.number,
                     'class_letter': self.clazz.letter,
-                    'teachersNews_pk': self.news.id,
+                    'teachers_news_pk': self.news.id,
                     'pk': self.comment.id
                 }
             ),
@@ -1540,7 +1540,7 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
                 kwargs={
                     'class_number': self.clazz.number,
                     'class_letter': self.clazz.letter,
-                    'teachersNews_pk': self.news.id,
+                    'teachers_news_pk': self.news.id,
                     'pk': self.comment.id
                 }
             ),
@@ -1559,7 +1559,7 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
                 kwargs={
                     'class_number': self.clazz.number,
                     'class_letter': self.clazz.letter,
-                    'teachersNews_pk': self.news.id + 1,
+                    'teachers_news_pk': self.news.id + 1,
                     'pk': self.comment.id
                 }
             )
@@ -1577,7 +1577,7 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
                 kwargs={
                     'class_number': self.clazz.number,
                     'class_letter': self.clazz.letter,
-                    'teachersNews_pk': self.news.id,
+                    'teachers_news_pk': self.news.id,
                     'pk': self.comment.id + 5
                 }
             )
@@ -1600,7 +1600,7 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
                 kwargs={
                     'class_number': self.clazz.number,
                     'class_letter': self.clazz.letter,
-                    'teachersNews_pk': self.news.id,
+                    'teachers_news_pk': self.news.id,
                     'pk': self.comment.id
                 }
             )
@@ -1621,7 +1621,7 @@ class NewsTeachersCommentsViewSetTestCase(APITestCase):
                 kwargs={
                     'class_number': self.clazz.number,
                     'class_letter': self.clazz.letter,
-                    'teachersNews_pk': self.news.id,
+                    'teachers_news_pk': self.news.id,
                     'pk': self.comment.id
                 }
             )

@@ -20,26 +20,26 @@ teachers_url_pattern = r'{default_pattern}/{detail_pattern}'.format(
 )
 
 students_router = routers.SimpleRouter()
-students_router.register(students_url_pattern, NewsStudentsViewSet, base_name='studentsNews')
+students_router.register(students_url_pattern, NewsStudentsViewSet, base_name='students_news')
 
 teachers_router = routers.SimpleRouter()
-teachers_router.register(teachers_url_pattern, NewsTeachersViewSet, base_name='teachersNews')
+teachers_router.register(teachers_url_pattern, NewsTeachersViewSet, base_name='teachers_news')
 
 students_comments_router = routers.NestedSimpleRouter(
-    students_router, students_url_pattern, lookup='studentsNews'
+    students_router, students_url_pattern, lookup='students_news'
 )
-students_comments_router.register(r'comments', CommentsViewSet, base_name='studentsNews-comments')
+students_comments_router.register(r'comments', CommentsViewSet, base_name='students_news_comments')
 
 teachers_comments_router = routers.NestedSimpleRouter(
-    teachers_router, teachers_url_pattern, lookup='teachersNews'
+    teachers_router, teachers_url_pattern, lookup='teachers_news'
 )
-teachers_comments_router.register(r'comments', CommentsViewSet, base_name='teachersNews-comments')
+teachers_comments_router.register(r'comments', CommentsViewSet, base_name='teachers_news_comments')
 
 urlpatterns = [
-    url(r'^news/teachers/$', NewsTeachersList.as_view(), name='teachers-news-list'),
+    url(r'^news/teachers/$', NewsTeachersList.as_view(), name='teachers_news_list'),
     url(r'^news/teachers/(?P<class_number>[8]|[9]|1[0-2])/$',
         NewsTeachersClassNumberList.as_view(),
-        name='teachers-class-number-list')
+        name='teachers_class_number_list')
 ]
 
 urlpatterns += students_router.urls

@@ -123,7 +123,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
         return CommentReadSerializer if self.request.method in ('GET',) else CommentSerializer
 
     def get_news_pk(self):
-        return self.kwargs.get('studentsNews_pk', self.kwargs.get('teachersNews_pk'))
+        return self.kwargs.get('students_news_pk', self.kwargs.get('teachers_news_pk'))
 
     def get_related_news(self):
         return generics.get_object_or_404(News, id=self.get_news_pk())

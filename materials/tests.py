@@ -13,8 +13,8 @@ from .models import Material
 class MaterialsViewSetTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.list_view_name = 'materials:nested-materials-list'
-        self.detail_view_name = 'materials:nested-materials-detail'
+        self.list_view_name = 'materials:nested_materials-list'
+        self.detail_view_name = 'materials:nested_materials-detail'
         self.serializer_class = MaterialSerializer
 
         self.clazz = Class.objects.create(number=10, letter='A')
