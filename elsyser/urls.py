@@ -7,6 +7,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^docs/', include('rest_framework_docs.urls')),
-    url(r'^api/', include('elsyser.api')),
-    url(r'^', include('django.contrib.auth.urls')),  # These urls are imported in order to make password reset work
+    url(r'^api/', include('elsyser.api'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

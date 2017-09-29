@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from rest_framework import routers
 
 from . import views
@@ -15,9 +15,6 @@ urlpatterns = [
         views.AccountActivation.as_view(),
         name='activation'),
     url(r'^login/$', views.UserLogin.as_view(), name='login'),
-    url(r'^password/change/$',
-        views.ChangePassword.as_view(),
-        name='change_password'),
     url(r'^subjects/$', views.SubjectsList.as_view(), name='subjects_list'),
     url(r'^classes/$', views.ClassesList.as_view(), name='classes_list'),
     url(r'^students/$', views.StudentsList.as_view(), name='students_list'),
@@ -25,6 +22,7 @@ urlpatterns = [
     url(r'^grades/(?P<subject_pk>[0-9]+)/(?P<user_pk>[0-9]+)/$',
         views.GradesDetail.as_view(),
         name='grades_detail'),
+    url(r'^', include('djoser.urls.base')),
 ]
 
 urlpatterns += router.urls
