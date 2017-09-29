@@ -38,6 +38,7 @@
 * [django-cors-headers](https://github.com/ottoyiu/django-cors-headers) - Django app for handling the server headers required for Cross-Origin Resource Sharing (CORS)
 * [drf-nested-routers](https://github.com/alanjds/drf-nested-routers) - Nested routing for DRF
 * [drf-word-filter](https://github.com/trollknurr/django-rest-framework-word-search-filter) - Word search filter for DRF
+* [djoser](https://github.com/sunscrapers/djoser) - REST implementation of Django authentication system
 * [drf-docs](https://github.com/manosim/django-rest-framework-docs) - Document Web APIs made with Django REST Framework
 * [Visual Studio Code](https://github.com/Microsoft/vscode) - A really nice text editor
 
@@ -95,7 +96,9 @@ How to copy this project to your local machine and run it:
 - *POST* `/api/register/` - Create new account.
 - *PUT* `/api/activate/:activation_key/` - Activate your account (via email).
 - *POST* `/api/login/` - Log in.
-- *PUT* `/api/change-password/` - Change your password
+- *PUT* `/api/password/change/` - Change your password
+- *POST* `/api/password/reset/` - Reset your password via email
+- *POST* `/api/password/reset/confirm` - Confirm your new password (You should visit this point via the reset email)
 - `/api/profile/:user_id/`
     - *GET* - Personal info about the user.
     - *UPDATE* - Update profile info.
@@ -207,9 +210,8 @@ How to copy this project to your local machine and run it:
 
 ## Author
 
-[wencakisa](https://github.com/wencakisa) - I am a student in 10th grade in ELSYS.
-I am developing this back end service, used by [the ELSYSER web client](https://github.com/pu6ki/elsyser-web-client),
-which is developed by my schoolmate [matir8](https://github.com/matir8).
+- [wencakisa](https://github.com/wencakisa) - Developer of the ELSYSER Platform API
+- [matir8](https://github.com/pu6ki/elsyser-web-client) - Developer of the ELSYSER Platform Client
 
 ### License
 

@@ -44,8 +44,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework_word_filter',
     'rest_framework_docs',
-    'corsheaders',
     'djoser',
+    'corsheaders',
 
     'students',
     'news',
