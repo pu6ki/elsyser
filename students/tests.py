@@ -295,66 +295,66 @@ class LoginViewTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class ChangePasswordViewTestCase(APITestCase):
-    def setUp(self):
-        self.client = APIClient()
-        self.view = reverse('students:change-password')
+# class ChangePasswordViewTestCase(APITestCase):
+#     def setUp(self):
+#         self.client = APIClient()
+#         self.view = reverse('students:change-password')
 
-        self.user_password = 'mys3cr3tp@ssw0rd'
-        self.new_password = 'b3stk3pts3cr3t'
-        self.user = User.objects.create_user(username='tester', password=self.user_password)
+#         self.user_password = 'mys3cr3tp@ssw0rd'
+#         self.new_password = 'b3stk3pts3cr3t'
+#         self.user = User.objects.create_user(username='tester', password=self.user_password)
 
-        self.put_data = {
-            'old_password': self.user_password,
-            'new_password': self.new_password
-        }
+#         self.put_data = {
+#             'old_password': self.user_password,
+#             'new_password': self.new_password
+#         }
 
-    def test_password_change_with_non_authenticated_user(self):
-        response = self.client.put(self.view, data=self.put_data)
+#     def test_password_change_with_non_authenticated_user(self):
+#         response = self.client.put(self.view, data=self.put_data)
 
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+#         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_password_change_with_non_matching_old_password(self):
-        self.client.force_authenticate(user=self.user)
+#     def test_password_change_with_non_matching_old_password(self):
+#         self.client.force_authenticate(user=self.user)
 
-        self.put_data['old_password'] += 'bla'
-        response = self.client.put(self.view, data=self.put_data)
+#         self.put_data['old_password'] += 'bla'
+#         response = self.client.put(self.view, data=self.put_data)
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data['message'], 'Wrong password.')
+#         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+#         self.assertEqual(response.data['message'], 'Wrong password.')
 
-    def test_password_change_with_too_short_new_password(self):
-        self.client.force_authenticate(user=self.user)
+#     def test_password_change_with_too_short_new_password(self):
+#         self.client.force_authenticate(user=self.user)
 
-        self.put_data['new_password'] = 'bla'
-        response = self.client.put(self.view, data=self.put_data)
+#         self.put_data['new_password'] = 'bla'
+#         response = self.client.put(self.view, data=self.put_data)
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            response.data['new_password'],
-            ['This password is too short. It must contain at least 8 characters.']
-        )
+#         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+#         self.assertEqual(
+#             response.data['new_password'],
+#             ['This password is too short. It must contain at least 8 characters.']
+#         )
 
-    def test_password_change_with_too_long_new_password(self):
-        self.client.force_authenticate(user=self.user)
+#     def test_password_change_with_too_long_new_password(self):
+#         self.client.force_authenticate(user=self.user)
 
-        self.put_data['new_password'] = self.new_password * 1000
-        response = self.client.put(self.view, data=self.put_data)
+#         self.put_data['new_password'] = self.new_password * 1000
+#         response = self.client.put(self.view, data=self.put_data)
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            response.data['new_password'],
-            ['Ensure this field has no more than 64 characters.']
-        )
+#         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+#         self.assertEqual(
+#             response.data['new_password'],
+#             ['Ensure this field has no more than 64 characters.']
+#         )
 
-    def test_password_change_with_matching_passwords(self):
-        self.client.force_authenticate(user=self.user)
+#     def test_password_change_with_matching_passwords(self):
+#         self.client.force_authenticate(user=self.user)
 
-        self.put_data['new_password'] = self.new_password
-        response = self.client.put(self.view, data=self.put_data)
+#         self.put_data['new_password'] = self.new_password
+#         response = self.client.put(self.view, data=self.put_data)
 
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertTrue(self.user.check_password(self.new_password))
+#         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+#         self.assertTrue(self.user.check_password(self.new_password))
 
 
 class ProfileViewSetTestCase(APITestCase):
@@ -555,7 +555,7 @@ class ProfileViewSetTestCase(APITestCase):
 class StudentsListViewTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.view_name = 'students:students-list'
+        self.view_name = 'students:students_list'
         self.url = reverse(self.view_name)
 
         self.clazz = Class.objects.create(number=10, letter='A')
@@ -634,7 +634,7 @@ class StudentsListViewTestCase(APITestCase):
 class ClassesListViewTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.view_name = 'students:classes-list'
+        self.view_name = 'students:classes_list'
         self.url = reverse(self.view_name)
 
         self.class_number = 10
@@ -683,7 +683,7 @@ class ClassesListViewTestCase(APITestCase):
 class GradesListViewTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.view_name = 'students:grades-list'
+        self.view_name = 'students:grades_list'
 
         self.clazz = Class.objects.create(number=10, letter='A')
         self.subject = Subject.objects.create(title='Maths')
@@ -757,7 +757,7 @@ class GradesListViewTestCase(APITestCase):
 class GradesDetailViewTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.view_name = 'students:grades-detail'
+        self.view_name = 'students:grades_detail'
 
         self.clazz = Class.objects.create(number=10, letter='A')
         self.subject1 = Subject.objects.create(title='Maths')
