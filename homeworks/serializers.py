@@ -34,11 +34,10 @@ class SubmissionReadSerializer(SubmissionSerializer):
 
 class HomeworkSerializer(serializers.ModelSerializer):
     details = serializers.CharField(max_length=256, allow_blank=True)
-    submissions = SubmissionSerializer(read_only=True, many=True)
 
     class Meta:
         model = Homework
-        fields = ('id', 'topic', 'subject', 'clazz', 'deadline', 'details', 'author', 'submissions')
+        fields = ('id', 'topic', 'subject', 'clazz', 'deadline', 'details', 'author')
         depth = 1
 
     def create(self, validated_data):
