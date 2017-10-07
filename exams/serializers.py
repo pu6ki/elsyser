@@ -1,5 +1,8 @@
+from django.contrib.auth.models import User
+
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
+from notifications.signals import notify
 
 from students.models import Class
 from students.serializers import ClassSerializer, SubjectSerializer, TeacherAuthorSerializer
@@ -22,9 +25,14 @@ class ExamSerializer(serializers.ModelSerializer):
 
         author = request.user.teacher
         subject = author.subject
-        validated_data['clazz'] = get_object_or_404(Class, **validated_data.get('clazz'))
+        clazz = get_object_or_404(Class, **validated_data.pop('clazz'))
 
-        return Exam.objects.create(subject=subject, author=author, **validated_data)
+        exam = Exam.objects.create(subject=subject, author=author, clazz=clazz, **validated_data)
+
+        recipient_list = User.objects.filter(student__clazz=clazz)
+        notify.send(exam, recipient=recipient_list, verb=' was created.')
+
+        return exam
 
     def update(self, instance, validated_data):
         instance.__dict__.update(**validated_data)

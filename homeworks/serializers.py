@@ -1,4 +1,7 @@
+from django.contrib.auth.models import User
+
 from rest_framework import serializers
+from notifications.signals import notify
 
 from students.serializers import (
     ClassSerializer, SubjectSerializer, TeacherAuthorSerializer, StudentAuthorSerializer
@@ -45,7 +48,17 @@ class HomeworkSerializer(serializers.ModelSerializer):
         subject = author.subject
         clazz = self.context['clazz']
 
-        return Homework.objects.create(subject=subject, author=author, clazz=clazz, **validated_data)
+        homework = Homework.objects.create(
+            subject=subject,
+            author=author,
+            clazz=clazz,
+            **validated_data
+        )
+
+        recipient_list = User.objects.filter(student__clazz=clazz)
+        notify.send(homework, recipient=recipient_list, verb=' was created.')
+
+        return homework
 
 
 class HomeworkReadSerializer(HomeworkSerializer):

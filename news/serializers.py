@@ -1,4 +1,7 @@
+from django.contrib.auth.models import User
+
 from rest_framework import serializers
+from notifications.signals import notify
 
 from students.serializers import UserInfoSerializer
 
@@ -59,4 +62,14 @@ class NewsSerializer(AbstractPostSerializer):
         validated_data['class_number'] = self.context['class_number']
         validated_data['class_letter'] = self.context.get('class_letter', '')
 
-        return News.objects.create(author=author, **validated_data)
+        news = News.objects.create(author=author, **validated_data)
+
+        recipient_list = User.objects.filter(student__clazz__number=validated_data['class_number'])
+        if validated_data['class_letter']:
+            recipient_list = recipient_list.filter(
+                student__clazz__letter=validated_data['class_letter']
+            )
+
+        notify.send(news, recipient=recipient_list, verb=' was created.')
+
+        return news

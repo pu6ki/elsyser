@@ -1,3 +1,5 @@
+from django.contrib.auth import login
+
 from collections import defaultdict
 
 from django.contrib.auth.models import User
@@ -60,6 +62,8 @@ class UserLogin(generics.CreateAPIView):
 
         user = serializer.validated_data['user']
         token, _ = Token.objects.get_or_create(user=user)
+
+        login(request, user)
 
         response_data = UserInfoSerializer(user).data
         response_data['token'] = token.key

@@ -41,7 +41,7 @@ class HomeworksViewSet(viewsets.ModelViewSet):
         return HomeworkReadSerializer if self.request.method in ('GET',) else HomeworkSerializer
 
     def create(self, request, *args, **kwargs):
-        clazz_data = request.data.get('clazz')
+        clazz_data = request.data.get('clazz', {})
         clazz = get_object_or_404(Class, **clazz_data)
         context = {'request': request, 'clazz': clazz}
 

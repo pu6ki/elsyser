@@ -6,4 +6,5 @@ urlpatterns = [
     url(r'^', include('exams.urls', namespace='exams')),
     url(r'^', include('homeworks.urls', namespace='homeworks')),
     url(r'^', include('materials.urls', namespace='materials')),
+    url(r'^notifications/', include('notifications.urls', namespace='notifications'))
 ]
