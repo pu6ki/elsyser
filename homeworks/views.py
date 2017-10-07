@@ -63,6 +63,7 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
     }
     filter_backends = (SubmissionsFilterBackend, FullWordSearchFilter)
     word_fields = ('student__user__username',)
+    pagination_class = None
 
     def get_permissions(self):
         return [
