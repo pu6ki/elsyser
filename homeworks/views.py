@@ -80,9 +80,13 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         homework = self.get_related_homework()
+        queryset = homework.submissions
 
-        return homework.submissions
+        if IsStudent().has_permission(self.request, self):
+            return queryset.filter(student=self.request.user.student)
 
+        return queryset.filter(checked=False)
+    
     def get_object(self):
         return get_object_or_404(self.get_queryset(), id=self.kwargs['pk'])
 
