@@ -17,7 +17,7 @@ class Homework(models.Model):
         return '{} ({}) - {}'.format(self.topic, self.subject, self.clazz)
 
     class Meta:
-        ordering = ['-deadline', 'clazz', 'subject']
+        ordering = ['deadline', 'clazz', 'subject']
 
 
 class Submission(BaseAbstractPost):

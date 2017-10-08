@@ -26,7 +26,7 @@ class HomeworksViewSet(viewsets.ModelViewSet):
         'update': (IsAuthenticated, IsTeacher, IsTeacherAuthor),
         'destroy': (IsAuthenticated, IsTeacher, IsTeacherAuthor)
     }
-    queryset = Homework.objects.filter(deadline__gte=datetime.now()).order_by('-deadline')
+    queryset = Homework.objects.filter(deadline__gte=datetime.now())
     filter_backends = (HomeworksFilterBackend, FullWordSearchFilter)
     word_fields = ('topic', 'subject__title', 'author__user__username')
 
