@@ -206,7 +206,7 @@ How to copy this project to your local machine and run it:
 1. `$ python3 manage.py runserver`
 2. Visit `http://127.0.0.1:8000/admin/`
 3. Log in with your superuser data.
-4. Here you can add, update and remove your models.
+4. Here you can add, update and remove your entries.
 
 ## Author
 
