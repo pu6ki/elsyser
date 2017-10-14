@@ -222,6 +222,6 @@ class GradesSerializer(serializers.ModelSerializer):
         student = self.context['student']
 
         grade = Grade.objects.create(subject=subject, student=student, **validated_data)
-        notify.send(grade, recipient=student, verb=' was created.')
+        notify.send(grade, recipient=student.user, verb=' was created.')
 
         return grade
