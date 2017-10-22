@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'rest_framework_docs',
     'djoser',
     'corsheaders',
-    'notifications',
 
     'students',
     'news',
