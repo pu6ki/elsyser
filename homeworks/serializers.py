@@ -1,11 +1,11 @@
 from django.contrib.auth.models import User
 
 from rest_framework import serializers
-from notifications.signals import notify
 
 from students.serializers import (
     ClassSerializer, SubjectSerializer, TeacherAuthorSerializer, StudentAuthorSerializer
 )
+from students.utils import send_creation_email
 
 from .models import Homework, Submission
 
@@ -55,7 +55,8 @@ class HomeworkSerializer(serializers.ModelSerializer):
         )
 
         recipient_list = User.objects.filter(student__clazz=clazz)
-        notify.send(homework, recipient=recipient_list, verb=' was created.')
+        for user in recipient_list:
+            send_creation_email(user, model=homework)
 
         return homework
 

@@ -9,10 +9,9 @@ from django.core.validators import validate_email, ValidationError
 
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-from notifications.signals import notify
 
 from .models import Class, Subject, Student, Teacher, Grade
-from .utils import send_verification_email, generate_activation_key
+from .utils import generate_activation_key, send_verification_email, send_creation_email
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -222,6 +221,6 @@ class GradesSerializer(serializers.ModelSerializer):
         student = self.context['student']
 
         grade = Grade.objects.create(subject=subject, student=student, **validated_data)
-        notify.send(grade, recipient=student.user, verb=' was created.')
+        send_creation_email(student.user, model=grade)
 
         return grade
