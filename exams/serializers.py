@@ -2,10 +2,10 @@ from django.contrib.auth.models import User
 
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
-from notifications.signals import notify
 
 from students.models import Class
 from students.serializers import ClassSerializer, SubjectSerializer, TeacherAuthorSerializer
+from students.utils import send_creation_email
 
 from .models import Exam
 
@@ -30,7 +30,8 @@ class ExamSerializer(serializers.ModelSerializer):
         exam = Exam.objects.create(subject=subject, author=author, clazz=clazz, **validated_data)
 
         recipient_list = User.objects.filter(student__clazz=clazz)
-        notify.send(exam, recipient=recipient_list, verb=' was created.')
+        for user in recipient_list:
+            send_creation_email(user, model=exam)
 
         return exam
 
