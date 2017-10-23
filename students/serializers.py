@@ -41,7 +41,8 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('username', 'first_name', 'last_name', 'email', 'password')
 
     def validate_username(self, value):
-        pattern = re.compile(r'^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$')
+        username_regex = r'^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$'
+        pattern = re.compile(username_regex)
 
         if not pattern.match(value):
             raise serializers.ValidationError(
