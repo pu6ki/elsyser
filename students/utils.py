@@ -1,8 +1,11 @@
 import uuid
 
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import send_mail, send_mass_mail
 
+
+# TODO: Use send_mass_mail()
+# TODO: Use HTML template
 
 def generate_activation_key():
     return uuid.uuid4().hex
