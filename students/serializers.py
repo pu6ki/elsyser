@@ -222,6 +222,7 @@ class GradesSerializer(serializers.ModelSerializer):
         student = self.context['student']
 
         grade = Grade.objects.create(subject=subject, student=student, **validated_data)
+        grade.author = self.context['request'].user.teacher
         send_creation_email(student.user, model=grade)
 
         return grade
