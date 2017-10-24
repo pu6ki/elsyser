@@ -1,10 +1,8 @@
 import uuid
 
 from django.conf import settings
-from django.core.mail import send_mail, send_mass_mail
+from django.core.mail import send_mail
 
-
-# TODO: Use send_mass_mail()
 # TODO: Use HTML template
 
 def generate_activation_key():
@@ -22,7 +20,8 @@ def send_email(subject, message, user):
         message=msg,
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[user.email],
-        fail_silently=False
+        fail_silently=False,
+        html_message='static/email_templates/elsyser-notification-email-template.html'
     )
 
 
