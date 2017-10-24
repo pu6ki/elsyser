@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE HTML>
 <html>
 
 <head>
@@ -369,13 +369,13 @@
                   </tr>
                   <tr>
                     <td>
-                      <p id="text">Hi, {{first_name}} {{last_name}},</p>
-                      <p>New <b>{{type}}</b> was added by <b>{{author}}</b> on <b>{{date}}</b>.</p>
+                      <p id="text">Hi, {{ full_name }}!</p>
+                      <p>New {{ type }} (<b>{{ model }}</b>) was added by <b>{{ author }}</b> just now.</p>
                     </td>
                   </tr>
                   <tr>
                     <td class="btn btn-primary">
-                      <a href="{{link}}" target="_blank">Check it out</a>
+                      <a href="{{ link }}" target="_blank">Check it out</a>
                     </td>
                   </tr>
                 </table>
