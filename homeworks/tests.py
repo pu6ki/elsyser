@@ -32,7 +32,7 @@ class HomeworksViewSetTestCase(APITestCase):
             subject=self.subject,
             clazz=self.clazz,
             deadline=datetime.now().date(),
-            details='something interesting',
+            details='detailed explanation',
             author=self.teacher
         )
 
@@ -67,16 +67,10 @@ class HomeworksViewSetTestCase(APITestCase):
     def test_homeworks_detail_with_authenticated_user(self):
         self.client.force_authenticate(user=self.student_user)
 
-        response = self.client.get(
-            reverse(self.detail_view_name, kwargs={'pk': self.homework.id})
-        )
+        response = self.client.get(reverse(self.detail_view_name, kwargs={'pk': self.homework.id}))
 
-        self.assertEqual(
-            response.data['clazz']['number'], self.student.clazz.number
-        )
-        self.assertEqual(
-            response.data['clazz']['letter'], self.student.clazz.letter
-        )
+        self.assertEqual(response.data['clazz']['number'], self.student.clazz.number)
+        self.assertEqual(response.data['clazz']['letter'], self.student.clazz.letter)
         self.assertEqual(response.data['details'], self.homework.details)
         self.assertEqual(response.data['subject']['title'], self.subject.title)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -102,7 +96,7 @@ class HomeworksViewSetTestCase(APITestCase):
 
     def test_homeworks_creation_with_student_account(self):
         self.client.force_authenticate(user=self.student_user)
-        self.homework.details = 'С0002ГР'
+        self.homework.details = 'details'
         post_data = self.serializer_class(self.homework).data
 
         response = self.client.post(
@@ -117,12 +111,10 @@ class HomeworksViewSetTestCase(APITestCase):
 
     def test_homeworks_creation_with_too_long_details(self):
         self.client.force_authenticate(user=self.teacher_user)
-        self.homework.details = 'C0002ГР' * 256
+        self.homework.details = 'details' * 256
         post_data = self.serializer_class(self.homework).data
 
-        response = self.client.post(
-            reverse(self.list_view_name), post_data, format='json'
-        )
+        response = self.client.post(reverse(self.list_view_name), post_data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -132,24 +124,20 @@ class HomeworksViewSetTestCase(APITestCase):
 
     def test_homeworks_creation_with_valid_details(self):
         self.client.force_authenticate(user=self.teacher_user)
-        self.homework.details = 'C0002ГР'
+        self.homework.details = 'details'
         post_data = self.serializer_class(self.homework).data
 
-        response = self.client.post(
-            reverse(self.list_view_name), post_data, format='json'
-        )
+        response = self.client.post(reverse(self.list_view_name), post_data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_homeworks_update_with_student_account(self):
         self.client.force_authenticate(user=self.student_user)
-        self.homework.details = 'С0002ГР'
+        self.homework.details = 'details'
         put_data = self.serializer_class(self.homework).data
 
         response = self.client.put(
-            reverse(self.detail_view_name, kwargs={'pk': self.homework.id}),
-            put_data,
-            format='json'
+            reverse(self.detail_view_name, kwargs={'pk': self.homework.id}), put_data, format='json'
         )
 
         self.assertEqual(
@@ -160,13 +148,11 @@ class HomeworksViewSetTestCase(APITestCase):
 
     def test_homeworks_update_with_too_long_details(self):
         self.client.force_authenticate(user=self.teacher_user)
-        self.homework.details = 'C0002ГР' * 256
+        self.homework.details = 'details' * 256
         put_data = self.serializer_class(self.homework).data
 
         response = self.client.put(
-            reverse(self.detail_view_name, kwargs={'pk': self.homework.id}),
-            put_data,
-            format='json'
+            reverse(self.detail_view_name, kwargs={'pk': self.homework.id}), put_data, format='json'
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -177,13 +163,11 @@ class HomeworksViewSetTestCase(APITestCase):
 
     def test_homeworks_update_with_valid_details(self):
         self.client.force_authenticate(user=self.teacher_user)
-        self.homework.details = 'C0002ГР'
+        self.homework.details = 'details'
         put_data = self.serializer_class(self.homework).data
 
         response = self.client.put(
-            reverse(self.detail_view_name, kwargs={'pk': self.homework.id}),
-            put_data,
-            format='json'
+            reverse(self.detail_view_name, kwargs={'pk': self.homework.id}), put_data, format='json'
         )
 
         self.assertEqual(response.data['details'], self.homework.details)
@@ -199,7 +183,7 @@ class HomeworksViewSetTestCase(APITestCase):
 
         response = self.client.put(
             reverse(self.detail_view_name, kwargs={'pk': self.homework.id}),
-            {'details': 'HAHAHA I AM ANONYMOUS!'},
+            {'details': 'detailed information'},
             format='json'
         )
 
@@ -260,35 +244,27 @@ class SubmissionsViewSetTestCase(APITestCase):
             subject=self.subject,
             clazz=self.clazz,
             deadline=datetime.now().date(),
-            details='something interesting',
+            details='detailed explanation',
             author=self.teacher
         )
 
         self.student1_submission = Submission.objects.create(
             homework=self.homework,
             student=self.student1,
-            content='this is my solution.'
+            content='solution'
         )
         self.student2_submission = Submission.objects.create(
             homework=self.homework,
             student=self.student2,
-            content='noonecansaveyoufromwhatyouwant'
+            content='test'
         )
 
     def test_submissions_list_with_anonymous_user(self):
         response = self.client.get(
-            reverse(
-                self.list_view_name,
-                kwargs={
-                    'homeworks_pk': self.homework.id
-                }
-            )
+            reverse(self.list_view_name, kwargs={'homeworks_pk': self.homework.id})
         )
 
-        self.assertEqual(
-            response.data['detail'],
-            'Authentication credentials were not provided.'
-        )
+        self.assertEqual(response.data['detail'], 'Authentication credentials were not provided.')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_submissions_detail_with_anonymous_user(self):
@@ -302,28 +278,17 @@ class SubmissionsViewSetTestCase(APITestCase):
             )
         )
 
-        self.assertEqual(
-            response.data['detail'],
-            'Authentication credentials were not provided.'
-        )
+        self.assertEqual(response.data['detail'], 'Authentication credentials were not provided.')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_submissions_list_with_student_user(self):
         self.client.force_authenticate(user=self.student_user1)
 
         response = self.client.get(
-            reverse(
-                self.list_view_name,
-                kwargs={
-                    'homeworks_pk': self.homework.id
-                }
-            )
+            reverse(self.list_view_name, kwargs={'homeworks_pk': self.homework.id})
         )
 
-        self.assertNotEqual(
-            response.data,
-            SubmissionSerializer(self.student2_submission).data
-        )
+        self.assertNotEqual(response.data, SubmissionSerializer(self.student2_submission).data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_submissions_detail_with_student_user(self):
@@ -363,12 +328,7 @@ class SubmissionsViewSetTestCase(APITestCase):
         self.client.force_authenticate(user=self.teacher_user)
 
         response = self.client.get(
-            reverse(
-                self.list_view_name,
-                kwargs={
-                    'homeworks_pk': self.homework.id
-                }
-            )
+            reverse(self.list_view_name, kwargs={'homeworks_pk': self.homework.id})
         )
 
         self.assertEqual(response.data[1]['id'], self.student1_submission.id)
@@ -417,12 +377,7 @@ class SubmissionsViewSetTestCase(APITestCase):
         )
 
         response = self.client.get(
-            reverse(
-                self.list_view_name,
-                kwargs={
-                    'homeworks_pk': self.homework.id
-                }
-            )
+            reverse(self.list_view_name, kwargs={'homeworks_pk': self.homework.id})
         )
 
         self.assertEqual(response.data, [])
@@ -432,12 +387,7 @@ class SubmissionsViewSetTestCase(APITestCase):
         self.client.force_authenticate(user=self.teacher_user)
 
         response = self.client.post(
-            reverse(
-                self.list_view_name,
-                kwargs={
-                    'homeworks_pk': self.homework.id
-                }
-            ),
+            reverse(self.list_view_name, kwargs={'homeworks_pk': self.homework.id}),
             {'content': 'test'},
             format='json'
         )
@@ -452,12 +402,7 @@ class SubmissionsViewSetTestCase(APITestCase):
         self.client.force_authenticate(user=self.student_user1)
 
         response = self.client.post(
-            reverse(
-                self.list_view_name,
-                kwargs={
-                    'homeworks_pk': self.homework.id
-                }
-            ),
+            reverse(self.list_view_name, kwargs={'homeworks_pk': self.homework.id}),
             {'content': 'test'},
             format='json'
         )

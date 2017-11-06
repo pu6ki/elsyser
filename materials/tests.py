@@ -27,9 +27,9 @@ class MaterialsViewSetTestCase(APITestCase):
         self.teacher = Teacher.objects.create(user=self.teacher_user, subject=self.subject)
 
         self.material = Material.objects.create(
-            title='bla bla bla',
-            section='Quadratic inequations',
-            content='Here I will put some useful links for the current topic.',
+            title='test material',
+            section='test material section',
+            content='test material content',
             class_number=self.clazz.number,
             subject=self.subject,
             author=self.teacher
@@ -37,12 +37,7 @@ class MaterialsViewSetTestCase(APITestCase):
 
     def test_materials_list_with_anonymous_user(self):
         response = self.client.get(
-            reverse(
-                self.list_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id
-                }
-            )
+            reverse(self.list_view_name, kwargs={'subject_pk': self.material.subject.id})
         )
 
         self.assertEqual(
@@ -55,10 +50,7 @@ class MaterialsViewSetTestCase(APITestCase):
         response = self.client.get(
             reverse(
                 self.detail_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id,
-                    'pk': self.material.id
-                }
+                kwargs={'subject_pk': self.material.subject.id, 'pk': self.material.id}
             )
         )
 
@@ -72,12 +64,7 @@ class MaterialsViewSetTestCase(APITestCase):
         self.client.force_authenticate(user=self.student_user)
 
         response = self.client.get(
-            reverse(
-                self.list_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id
-                }
-            )
+            reverse(self.list_view_name, kwargs={'subject_pk': self.material.subject.id})
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -88,10 +75,7 @@ class MaterialsViewSetTestCase(APITestCase):
         response = self.client.get(
             reverse(
                 self.detail_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id,
-                    'pk': self.material.id
-                }
+                kwargs={'subject_pk': self.material.subject.id, 'pk': self.material.id}
             )
         )
 
@@ -99,16 +83,11 @@ class MaterialsViewSetTestCase(APITestCase):
 
     def test_materials_creation_with_student_account(self):
         self.client.force_authenticate(user=self.student_user)
-        self.material.title = 'С0002ГР'
+        self.material.title = 'test title'
         post_data = self.serializer_class(self.material).data
 
         response = self.client.post(
-            reverse(
-                self.list_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id
-                }
-            ),
+            reverse(self.list_view_name, kwargs={'subject_pk': self.material.subject.id}),
             post_data,
             format='json'
         )
@@ -125,41 +104,27 @@ class MaterialsViewSetTestCase(APITestCase):
         post_data = self.serializer_class(self.material).data
 
         response = self.client.post(
-            reverse(
-                self.list_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id
-                }
-            ),
+            reverse(self.list_view_name, kwargs={'subject_pk': self.material.subject.id}),
             post_data,
             format='json'
         )
 
-        self.assertEqual(
-            response.data['title'],
-            ['Ensure this field has at least 3 characters.']
-        )
+        self.assertEqual(response.data['title'], ['Ensure this field has at least 3 characters.'])
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_materials_creation_with_too_long_title(self):
         self.client.force_authenticate(user=self.teacher_user)
-        self.material.title = 'Svetlosyanka' * 150
+        self.material.title = 'test title' * 150
         post_data = self.serializer_class(self.material).data
 
         response = self.client.post(
-            reverse(
-                self.list_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id
-                }
-            ),
+            reverse(self.list_view_name, kwargs={'subject_pk': self.material.subject.id}),
             post_data,
             format='json'
         )
 
         self.assertEqual(
-            response.data['title'],
-            ['Ensure this field has no more than 150 characters.']
+            response.data['title'], ['Ensure this field has no more than 150 characters.']
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -169,12 +134,7 @@ class MaterialsViewSetTestCase(APITestCase):
         post_data = self.serializer_class(self.material).data
 
         response = self.client.post(
-            reverse(
-                self.list_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id
-                }
-            ),
+            reverse(self.list_view_name, kwargs={'subject_pk': self.material.subject.id}),
             post_data,
             format='json'
         )
@@ -187,23 +147,17 @@ class MaterialsViewSetTestCase(APITestCase):
 
     def test_materials_creation_with_too_long_section(self):
         self.client.force_authenticate(user=self.teacher_user)
-        self.material.section = 'Svetlosyanka' * 150
+        self.material.section = 'test title' * 150
         post_data = self.serializer_class(self.material).data
 
         response = self.client.post(
-            reverse(
-                self.list_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id
-                }
-            ),
+            reverse(self.list_view_name, kwargs={'subject_pk': self.material.subject.id}),
             post_data,
             format='json'
         )
 
         self.assertEqual(
-            response.data['section'],
-            ['Ensure this field has no more than 150 characters.']
+            response.data['section'], ['Ensure this field has no more than 150 characters.']
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -213,12 +167,7 @@ class MaterialsViewSetTestCase(APITestCase):
         post_data = self.serializer_class(self.material).data
 
         response = self.client.post(
-            reverse(
-                self.list_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id
-                }
-            ),
+            reverse(self.list_view_name, kwargs={'subject_pk': self.material.subject.id}),
             post_data,
             format='json'
         )
@@ -228,18 +177,13 @@ class MaterialsViewSetTestCase(APITestCase):
 
     def test_materials_creation_with_valid_data(self):
         self.client.force_authenticate(user=self.teacher_user)
-        self.material.title = 'Hvala!'
-        self.material.section = 'TBA'
-        self.material.content = 'ELSYSER is damn good!'
+        self.material.title = 'test title'
+        self.material.section = 'test section'
+        self.material.content = 'test content'
         post_data = self.serializer_class(self.material).data
 
         response = self.client.post(
-            reverse(
-                self.list_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id
-                }
-            ),
+            reverse(self.list_view_name, kwargs={'subject_pk': self.material.subject.id}),
             post_data,
             format='json'
         )
@@ -248,39 +192,32 @@ class MaterialsViewSetTestCase(APITestCase):
 
     def test_materials_update_with_student_account(self):
         self.client.force_authenticate(user=self.student_user)
-        self.material.title = 'С0002ГР'
+        self.material.title = 'test title'
         put_data = self.serializer_class(self.material).data
 
         response = self.client.put(
             reverse(
                 self.detail_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id,
-                    'pk': self.material.id
-                }
+                kwargs={'subject_pk': self.material.subject.id, 'pk': self.material.id}
             ),
             put_data,
             format='json'
         )
 
         self.assertEqual(
-            response.data['detail'],
-            'Only teachers are allowed to view and modify this content.'
+            response.data['detail'], 'Only teachers are allowed to view and modify this content.'
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_materials_update_with_invalid_subject_id(self):
         self.client.force_authenticate(user=self.teacher_user)
-        self.material.title = 'Hvala!'
+        self.material.title = 'test title'
         put_data = self.serializer_class(self.material).data
 
         response = self.client.put(
             reverse(
                 self.detail_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id + 1,
-                    'pk': self.material.id
-                }
+                kwargs={'subject_pk': self.material.subject.id + 1, 'pk': self.material.id}
             ),
             put_data,
             format='json'
@@ -291,16 +228,13 @@ class MaterialsViewSetTestCase(APITestCase):
 
     def test_materials_update_with_invalid_id(self):
         self.client.force_authenticate(user=self.teacher_user)
-        self.material.title = 'Hvala!'
+        self.material.title = 'test title'
         put_data = self.serializer_class(self.material).data
 
         response = self.client.put(
             reverse(
                 self.detail_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id,
-                    'pk': self.material.id + 1
-                }
+                kwargs={'subject_pk': self.material.subject.id, 'pk': self.material.id + 1}
             ),
             put_data,
             format='json'
@@ -317,41 +251,31 @@ class MaterialsViewSetTestCase(APITestCase):
         response = self.client.put(
             reverse(
                 self.detail_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id,
-                    'pk': self.material.id
-                }
+                kwargs={'subject_pk': self.material.subject.id, 'pk': self.material.id}
             ),
             put_data,
             format='json'
         )
 
-        self.assertEqual(
-            response.data['title'],
-            ['Ensure this field has at least 3 characters.']
-        )
+        self.assertEqual(response.data['title'], ['Ensure this field has at least 3 characters.'])
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_materials_update_with_too_long_title(self):
         self.client.force_authenticate(user=self.teacher_user)
-        self.material.title = 'Svetlosyanka' * 150
+        self.material.title = 'test title' * 150
         put_data = self.serializer_class(self.material).data
 
         response = self.client.put(
             reverse(
                 self.detail_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id,
-                    'pk': self.material.id
-                }
+                kwargs={'subject_pk': self.material.subject.id, 'pk': self.material.id}
             ),
             put_data,
             format='json'
         )
 
         self.assertEqual(
-            response.data['title'],
-            ['Ensure this field has no more than 150 characters.']
+            response.data['title'], ['Ensure this field has no more than 150 characters.']
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -363,41 +287,31 @@ class MaterialsViewSetTestCase(APITestCase):
         response = self.client.put(
             reverse(
                 self.detail_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id,
-                    'pk': self.material.id
-                }
+                kwargs={'subject_pk': self.material.subject.id, 'pk': self.material.id}
             ),
             put_data,
             format='json'
         )
 
-        self.assertEqual(
-            response.data['section'],
-            ['Ensure this field has at least 3 characters.']
-        )
+        self.assertEqual(response.data['section'], ['Ensure this field has at least 3 characters.'])
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_materials_update_with_too_long_section(self):
         self.client.force_authenticate(user=self.teacher_user)
-        self.material.section = 'Svetlosyanka' * 150
+        self.material.section = 'test title' * 150
         put_data = self.serializer_class(self.material).data
 
         response = self.client.put(
             reverse(
                 self.detail_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id,
-                    'pk': self.material.id
-                }
+                kwargs={'subject_pk': self.material.subject.id, 'pk': self.material.id}
             ),
             put_data,
             format='json'
         )
 
         self.assertEqual(
-            response.data['section'],
-            ['Ensure this field has no more than 150 characters.']
+            response.data['section'], ['Ensure this field has no more than 150 characters.']
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -409,35 +323,26 @@ class MaterialsViewSetTestCase(APITestCase):
         response = self.client.put(
             reverse(
                 self.detail_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id,
-                    'pk': self.material.id
-                }
+                kwargs={'subject_pk': self.material.subject.id, 'pk': self.material.id}
             ),
             put_data,
             format='json'
         )
 
-        self.assertEqual(
-            response.data['content'],
-            ['This field may not be blank.']
-        )
+        self.assertEqual(response.data['content'], ['This field may not be blank.'])
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_materials_update_with_valid_data(self):
         self.client.force_authenticate(user=self.teacher_user)
-        self.material.title = 'Hvala!'
-        self.material.section = 'TBA'
-        self.material.content = 'ELSYSER is damn good!'
+        self.material.title = 'test title'
+        self.material.section = 'test section'
+        self.material.content = 'test content'
         put_data = self.serializer_class(self.material).data
 
         response = self.client.put(
             reverse(
                 self.detail_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id,
-                    'pk': self.material.id
-                }
+                kwargs={'subject_pk': self.material.subject.id, 'pk': self.material.id}
             ),
             put_data,
             format='json'
@@ -456,12 +361,9 @@ class MaterialsViewSetTestCase(APITestCase):
         response = self.client.put(
             reverse(
                 self.detail_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id,
-                    'pk': self.material.id
-                }
+                kwargs={'subject_pk': self.material.subject.id, 'pk': self.material.id}
             ),
-            {'topic': 'HAHAHA I AM ANONYMOUS!'},
+            {'topic': 'test topic'},
             format='json'
         )
 
@@ -477,10 +379,7 @@ class MaterialsViewSetTestCase(APITestCase):
         response = self.client.delete(
             reverse(
                 self.detail_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id + 1,
-                    'pk': self.material.id
-                }
+                kwargs={'subject_pk': self.material.subject.id + 1, 'pk': self.material.id}
             )
         )
 
@@ -493,10 +392,7 @@ class MaterialsViewSetTestCase(APITestCase):
         response = self.client.delete(
             reverse(
                 self.detail_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id,
-                    'pk': self.material.id + 1
-                }
+                kwargs={'subject_pk': self.material.subject.id, 'pk': self.material.id + 1}
             )
         )
 
@@ -514,10 +410,7 @@ class MaterialsViewSetTestCase(APITestCase):
         response = self.client.delete(
             reverse(
                 self.detail_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id,
-                    'pk': self.material.id
-                }
+                kwargs={'subject_pk': self.material.subject.id, 'pk': self.material.id}
             ),
         )
 
@@ -533,10 +426,7 @@ class MaterialsViewSetTestCase(APITestCase):
         response = self.client.delete(
             reverse(
                 self.detail_view_name,
-                kwargs={
-                    'subject_pk': self.material.subject.id,
-                    'pk': self.material.id
-                }
+                kwargs={'subject_pk': self.material.subject.id, 'pk': self.material.id}
             ),
         )
 
