@@ -35,16 +35,16 @@ class ExamsViewSetTestCase(APITestCase):
             subject=self.subject1,
             date=self.date,
             clazz=self.clazz,
-            topic='Quadratic inequations',
-            details='This will be the hardest **** ever!!!',
+            topic='test topic 1',
+            details='detailed information',
             author=self.teacher
         )
         self.exam2 = Exam.objects.create(
             subject=self.subject2,
             date=self.date,
             clazz=self.clazz,
-            topic='Realism',
-            details='idk idk dik',
+            topic='test topic 2',
+            details='detailed information',
             author=self.teacher
         )
 
@@ -62,10 +62,7 @@ class ExamsViewSetTestCase(APITestCase):
             reverse(self.detail_view_name, kwargs={'pk': self.exam1.id})
         )
 
-        self.assertEqual(
-            response.data['detail'],
-            'Authentication credentials were not provided.'
-        )
+        self.assertEqual(response.data['detail'], 'Authentication credentials were not provided.')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_exams_list_with_student_user(self):
@@ -73,9 +70,7 @@ class ExamsViewSetTestCase(APITestCase):
 
         response = self.client.get(reverse(self.list_view_name))
 
-        self.assertEqual(
-            self.subject1.title, response.data['results'][1]['subject']['title']
-        )
+        self.assertEqual(self.subject1.title, response.data['results'][1]['subject']['title'])
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_exams_list_with_teacher_user(self):
@@ -90,9 +85,7 @@ class ExamsViewSetTestCase(APITestCase):
     def test_exams_detail_with_authenticated_user(self):
         self.client.force_authenticate(user=self.student_user)
 
-        response = self.client.get(
-            reverse(self.detail_view_name, kwargs={'pk': self.exam1.id})
-        )
+        response = self.client.get(reverse(self.detail_view_name, kwargs={'pk': self.exam1.id}))
 
         self.assertIsNotNone(response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -115,9 +108,7 @@ class ExamsViewSetTestCase(APITestCase):
     def test_exams_detail_with_invalid_id(self):
         self.client.force_authenticate(user=self.student_user)
 
-        response = self.client.get(
-            reverse(self.detail_view_name, kwargs={'pk': self.exam2.id + 1})
-        )
+        response = self.client.get(reverse(self.detail_view_name, kwargs={'pk': self.exam2.id + 1}))
 
         self.assertEqual(response.data['detail'], 'Not found.')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -125,9 +116,7 @@ class ExamsViewSetTestCase(APITestCase):
     def test_exams_detail_with_valid_id(self):
         self.client.force_authenticate(user=self.student_user)
 
-        response = self.client.get(
-            reverse(self.detail_view_name, kwargs={'pk': self.exam1.id})
-        )
+        response = self.client.get(reverse(self.detail_view_name, kwargs={'pk': self.exam1.id}))
 
         self.assertEqual(response.data['details'], self.exam1.details)
         self.assertEqual(response.data['topic'], self.exam1.topic)
@@ -136,12 +125,10 @@ class ExamsViewSetTestCase(APITestCase):
 
     def test_exams_creation_with_student_account(self):
         self.client.force_authenticate(user=self.student_user)
-        self.exam1.topic = 'glucimir'
+        self.exam1.topic = 'test topic'
         post_data = self.serializer_class(self.exam1).data
 
-        response = self.client.post(
-            reverse(self.list_view_name), post_data, format='json'
-        )
+        response = self.client.post(reverse(self.list_view_name), post_data, format='json')
 
         self.assertEqual(
             response.data['detail'],
@@ -154,21 +141,17 @@ class ExamsViewSetTestCase(APITestCase):
         self.exam1.topic = ''
         post_data = self.serializer_class(self.exam1).data
 
-        response = self.client.post(
-            reverse(self.list_view_name), post_data, format='json'
-        )
+        response = self.client.post(reverse(self.list_view_name), post_data, format='json')
 
         self.assertEqual(response.data['topic'], ['This field may not be blank.'])
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_exams_creation_with_too_long_topic(self):
         self.client.force_authenticate(user=self.teacher_user)
-        self.exam1.topic = 'glucimir' * 20
+        self.exam1.topic = 'test topic' * 20
         post_data = self.serializer_class(self.exam1).data
 
-        response = self.client.post(
-            reverse(self.list_view_name), post_data, format='json'
-        )
+        response = self.client.post(reverse(self.list_view_name), post_data, format='json')
 
         self.assertEqual(
             response.data['topic'],
@@ -178,24 +161,20 @@ class ExamsViewSetTestCase(APITestCase):
 
     def test_exams_creation_with_valid_topic(self):
         self.client.force_authenticate(user=self.teacher_user)
-        self.exam1.topic = 'glucimir'
+        self.exam1.topic = 'test topic'
         post_data = self.serializer_class(self.exam1).data
 
-        response = self.client.post(
-            reverse(self.list_view_name), post_data, format='json'
-        )
+        response = self.client.post(reverse(self.list_view_name), post_data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_exams_update_with_student_account(self):
         self.client.force_authenticate(user=self.student_user)
-        self.exam1.topic = 'glucimir'
+        self.exam1.topic = 'test topic'
         put_data = self.serializer_class(self.exam1).data
 
         response = self.client.put(
-            reverse(self.detail_view_name, kwargs={'pk': self.exam1.id}),
-            put_data,
-            format='json'
+            reverse(self.detail_view_name, kwargs={'pk': self.exam1.id}), put_data, format='json'
         )
 
         self.assertEqual(
@@ -210,9 +189,7 @@ class ExamsViewSetTestCase(APITestCase):
         put_data = self.serializer_class(self.exam1).data
 
         response = self.client.put(
-            reverse(self.detail_view_name, kwargs={'pk': self.exam1.id}),
-            put_data,
-            format='json'
+            reverse(self.detail_view_name, kwargs={'pk': self.exam1.id}), put_data, format='json'
         )
 
         self.assertEqual(response.data['topic'], ['This field may not be blank.'])
@@ -220,13 +197,11 @@ class ExamsViewSetTestCase(APITestCase):
 
     def test_exams_update_with_too_long_topic(self):
         self.client.force_authenticate(user=self.teacher_user)
-        self.exam1.topic = 'glucimir' * 20
+        self.exam1.topic = 'test topic' * 20
         put_data = self.serializer_class(self.exam1).data
 
         response = self.client.put(
-            reverse(self.detail_view_name, kwargs={'pk': self.exam1.id}),
-            put_data,
-            format='json'
+            reverse(self.detail_view_name, kwargs={'pk': self.exam1.id}), put_data, format='json'
         )
 
         self.assertEqual(
@@ -257,13 +232,11 @@ class ExamsViewSetTestCase(APITestCase):
 
     def test_exams_update_with_valid_topic(self):
         self.client.force_authenticate(user=self.teacher_user)
-        self.exam1.topic = 'glucimir'
+        self.exam1.topic = 'test topic'
         put_data = self.serializer_class(self.exam1).data
 
         response = self.client.put(
-            reverse(self.detail_view_name, kwargs={'pk': self.exam1.id}),
-            put_data,
-            format='json'
+            reverse(self.detail_view_name, kwargs={'pk': self.exam1.id}), put_data, format='json'
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -277,9 +250,7 @@ class ExamsViewSetTestCase(APITestCase):
         self.exam1.author = new_teacher
         self.exam1.save()
 
-        response = self.client.delete(
-            reverse(self.detail_view_name, kwargs={'pk': self.exam1.id})
-        )
+        response = self.client.delete(reverse(self.detail_view_name, kwargs={'pk': self.exam1.id}))
 
         self.assertEqual(
             response.data['detail'],
@@ -290,9 +261,7 @@ class ExamsViewSetTestCase(APITestCase):
     def test_exams_deletion(self):
         self.client.force_authenticate(user=self.teacher_user)
 
-        response = self.client.delete(
-            reverse(self.detail_view_name, kwargs={'pk': self.exam1.id})
-        )
+        response = self.client.delete(reverse(self.detail_view_name, kwargs={'pk': self.exam1.id}))
 
         self.assertEqual(Exam.objects.count(), 1)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
