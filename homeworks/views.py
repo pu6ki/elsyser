@@ -80,7 +80,7 @@ class SubmissionsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         homework = self.get_related_homework()
-        return homework.submissions
+        return homework.submissions.all()
 
     def get_object(self):
         return get_object_or_404(self.get_queryset(), id=self.kwargs['pk'])
