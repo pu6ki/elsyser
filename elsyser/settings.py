@@ -46,12 +46,14 @@ INSTALLED_APPS = [
     'rest_framework_docs',
     'djoser',
     'corsheaders',
+    'vote',
 
     'students',
     'news',
     'exams',
     'homeworks',
-    'materials'
+    'materials',
+    'talks',
 ]
 
 MIDDLEWARE = [
