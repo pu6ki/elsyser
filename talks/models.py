@@ -15,7 +15,7 @@ class Meetup(models.Model):
 
 
 class Talk(VoteModel):
-    meetup = models.ForeignKey(Meetup, related_name='talks', on_delete=models.CASCADE)
+    meetup = models.ForeignKey(Meetup, related_name='talks', null=True, on_delete=models.CASCADE)
     author = models.ForeignKey(User, related_name='talks', on_delete=models.CASCADE)
     topic = models.CharField(max_length=500)
     description = models.CharField(max_length=10000)
