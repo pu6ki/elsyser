@@ -1,16 +1,21 @@
 from django.conf.urls import url
 
-from rest_framework import routers
+from rest_framework_nested import routers
 
-from .views import TalksViewSet, VoteTalk
+from .views import MeetupsViewSet, TalksViewSet
 
 
 app_name = 'talks'
 
-router = routers.SimpleRouter()
-router.register('talks', TalksViewSet, base_name='talks')
+meetups_router = routers.SimpleRouter()
+meetups_router.register(r'meetups', MeetupsViewSet, base_name='meetups')
 
-urlpatterns = [
-    url(r'^talks/(?P<pk>\d+)/(?P<action>upvote|downvote)/$', VoteTalk.as_view(), name='vote-talk'),
-]
-urlpatterns += router.urls
+talks_router = routers.NestedSimpleRouter(
+    parent_router=meetups_router,
+    parent_prefix=r'meetups',
+    lookup='meetups'
+)
+talks_router.register(r'talks', TalksViewSet, base_name='talks')
+
+urlpatterns = meetups_router.urls
+urlpatterns += talks_router.urls
