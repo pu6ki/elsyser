@@ -88,8 +88,12 @@ class TalksViewSet(viewsets.ModelViewSet):
     def vote(self, request, up=True):
         talk = self.get_object()
 
+        print('up = {}'.format(up))
+        print(request.user.id)
+
         talk.votes.up(request.user.id) if up else talk.votes.delete(request.user.id)
         talk.save()
+        print('votes: {}'.format(talk.votes.count()))
 
         return Response({'votes_count': talk.votes.count()}, status=status.HTTP_200_OK)
 
@@ -99,4 +103,5 @@ class TalksViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['put'])
     def downvote(self, request, *args, **kwargs):
+        print('in downvote view')
         return self.vote(request, up=False)
