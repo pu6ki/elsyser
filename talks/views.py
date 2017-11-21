@@ -91,8 +91,12 @@ class TalksViewSet(viewsets.ModelViewSet):
         print('up = {}'.format(up))
         print(request.user.id)
 
-        talk.votes.up(request.user.id) if up else talk.votes.delete(request.user.id)
-        talk.save()
+        if up:
+            talk.votes.up(request.user.id)
+        else:
+            talk.votes.delete(request.user.id)
+
+        # talk.save()
         print('votes: {}'.format(talk.votes.count()))
 
         return Response({'votes_count': talk.votes.count()}, status=status.HTTP_200_OK)
