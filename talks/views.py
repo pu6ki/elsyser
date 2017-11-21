@@ -75,6 +75,7 @@ class TalksViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.validated_data, status=status.HTTP_201_CREATED, headers=headers)
 
+
     def update(self, request, *args, **kwargs):
         talk = self.get_object()
         self.check_object_permissions(request, talk)
@@ -85,20 +86,18 @@ class TalksViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def vote(self, request, talk, up=True):
+    def vote(self, request, up=True):
+        talk = self.get_object()
+
         talk.votes.up(request.user.id) if up else talk.votes.delete(request.user.id)
         talk.save()
 
+        return Response({'votes_count': talk.votes.count()}, status=status.HTTP_200_OK)
+
     @detail_route(methods=['put'])
     def upvote(self, request, *args, **kwargs):
-        talk = self.get_object()
-        self.vote(request, talk, up=True)
-
-        return Response({'votes': talk.votes.count()}, status=status.HTTP_200_OK)
+        return self.vote(request)
 
     @detail_route(methods=['put'])
     def downvote(self, request, *args, **kwargs):
-        talk = self.get_object()
-        self.vote(request, talk, up=False)
-
-        return Response({'votes_count': talk.votes.count()}, status=status.HTTP_200_OK)
+        return self.vote(request, up=False)

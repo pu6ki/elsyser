@@ -9,13 +9,17 @@ class TalkSerializer(serializers.ModelSerializer):
     topic = serializers.CharField(required=True, max_length=500)
     description = serializers.CharField(required=True, max_length=10000)
     votes_count = serializers.SerializerMethodField()
+    has_voted = serializers.SerializerMethodField()
 
     class Meta:
         model = Talk
-        fields = ('id', 'author', 'topic', 'description', 'video_url', 'votes_count') 
+        fields = ('id', 'author', 'topic', 'description', 'video_url', 'votes_count', 'has_voted') 
 
     def get_votes_count(self, obj):
         return obj.votes.count()
+
+    def get_has_voted(self, obj):
+        return obj.votes.exists(self.context['request'].user.id)
 
     def create(self, validated_data):
         request = self.context['request']
