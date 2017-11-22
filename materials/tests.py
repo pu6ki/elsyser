@@ -40,10 +40,7 @@ class MaterialsViewSetTestCase(APITestCase):
             reverse(self.list_view_name, kwargs={'subject_pk': self.material.subject.id})
         )
 
-        self.assertEqual(
-            response.data['detail'],
-            'Authentication credentials were not provided.'
-        )
+        self.assertEqual(response.data['detail'], 'Authentication credentials were not provided.')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_materials_detail_with_anonymous_user(self):
