@@ -9,7 +9,6 @@ from rest_framework import status
 from .serializers import MeetupSerializer, TalkSerializer
 from .models import Meetup, Talk
 
-# TODO: Implement tests
 
 class MeetupsViewSetTestCase(APITestCase):
     def setUp(self):

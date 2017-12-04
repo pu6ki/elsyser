@@ -5,7 +5,7 @@ from vote.models import VoteModel
 
 
 class Meetup(models.Model):
-    date = models.DateField()
+    date = models.DateTimeField()
 
     def __str__(self):
         return '{} ({})'.format(self.__class__.__name__, self.date)
