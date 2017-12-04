@@ -155,6 +155,7 @@ class StudentsList(generics.ListAPIView):
     queryset = Student.objects.all()
     filter_backends = (FullWordSearchFilter,)
     word_fields = ('user__username',)
+    pagination_class = None
 
     def get_queryset(self):
         all_students = Student.objects.all()
