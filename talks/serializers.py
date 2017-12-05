@@ -31,7 +31,7 @@ class TalkSerializer(serializers.ModelSerializer):
 
 
 class MeetupSerializer(serializers.ModelSerializer):
-    description = serializers.CharField(max_length=10000)
+    description = serializers.CharField(required=False, max_length=10000)
     talks = TalkSerializer(many=True, read_only=True)
 
     class Meta:
