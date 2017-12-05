@@ -24,7 +24,7 @@ class TalkSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         request = self.context['request']
         author = request.user
-        
+
         meetup = self.context['meetup']
 
         return Talk.objects.create(meetup=meetup, author=author, **validated_data)
