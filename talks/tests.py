@@ -1,6 +1,7 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.reverse import reverse
@@ -22,8 +23,7 @@ class MeetupsViewSetTestCase(APITestCase):
             username='admin', email='admin@admin.com', password='s3cr3t'
         )
 
-        self.now = datetime.now().date()
-        self.date_format = '%Y-%m-%d'
+        self.now = timezone.now()
         self.upcoming_meetup = Meetup.objects.create(date=self.now + timedelta(days=3))
         self.past_meetup = Meetup.objects.create(date=self.now - timedelta(days=3))
 
@@ -48,7 +48,7 @@ class MeetupsViewSetTestCase(APITestCase):
 
         results = response.data['results']
         self.assertEqual(len(results), 1)
-        self.assertEqual(results[0]['date'], self.past_meetup.date.strftime(self.date_format))
+        self.assertEqual(results[0]['date'], self.past_meetup.date.isoformat().replace('+00:00', 'Z'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_meetups_list_upcoming_filtering(self):
@@ -58,7 +58,7 @@ class MeetupsViewSetTestCase(APITestCase):
 
         results = response.data['results']
         self.assertEqual(len(results), 1)
-        self.assertEqual(results[0]['date'], self.upcoming_meetup.date.strftime(self.date_format))
+        self.assertEqual(results[0]['date'], self.upcoming_meetup.date.isoformat().replace('+00:00', 'Z'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_meetups_detail_with_anonymous_user(self):
@@ -77,7 +77,7 @@ class MeetupsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['date'], self.past_meetup.date.strftime(self.date_format))
+        self.assertEqual(response.data['date'], self.past_meetup.date.isoformat().replace('+00:00', 'Z'))
 
     def test_meetups_create_with_normal_user(self):
         self.client.force_authenticate(user=self.normal_user)
@@ -91,6 +91,20 @@ class MeetupsViewSetTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(
             response.data['detail'], 'You do not have permission to perform this action.'
+        )
+
+    def test_meetups_create_with_too_long_description(self):
+        self.client.force_authenticate(user=self.admin_user)
+
+        response = self.client.post(
+            reverse(self.list_view_name),
+            data={'date': self.now, 'description': 'a' * 10001},
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data['description'], ['Ensure this field has no more than 10000 characters.']
         )
 
     def test_meetups_create_with_admin_user(self):
@@ -118,6 +132,20 @@ class MeetupsViewSetTestCase(APITestCase):
             response.data['detail'], 'You do not have permission to perform this action.'
         )
 
+    def test_meetups_update_with_too_long_description(self):
+        self.client.force_authenticate(user=self.admin_user)
+
+        response = self.client.put(
+            reverse(self.detail_view_name, kwargs={'pk': self.upcoming_meetup.id}),
+            data={'description': 'a' * 10001},
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data['description'], ['Ensure this field has no more than 10000 characters.']
+        )
+
     def test_meetups_update_with_admin_user(self):
         self.client.force_authenticate(user=self.admin_user)
 
@@ -128,7 +156,7 @@ class MeetupsViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['date'], self.now.strftime(self.date_format))
+        self.assertEqual(response.data['date'], self.now.isoformat().replace('+00:00', 'Z'))
 
     def test_meetups_delete_with_normal_user(self):
         self.client.force_authenticate(user=self.normal_user)
@@ -168,7 +196,7 @@ class TalksViewSetTestCase(APITestCase):
             username='admin', email='admin@admin.com', password='s3cr3t'
         )
 
-        self.meetup = Meetup.objects.create(date=datetime.now().date())
+        self.meetup = Meetup.objects.create(date=timezone.now())
         self.talk = Talk.objects.create(
             meetup=self.meetup,
             author=self.normal_user,
@@ -223,6 +251,66 @@ class TalksViewSetTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response.data['detail'], 'Authentication credentials were not provided.')
 
+    def test_talks_create_with_too_short_topic(self):
+        self.client.force_authenticate(user=self.normal_user)
+
+        self.post_data['topic'] = 'a'
+        response = self.client.post(
+            reverse(self.list_view_name, kwargs={'meetups_pk': self.meetup.id}),
+            data=self.post_data,
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data['topic'], ['Ensure this field has at least 3 characters.']
+        )
+
+    def test_talks_create_with_too_long_topic(self):
+        self.client.force_authenticate(user=self.normal_user)
+
+        self.post_data['topic'] *= 500 
+        response = self.client.post(
+            reverse(self.list_view_name, kwargs={'meetups_pk': self.meetup.id}),
+            data=self.post_data,
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data['topic'], ['Ensure this field has no more than 500 characters.']
+        )
+
+    def test_talks_create_with_too_short_description(self):
+        self.client.force_authenticate(user=self.normal_user)
+
+        self.post_data['description'] = 'a'
+        response = self.client.post(
+            reverse(self.list_view_name, kwargs={'meetups_pk': self.meetup.id}),
+            data=self.post_data,
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data['description'], ['Ensure this field has at least 5 characters.']
+        )
+
+    def test_talks_create_with_too_long_description(self):
+        self.client.force_authenticate(user=self.normal_user)
+
+        self.post_data['description'] *= 10000
+        response = self.client.post(
+            reverse(self.list_view_name, kwargs={'meetups_pk': self.meetup.id}),
+            data=self.post_data,
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data['description'], ['Ensure this field has no more than 10000 characters.']
+        )
+
     def test_talks_create_with_authenticated_user(self):
         self.client.force_authenticate(user=self.normal_user)
 
@@ -257,6 +345,66 @@ class TalksViewSetTestCase(APITestCase):
         self.assertEqual(
             response.data['detail'],
             'You should be the author of this content in order to modify it.'
+        )
+
+    def test_talks_update_with_too_short_topic(self):
+        self.client.force_authenticate(user=self.normal_user)
+
+        self.post_data['topic'] = 'a'
+        response = self.client.put(
+            reverse(self.detail_view_name, kwargs=self.detail_kwargs),
+            data=self.post_data,
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data['topic'], ['Ensure this field has at least 3 characters.']
+        )
+
+    def test_talks_update_with_too_long_topic(self):
+        self.client.force_authenticate(user=self.normal_user)
+
+        self.post_data['topic'] *= 500 
+        response = self.client.put(
+            reverse(self.detail_view_name, kwargs=self.detail_kwargs),
+            data=self.post_data,
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data['topic'], ['Ensure this field has no more than 500 characters.']
+        )
+
+    def test_talks_update_with_too_short_description(self):
+        self.client.force_authenticate(user=self.normal_user)
+
+        self.post_data['description'] = 'a'
+        response = self.client.put(
+            reverse(self.detail_view_name, kwargs=self.detail_kwargs),
+            data=self.post_data,
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data['description'], ['Ensure this field has at least 5 characters.']
+        )
+
+    def test_talks_update_with_too_long_description(self):
+        self.client.force_authenticate(user=self.normal_user)
+
+        self.post_data['description'] *= 10000
+        response = self.client.put(
+            reverse(self.detail_view_name, kwargs=self.detail_kwargs),
+            data=self.post_data,
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data['description'], ['Ensure this field has no more than 10000 characters.']
         )
 
     def test_talks_update_with_author_user(self):
