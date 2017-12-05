@@ -26,4 +26,4 @@ class Talk(VoteModel):
         return '{} - {}'.format(self.__class__.__name__, self.topic)
 
     class Meta:
-        ordering = ['vote_score']
+        ordering = ['-vote_score']
