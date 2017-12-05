@@ -197,14 +197,21 @@ class TalksViewSetTestCase(APITestCase):
         )
 
         self.meetup = Meetup.objects.create(date=timezone.now())
-        self.talk = Talk.objects.create(
+        self.first_talk = Talk.objects.create(
             meetup=self.meetup,
             author=self.normal_user,
-            topic='test topic',
-            description='test description'
+            topic='first test topic',
+            description='first test description'
+        )
+        self.second_talk = Talk.objects.create(
+            meetup=self.meetup,
+            author=self.normal_user,
+            topic='second test topic',
+            description='second test description'
         )
 
-        self.detail_kwargs = {'meetups_pk': self.meetup.id, 'pk': self.talk.id}
+        self.first_detail_kwargs = {'meetups_pk': self.meetup.id, 'pk': self.first_talk.id}
+        self.second_detail_kwargs = {'meetups_pk': self.meetup.id, 'pk': self.second_talk.id}
         self.post_data = {'topic': 'test', 'description': 'tests'}
 
     def test_talks_list_with_anonymous_user(self):
@@ -215,6 +222,20 @@ class TalksViewSetTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response.data['detail'], 'Authentication credentials were not provided.')
 
+    def test_talks_list_are_returned_sorted_by_votes(self):
+        self.client.force_authenticate(user=self.normal_user)
+
+        self.client.put(reverse(self.upvote_view_name, kwargs=self.second_detail_kwargs))
+
+        response = self.client.get(
+            reverse(self.list_view_name, kwargs={'meetups_pk': self.meetup.id})
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['results'][0]['topic'], self.second_talk.topic)
+        self.assertEqual(response.data['results'][1]['topic'], self.first_talk.topic)
+
+
     def test_talks_list_with_authenticated_user(self):
         self.client.force_authenticate(user=self.normal_user)
 
@@ -223,11 +244,11 @@ class TalksViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['results'][0]['topic'], self.talk.topic)
+        self.assertEqual(response.data['results'][0]['topic'], self.first_talk.topic)
 
     def test_talks_detail_with_anonymous_user(self):
         response = self.client.get(
-            reverse(self.detail_view_name, kwargs=self.detail_kwargs)
+            reverse(self.detail_view_name, kwargs=self.first_detail_kwargs)
         )
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -237,11 +258,11 @@ class TalksViewSetTestCase(APITestCase):
         self.client.force_authenticate(user=self.normal_user)
 
         response = self.client.get(
-            reverse(self.detail_view_name, kwargs=self.detail_kwargs)
+            reverse(self.detail_view_name, kwargs=self.first_detail_kwargs)
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['topic'], self.talk.topic)
+        self.assertEqual(response.data['topic'], self.first_talk.topic)
 
     def test_talks_create_with_anonymous_user(self):
         response = self.client.post(
@@ -324,7 +345,7 @@ class TalksViewSetTestCase(APITestCase):
 
     def test_talks_update_with_anonymous_user(self):
         response = self.client.put(
-            reverse(self.detail_view_name, kwargs=self.detail_kwargs),
+            reverse(self.detail_view_name, kwargs=self.first_detail_kwargs),
             data=self.post_data,
             format='json'
         )
@@ -336,7 +357,7 @@ class TalksViewSetTestCase(APITestCase):
         self.client.force_authenticate(user=self.admin_user)
 
         response = self.client.put(
-            reverse(self.detail_view_name, kwargs=self.detail_kwargs),
+            reverse(self.detail_view_name, kwargs=self.first_detail_kwargs),
             data=self.post_data,
             format='json'
         )
@@ -352,7 +373,7 @@ class TalksViewSetTestCase(APITestCase):
 
         self.post_data['topic'] = 'a'
         response = self.client.put(
-            reverse(self.detail_view_name, kwargs=self.detail_kwargs),
+            reverse(self.detail_view_name, kwargs=self.first_detail_kwargs),
             data=self.post_data,
             format='json'
         )
@@ -367,7 +388,7 @@ class TalksViewSetTestCase(APITestCase):
 
         self.post_data['topic'] *= 500 
         response = self.client.put(
-            reverse(self.detail_view_name, kwargs=self.detail_kwargs),
+            reverse(self.detail_view_name, kwargs=self.first_detail_kwargs),
             data=self.post_data,
             format='json'
         )
@@ -382,7 +403,7 @@ class TalksViewSetTestCase(APITestCase):
 
         self.post_data['description'] = 'a'
         response = self.client.put(
-            reverse(self.detail_view_name, kwargs=self.detail_kwargs),
+            reverse(self.detail_view_name, kwargs=self.first_detail_kwargs),
             data=self.post_data,
             format='json'
         )
@@ -397,7 +418,7 @@ class TalksViewSetTestCase(APITestCase):
 
         self.post_data['description'] *= 10000
         response = self.client.put(
-            reverse(self.detail_view_name, kwargs=self.detail_kwargs),
+            reverse(self.detail_view_name, kwargs=self.first_detail_kwargs),
             data=self.post_data,
             format='json'
         )
@@ -411,7 +432,7 @@ class TalksViewSetTestCase(APITestCase):
         self.client.force_authenticate(user=self.normal_user)
 
         response = self.client.put(
-            reverse(self.detail_view_name, kwargs=self.detail_kwargs),
+            reverse(self.detail_view_name, kwargs=self.first_detail_kwargs),
             data=self.post_data,
             format='json'
         )
@@ -419,7 +440,7 @@ class TalksViewSetTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_talks_upvote_with_anonymous_user(self):
-        response = self.client.put(reverse(self.upvote_view_name, kwargs=self.detail_kwargs))
+        response = self.client.put(reverse(self.upvote_view_name, kwargs=self.first_detail_kwargs))
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response.data['detail'], 'Authentication credentials were not provided.')
@@ -427,13 +448,13 @@ class TalksViewSetTestCase(APITestCase):
     def test_talks_upvote_with_authenticated_user(self):
         self.client.force_authenticate(user=self.normal_user)
 
-        response = self.client.put(reverse(self.upvote_view_name, kwargs=self.detail_kwargs))
+        response = self.client.put(reverse(self.upvote_view_name, kwargs=self.first_detail_kwargs))
 
-        self.assertEqual(self.talk.votes.count(), 1)
+        self.assertEqual(self.first_talk.votes.count(), 1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
     def test_talks_downvote_with_anonymous_user(self):
-        response = self.client.put(reverse(self.downvote_view_name, kwargs=self.detail_kwargs))
+        response = self.client.put(reverse(self.downvote_view_name, kwargs=self.first_detail_kwargs))
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response.data['detail'], 'Authentication credentials were not provided.')
@@ -441,16 +462,16 @@ class TalksViewSetTestCase(APITestCase):
     def test_talks_downvote_with_authenticated_user(self):
         self.client.force_authenticate(user=self.normal_user)
 
-        response = self.client.put(reverse(self.upvote_view_name, kwargs=self.detail_kwargs))
-        self.assertEqual(self.talk.votes.count(), 1)
+        response = self.client.put(reverse(self.upvote_view_name, kwargs=self.first_detail_kwargs))
+        self.assertEqual(self.first_talk.votes.count(), 1)
 
-        response = self.client.put(reverse(self.downvote_view_name, kwargs=self.detail_kwargs))
+        response = self.client.put(reverse(self.downvote_view_name, kwargs=self.first_detail_kwargs))
 
-        self.assertEqual(self.talk.votes.count(), 0)
+        self.assertEqual(self.first_talk.votes.count(), 0)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_talks_destroy_with_anonymous_user(self):
-        response = self.client.delete(reverse(self.detail_view_name, kwargs=self.detail_kwargs))
+        response = self.client.delete(reverse(self.detail_view_name, kwargs=self.first_detail_kwargs))
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response.data['detail'], 'Authentication credentials were not provided.')
@@ -458,7 +479,7 @@ class TalksViewSetTestCase(APITestCase):
     def test_talks_destroy_with_normal_user(self):
         self.client.force_authenticate(user=self.normal_user)
 
-        response = self.client.delete(reverse(self.detail_view_name, kwargs=self.detail_kwargs))
+        response = self.client.delete(reverse(self.detail_view_name, kwargs=self.first_detail_kwargs))
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(
@@ -468,6 +489,6 @@ class TalksViewSetTestCase(APITestCase):
     def test_talks_destroy_with_admin_user(self):
         self.client.force_authenticate(user=self.admin_user)
 
-        response = self.client.delete(reverse(self.detail_view_name, kwargs=self.detail_kwargs))
+        response = self.client.delete(reverse(self.detail_view_name, kwargs=self.first_detail_kwargs))
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
