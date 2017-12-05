@@ -6,6 +6,7 @@ from vote.models import VoteModel
 
 class Meetup(models.Model):
     date = models.DateTimeField()
+    description = models.CharField(max_length=10000, blank=True, null=True)
 
     def __str__(self):
         return '{} ({})'.format(self.__class__.__name__, self.date)
@@ -25,4 +26,4 @@ class Talk(VoteModel):
         return '{} - {}'.format(self.__class__.__name__, self.topic)
 
     class Meta:
-        ordering = ['vote_score']
+        ordering = ['votes__count']

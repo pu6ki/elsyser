@@ -6,8 +6,8 @@ from .models import Meetup, Talk
 
 class TalkSerializer(serializers.ModelSerializer):
     author = UserInfoSerializer(read_only=True)
-    topic = serializers.CharField(required=True, max_length=500)
-    description = serializers.CharField(required=True, max_length=10000)
+    topic = serializers.CharField(required=True, min_length=3, max_length=500)
+    description = serializers.CharField(required=True, min_length=5, max_length=10000)
     votes_count = serializers.SerializerMethodField()
     has_voted = serializers.SerializerMethodField()
 
@@ -31,8 +31,9 @@ class TalkSerializer(serializers.ModelSerializer):
 
 
 class MeetupSerializer(serializers.ModelSerializer):
+    description = serializers.CharField(max_length=10000)
     talks = TalkSerializer(many=True, read_only=True)
 
     class Meta:
         model = Meetup
-        fields = ('id', 'date', 'talks')
+        fields = ('id', 'date', 'description', 'talks')
